@@ -14,12 +14,12 @@ engine = sqlalchemy.create_engine(
 )
 sessionmaker = orm.sessionmaker(bind=engine)
 
-from . import _models # NOQA  # add _models module to locals so metadata of BaseModel could access it
+from . import _models  # NOQA  # add _models module to locals so metadata of BaseModel could access it
 
 BaseModel.metadata.create_all(engine)
 
 
-class Session(orm.sessionmaker):
+class Session:
 
     def __new__(cls, *args, **kwargs):
         return sessionmaker()
