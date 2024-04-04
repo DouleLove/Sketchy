@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block main %}
+<section id="section-carousel">
+    <div id="previews-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"
+         data-bs-pause="false">
+        <div class="carousel-inner" id="carousel-index-inner">
+            {% for preview in previews %}
+            {% if loop.index == 1 %}
+            {% set active = ' active' %}
+            {% else %}
+            {% set active = '' %}
+            {% endif %}
+            <div class="carousel-item{{ active }}">
+                <img class="d-block w-100" src="{{ preview }}">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="preview-upper">
+        <div class="preview-upper-flex">
+            <div class="preview-text">
+                <div class="preview-title">
+                    <span>Sketchy</span>
+                </div>
+                <div class="preview-additional">
+                    <span>Место для тех, кто любит создавать скетчи</span>
+                </div>
+            </div>
+            <div class="previews-overview">
+                {% for preview_ in previews %}
+                <img class="preview-showcase" src="{{ preview_ }}">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+<section id="section-beauty-steps">
+    <div class="container-steps">
+        <div class="wrapper-left-align">
+            <span class="steps-ttl">Путь к красоте</span>
+            <div class="container-bsteps">
+                <div class="container-step">
+                    <div class="step-bg">
+                        <img class="step-icon" width="50%" height="50%"
+                             src="{{ url_for('static', filename='img/flame.svg') }}">
+                    </div>
+                    <span class="step-desc">Вдохновляйся</span>
+                </div>
+                <img class="step-arrow" width="50" height="50"
+                     src="{{ url_for('static', filename='img/double-arrow.svg')}}">
+                <div class="container-step">
+                    <div class="step-bg">
+                        <img class="step-icon" width="50%" height="50%"
+                             src="{{ url_for('static', filename='img/palette.svg') }}">
+                    </div>
+                    <span class="step-desc">Создавай</span>
+                </div>
+                <img class="step-arrow" width="50" height="50"
+                     src="{{ url_for('static', filename='img/double-arrow.svg')}}">
+                <div class="container-step">
+                    <div class="step-bg">
+                        <img class="step-icon" width="50%" height="50%"
+                             src="{{ url_for('static', filename='img/heart-hand.svg') }}">
+                    </div>
+                    <span class="step-desc">Делись</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="section-star-sky-random-sketch">
+    <div id="section-random-sketch-wrapper">
+        <div id="random-sketch-clickable"></div>
+    </div>
+</section>
+<section id="section-sketches">
+    <div class="search-container">
+        <div class="search-line-outer">
+            <div class="search-line">
+                <div class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                </div>
+                <input class="search-input" type="search" placeholder="Поиск входновения">
+            </div>
+        </div>
+        <div class="search-rules-container">
+            <div class="search-rule">
+                <div class="search-rule-icon-container">
+                    <svg class="search-rule-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M5.5 9.5A.5.5 0 0 1 6 9h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5"/>
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                    </svg>
+                </div>
+                <div class="search-rule-text-wrapper">
+                    <span class="search-rule-title">Названия</span>
+                    <span class="search-rule-desc">Посмотрите на знакомые темы с другого ракурса</span>
+                </div>
+            </div>
+            <div class="search-rule">
+                <div class="search-rule-icon-container">
+                    <svg class="search-rule-icon" style="width: 2em; height: 2em;vertical-align: middle;fill: black;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M843.282963 870.115556c-8.438519-140.515556-104.296296-257.422222-233.908148-297.14963C687.881481 536.272593 742.4
+                            456.533333 742.4 364.088889c0-127.241481-103.158519-230.4-230.4-230.4S281.6 236.847407 281.6 364.088889c0 92.444444
+                            54.518519 172.183704 133.12 208.877037-129.611852 39.727407-225.46963 156.634074-233.908148 297.14963-0.663704 10.903704
+                            7.964444 20.195556 18.962963 20.195556l0 0c9.955556 0 18.299259-7.774815 18.962963-17.73037C227.745185 718.506667 355.65037
+                            596.385185 512 596.385185s284.254815 122.121481 293.357037 276.195556c0.568889 9.955556 8.912593 17.73037 18.962963 17.73037C835.318519
+                            890.311111 843.946667 881.019259 843.282963 870.115556zM319.525926 364.088889c0-106.287407 86.186667-192.474074 192.474074-192.474074s192.474074
+                            86.186667 192.474074 192.474074c0 106.287407-86.186667 192.474074-192.474074 192.474074S319.525926 470.376296 319.525926 364.088889z"/>
+                    </svg>
+                </div>
+                <div class="search-rule-text-wrapper">
+                    <span class="search-rule-title">Авторы</span>
+                    <span class="search-rule-desc">Найдите талантливых авторов</span>
+                </div>
+            </div>
+            <div class="search-rule">
+                <div class="search-rule-icon-container">
+                    <svg class="search-rule-icon" fill="black" height="213.195px" width="213.195px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 213.195 213.195" xml:space="preserve">
+                        <path d="M210.856,203.383l-25.689-79.277c-1.002-3.093-3.884-5.188-7.135-5.188h-18.135c8.12-14.714,13.953-32.089,13.953-51.658
+                            C173.85,30.173,143.68,0,106.596,0c-37.081,0-67.25,30.173-67.25,67.26c0,19.569,5.833,36.944,13.952,51.658H35.164
+                            c-3.252,0-6.132,2.095-7.135,5.188L2.34,203.383c-0.74,2.283-0.342,4.782,1.069,6.723c1.411,1.941,3.666,3.089,6.066,3.089h194.246
+                            c2.4,0,4.654-1.148,6.066-3.089C211.198,208.165,211.595,205.666,210.856,203.383z M106.596,15c28.813,0,52.254,23.444,52.254,52.26
+                            c0,46.04-39.284,79.696-52.262,89.557C93.6,146.983,54.346,113.433,54.346,67.26C54.346,38.444,77.785,15,106.596,15z
+                             M19.789,198.195l20.829-64.277h22.295c17.32,23.623,38.092,37.444,39.58,38.417c1.247,0.815,2.675,1.222,4.104,1.222
+                            c1.429,0,2.857-0.407,4.104-1.222c1.486-0.972,22.261-14.794,39.582-38.417h22.297l20.828,64.277H19.789z"/>
+                    </svg>
+                </div>
+                <div class="search-rule-text-wrapper">
+                    <span class="search-rule-title">Места</span>
+                    <span class="search-rule-desc">Узнайте как другие видят знакомые места</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="tmp" style="margin-bottom: 500px;"></div>
+<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+{% endblock %}
