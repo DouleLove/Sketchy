@@ -1,10 +1,11 @@
-from flask import Flask, Blueprint
-import os
+from flask import Flask
+
 import views
 from settings import SERVER_HOST, SERVER_PORT
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'penis'
+app.config['SECRET_KEY'] = 'tmp-secret_key-should-be-replaced'
+# app.config['SECRET_KEY'] = os['flask-app-secretkey']
 
 
 def run():
