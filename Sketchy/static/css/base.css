@@ -30,32 +30,41 @@ nav {
     margin-left: 3rem;
 }
 
-.d-block {
-    width: 100vw;
-    height: 100vh;
-}
-
 .nav-buttons {
-    margin-top: 0.9rem;
-    margin-right: 3rem;
+    margin-right: 1rem;
+    display: flex;
+    height: 100%;
 }
 
 .nav-btn {
+    display: flex;
     height: 100%;
-    padding-block: 1rem;
     padding-inline: 2rem;
     color: rgba(235, 237, 240, .8);
+    fill: rgba(235, 237, 240, .8);
     font-weight: 500;
     font-size: 20px;
     text-decoration: none;
-    text-align: center;
-    transition: 0.3s;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
 }
 
-.nav-btn:hover {
+.nav-btn > svg {
+    fill: rgba(235, 237, 240, .8);
+    transition: fill 0.3s;
+}
+
+.nav-btn:hover, .nav-btn:hover > svg {
     color: rgb(235, 237, 240);
+    fill: rgb(235, 237, 240);
 }
 
-.nav-btn.active {
+.nav-btn.active, .nav-btn.active > svg {
     color: rgb(91, 133, 227);
+    fill: rgb(91, 133, 227);
+}
+
+#user-avatar {
+    height: 75%;
 }

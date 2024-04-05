@@ -95,22 +95,9 @@ function setupAnimations() {
     );
 
     Array.from(document.getElementsByClassName('step-icon')).concat(
-        Array.from(document.getElementsByClassName('step-arrow')), document.getElementById('random-sketch-clickable')
+        Array.from(document.getElementsByClassName('step-arrow')), document.getElementById('random-sketch-clickable'),
+        document.getElementsByClassName('search-line-outer')[0]
     ).forEach((element) => _animateOpacity(element, {0: 0, 0.5: 0, 1: 1}));
 }
 
-function sketchRedirect(sender=undefined) {
-    alert('bebebe')
-    if (sender !== undefined && sender.classList.contains('sketch-preview')) {
-        const sID = +sender.id;
-    } else {
-        sID = ''
-    }
-    // redirecting to http://127.0.0.1/sketch/<int:sketch_id> if id found. Otherwise, fetch random id on backend side
-    window.location.href = 'http://127.0.0.1/sketch/' + sID;
-}
-
-
 setupAnimations();
-
-document.getElementById('random-sketch-clickable').addEventListener('click', sketchRedirect)
