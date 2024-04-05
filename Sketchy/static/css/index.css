@@ -11,6 +11,11 @@
   transition: transform .5s, -webkit-transform .5s;
 }
 
+.d-block {
+    width: 100vw;
+    height: 100vh;
+}
+
 .preview-upper {
     z-index: 1;
     position: absolute;
@@ -100,8 +105,18 @@
     font-weight: 500;
 }
 
+.step-icon {
+    width: 50%;
+    height: 50%;
+}
+
 .container-step {
     margin-inline: 3rem;
+}
+
+.double-arrow-steps {
+    height: 50px;
+    width: 50px;
 }
 
 #section-random-sketch-wrapper {
@@ -137,6 +152,7 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
+    position: absolute;
 }
 
 .search-line-outer {
@@ -212,7 +228,7 @@ input::-webkit-search-results-decoration {
 
 .search-rule-icon-container {
     margin-left: 0.5rem;
-    background-color: orange;
+    background-color: rgb(195, 121, 237);
     width: 3rem;
     height: 3rem;
     border-radius: 1rem;
