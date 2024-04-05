@@ -9,3 +9,7 @@ DB_PATH = os.path.join(APPLICATION_PATH, 'database/db.sqlite3')
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 8000
+
+APP_CONFIG = {
+    'SECRET_KEY': os.environ.get('flask-app-secretkey', 'tmp-secretkey-should-be-replaced')
+}
