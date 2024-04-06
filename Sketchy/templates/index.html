@@ -79,7 +79,7 @@
     </div>
 </section>
 <section id="section-star-sky-random-sketch">
-    <a id="section-random-sketch-wrapper" href="{{ base_url }}/sketch/">
+    <a id="section-random-sketch-wrapper" href="{{ origin_url }}/sketch">
         <div id="random-sketch-clickable"></div>
     </a>
 </section>
@@ -133,5 +133,5 @@
     </div>
 </section>
 <div class="tmp" style="margin-bottom: 500px;"></div>
-<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<script type="module" src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
