@@ -5,8 +5,8 @@ __all__ = (
 import sqlalchemy
 import sqlalchemy.orm as orm
 
+from Sketchy.settings import DB_PATH
 from . import BaseModel
-from ..settings import DB_PATH
 
 engine = sqlalchemy.create_engine(
     f'sqlite:///{DB_PATH}?check_same_thread=False',

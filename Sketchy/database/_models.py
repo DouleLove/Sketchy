@@ -3,6 +3,7 @@ __all__ = (
 )
 
 import sqlalchemy
+from flask_login import UserMixin
 
 from . import BaseModel
 
@@ -10,8 +11,9 @@ from . import BaseModel
 # stands as a generic module to be processed to BaseModel metadata
 
 
-class User(BaseModel):  # test model, should be removed or changed in future updates
+class User(BaseModel, UserMixin):  # test model, should be removed or changed in future updates
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
+    login = sqlalchemy.Column(sqlalchemy.String)
+    password = sqlalchemy.Column(sqlalchemy.String)
