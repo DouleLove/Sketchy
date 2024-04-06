@@ -1,9 +1,11 @@
-import importlib.util
+__all__ = ()
+
 from pathlib import Path
 
 from flask import Flask, Blueprint
+from flask_login import LoginManager
 
-from settings import SERVER_HOST, SERVER_PORT, APP_CONFIG, APPLICATION_PATH
+from settings import SERVER_HOST, SERVER_PORT, DEBUG, APP_CONFIG, APPLICATION_PATH
 
 
 def _setup(app):
@@ -11,29 +13,26 @@ def _setup(app):
     for setting, value in APP_CONFIG.items():
         app.config[setting] = value
 
-    # registering all blueprints found in application folder
-    # (NOTE: python packages are ignored, so if there are blueprints
-    #  inside package with __init__.py, they WILL NOT BE FOUND)
-    for path in Path(APPLICATION_PATH).rglob('*.py'):  # find all .py files (recursive glob)
-        filename = '.'.join(path.name.split('.')[:-1]).replace('\\', '/')
+    for path in Path(APPLICATION_PATH).rglob('*.py'):  # find all .py files in application folder
+        # prepare filename to be passed into __import__ to format like 'package1.package2...packageN.module_name'
+        filename = '.'.join(str(path).replace(APPLICATION_PATH, '').split('.')[:-1]).strip('\\').replace('\\', '.')
 
-        # import module by absolute path
         try:
-            spec = importlib.util.spec_from_file_location(filename, str(path))
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+            module = __import__(filename)  # import module
         except ImportError:
-            continue  # could not import file because of relative import (module placed inside python package)
+            continue
 
-        for obj in vars(module).values():  # iterating globals of file
+        for obj in module.__dict__.values():  # iterating globals of file
             if isinstance(obj, Blueprint):
-                app.register_blueprint(obj)  # register blueprint
+                app.register_blueprint(obj)  # register blueprint (flask.Blueprint instance)
+            elif isinstance(obj, LoginManager):
+                obj.init_app(app)  # register login manager (flask_login.LoginManager instance)
 
 
 def run():
     app = Flask(__name__)
     _setup(app)
-    app.run(host=SERVER_HOST, port=SERVER_PORT)
+    app.run(host=SERVER_HOST, port=SERVER_PORT, debug=DEBUG)
 
 
 if __name__ == '__main__':
