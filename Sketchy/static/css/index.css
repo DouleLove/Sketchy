@@ -1,7 +1,4 @@
 .carousel {
-    animation: fadeInFast ease 1s;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
     background-color: rgba(0, 0, 0, .6)
 }
 
@@ -14,6 +11,7 @@
 .d-block {
     width: 100vw;
     height: 100vh;
+    filter: brightness(85%);
 }
 
 .preview-upper {
@@ -28,6 +26,27 @@
     justify-content: space-between;
     width: 100vw;
     height: 100vh;
+}
+
+.preview-text-flex-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#preview-text {
+    margin-left: 10rem;
+    margin-top: 15rem;
+}
+
+#preview-additional {
+    width: 20vw;
+    font-size: 70px;
+    font-weight: bold;
+    font-family: arial;
+    color: white;
+    text-shadow: 2px 2px 2px grey;
+    line-height: 95px;
 }
 
 .previews-overview {
@@ -119,7 +138,7 @@
     width: 50px;
 }
 
-#section-random-sketch-wrapper {
+#random-sketch-bg {
     background-image: url('/static/img/stars-sky.jpg');
     animation: bgZoomInOut 50s linear infinite;
     background-size: cover;
@@ -130,19 +149,24 @@
     align-items: center;
 }
 
-#random-sketch-clickable {
+#random-sketch-wrapper {
     height: 100%;
     width: 20%;
-    background-image: url('https://www.hoyoverse.com/_nuxt/img/m-layer-0.1467ae6.png');
-    background-size: 80% auto;
-    background-position: center;
-    background-repeat: no-repeat;
-    transition: all 500ms;
 }
 
-#random-sketch-clickable:hover {
-    background-size: 95% auto;
-    transform: rotate(270deg);
+#random-sketch-clickable {
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/img/logo.svg');
+    background-size: 60% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 1000ms;
+}
+
+#random-sketch-wrapper:hover > #random-sketch-clickable {
+    background-size: 80% auto;
+    transform: rotate(360deg);
 }
 
 .search-container {
@@ -166,6 +190,7 @@
     border: 1px solid rgb(181, 181, 181);
     border-radius: 15px;
     display: flex;
+    align-items: center;
     transition: box-shadow 200ms ease, border 100ms ease;
     z-index: 1;
 }
@@ -177,38 +202,22 @@
 
 .search-input {
     border-radius: 5px;
-    outline: none;
-    border: none;
     padding: 5px;
     width: 100%;
     border-radius: inherit;
-}
-
-input::-webkit-search-decoration,
-input::-webkit-search-cancel-button,
-input::-webkit-search-results-button,
-input::-webkit-search-results-decoration {
-  -webkit-appearance: none;
-}
-
-.search-icon {
-    padding-left: 10px;
-    padding-right: 4px;
-    padding-block: 10px;
 }
 
 .search-rules-container {
     width: 30%;
     overflow: hidden;
     height: 0px;
-    transition: height 200ms ease-in-out;
-    box-shadow: none;
+    transition: height 300ms ease-in-out;
 }
 
 .search-container:focus-within:has(input[type='search']:focus) > .search-rules-container {
     height: 15rem;
     overflow: hidden;
-    box-shadow: 3px 3px 15px 6px rgba(205, 205, 205, 0.75);
+    box-shadow: 3px 3px 9px 3px rgba(205, 205, 205, 0.75);
 }
 
 .search-rule {
@@ -258,6 +267,21 @@ input::-webkit-search-results-decoration {
     font-size: 13px;
 }
 
+.search-rule-selected-icon-ppv-container {
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    margin-left: 10px;
+}
+
+.search-rule-selected-icon-ppv {
+    width: 75%;
+    height: 75%;
+}
+
 @keyframes bgZoomInOut {
     0%, 100% {
         background-size: 100% 300%;
@@ -277,19 +301,4 @@ input::-webkit-search-results-decoration {
 	100% {
 		background-position: 0% 50%;
 	}
-}
-
-@keyframes fadeInFast {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes brightnessAnimation {
-    100% {
-        filter: brightness(100%);
-    }
 }

@@ -7,6 +7,18 @@ body {
     overflow-x: hidden;
 }
 
+input {
+    outline: none;
+    border: none;
+}
+
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button,
+input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
 nav {
     position: fixed;
     top: 0;
@@ -15,19 +27,25 @@ nav {
     width: 100vw;
 }
 
-.nav-wrapper {
+#nav-wrapper {
     background-color: rgba(0, 0, 0, .7);
     -webkit-backdrop-filter: saturate(180%) blur(16px);
     backdrop-filter: saturate(180%) blur(16px);
     height: 4rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.img-logo-nav {
-    height: 3.2rem;
-    margin-top: 0.4rem;
-    margin-left: 3rem;
+#img-logo-nav-wrapper {
+    height: 80%;
+    width: 20%;
+    margin-left: 1rem;
+}
+
+#img-logo-nav {
+    height: 100%;
+    width: 100%;
 }
 
 .nav-buttons {
