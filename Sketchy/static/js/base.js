@@ -1,5 +1,5 @@
 function markActiveNavButton() {
-    const currentUrl = window.location.href;
+    const currentUrl = window.location.href.split('?')[0];
     const navButtons = document.getElementsByClassName('nav-btn');
 
     for (const btn of navButtons) {
@@ -10,3 +10,4 @@ function markActiveNavButton() {
 }
 
 markActiveNavButton();
+window.history.replaceState({}, '', encodeURI(window.location.href));

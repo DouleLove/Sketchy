@@ -1,3 +1,35 @@
+export function getURLParameters() {
+    const parameters = {};
+    const searchString = decodeURI(location.search.substr(1));
+    const pairs = searchString.split("&");
+    if (pairs.length == 1 && !pairs[0]) {
+        return {};
+    }
+    let parts;
+    for (let i = 0; i < pairs.length; i++) {
+        parts = pairs[i].split("=");
+        const name = parts[0];
+        const data = decodeURI(parts[1]);
+        parameters[name] = data;
+    }
+    return parameters;
+}
+
+export function formatURL(partial, parameters) {
+    let joinedParams =  ''
+    for (const key in parameters) {
+        if (!joinedParams) {
+            joinedParams += `?${key}=${parameters[key]}`;
+        } else {
+            joinedParams += `&${key}=${parameters[key]}`;
+        }
+    }
+    if (!(typeof partial === 'string' || partial instanceof String)) {
+        partial = Array.from(partial).join('');
+    }
+    return partial + joinedParams;
+}
+
 export function getBrightness(elem) {
     let styleBrightness = getComputedStyle(elem).getPropertyValue('filter');
     return +(styleBrightness.replace(/[a-zA-Z()]+/g, ''));
@@ -43,5 +75,5 @@ export function animateOpacity(elem, values, duration=1000) {
     }
 
     keyframes.sort((a, b) => a['offset'] - b['offset']);
-    elem.animate(keyframes, {'duration': duration});
+    elem.animate(keyframes, {'duration': duration, 'iterations': 1, 'fill': 'forwards'});
 }
