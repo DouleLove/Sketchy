@@ -4,7 +4,7 @@ import os
 from random import randint
 
 from flask import Blueprint, redirect, render_template, url_for, request
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user
 
 from database import User, Session
 from forms import LoginForm
@@ -45,5 +45,19 @@ def sketch_view(sketch_id=None):
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
 def auth():
-    form = LoginForm()
-    return render_template('form.html', form=form)
+    form = LoginForm(new=bool(request.args.get('n')))
+
+    if (user := form.validate_on_submit()) is False:  # validation failed or form just created
+        return render_template('signin-form.html' if request.args.get('n') is None else 'signup-form.html', form=form)
+
+    if user is None:
+        # create new user
+        session = Session()
+        user = User()
+        user.login = form.login.data
+        user.password = form.password.data
+        session.add(user)
+        session.commit()
+    login_user(user)
+
+    return redirect(request.args.get('referrer', '/'))
