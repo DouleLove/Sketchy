@@ -17,10 +17,7 @@ def _setup(app):
         # prepare filename to be passed into __import__ to format like 'package1.package2...packageN.module_name'
         filename = '.'.join(str(path).replace(APPLICATION_PATH, '').split('.')[:-1]).strip('\\').replace('\\', '.')
 
-        try:
-            module = __import__(filename)  # import module
-        except ImportError:
-            continue
+        module = __import__(filename)  # import module
 
         for obj in module.__dict__.values():  # iterating globals of file
             if isinstance(obj, Blueprint):
