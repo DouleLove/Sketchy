@@ -1,7 +1,6 @@
 __all__ = ()
 
 import os
-from random import randint
 
 from flask import Blueprint, redirect, render_template, url_for, request
 from flask_login import LoginManager, login_user
@@ -34,13 +33,12 @@ def index():
 
 
 @blueprint.route('/sketch')
-@blueprint.route('/sketch/<int:sketch_id>')
-def sketch_view(sketch_id=None):
-    if not sketch_id:
-        sketch_id = randint(1, 12)
-        return redirect(f'{request.url}/{sketch_id}')
+def sketch_view():
+    # sketch_id = request.args.get('sid')
+    # if sketch_id is None:
+    #     # sketch_id = randint(1, 12)  # fetch random sketch_id from db here
 
-    return str(sketch_id)  # render template here
+    return render_template('base.html')  # render template here
 
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
@@ -60,4 +58,11 @@ def auth():
         session.commit()
     login_user(user)
 
-    return redirect(request.args.get('referrer', '/'))
+    return redirect(request.args.get('referrer', '/profile'))
+
+
+@blueprint.route('/profile')
+def profile():
+    # uid = request.args.get('uid', current_user.id)
+
+    return render_template('base.html')
