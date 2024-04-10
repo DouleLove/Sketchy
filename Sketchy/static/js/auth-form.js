@@ -9,6 +9,25 @@ function setSwitcher() {
 }
 
 
+function setPwToggler() {
+    document.getElementById('auth-form').addEventListener('submit', onSubmit);
+    [].forEach.call(
+        document.getElementsByClassName('eye-switch-pw-type'),
+        (elem) => elem.addEventListener('click', (e) => {
+            const fld = e.currentTarget.previousElementSibling;
+            const line = e.currentTarget.children[1];
+            if (line.hasAttribute('checked')) {
+                fld.setAttribute('type', 'password');
+                line.removeAttribute('checked');
+            } else {
+                fld.setAttribute('type', 'text');
+                line.setAttribute('checked', '');
+            }
+        })
+    );
+}
+
+
 function setReferrer() {
     const url = window.location.href.split('?')[0];
     const parameters = getURLParameters();
@@ -42,6 +61,7 @@ function switchAuthTab() {
 
 function onSubmit(e) {
     e.preventDefault();
+    document.getElementById('password').setAttribute('type', 'password');
 
     const xhr = new XMLHttpRequest();
 
@@ -58,6 +78,7 @@ function onSubmit(e) {
 
             $('#auth-form').html($(data).find('#auth-form-inner'));
             setSwitcher();
+            setPwToggler();
         }
     });
 }
@@ -66,7 +87,7 @@ function onSubmit(e) {
 function main() {
     setSwitcher();
     setReferrer();
-    document.getElementById('auth-form').addEventListener('submit', onSubmit);
+    setPwToggler();
 }
 
 

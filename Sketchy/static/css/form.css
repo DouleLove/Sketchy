@@ -110,6 +110,10 @@ html, body, main {
     width: 100%;
 }
 
+.form-field-inner {
+    display: flex;
+}
+
 .form-field-input {
     width: 100%;
     padding: 5px;
@@ -163,6 +167,35 @@ html, body, main {
     animation: errorSlideDown 300ms ease;
     font-size: 13px;
 }
+
+.eye-switch-pw-type {
+    height: 1.5rem;
+    width: 2rem;
+    align-self: center;
+    fill: rgb(201, 201, 201);
+    stroke: rgb(201, 201, 201);
+    transition: fill 400ms, stroke 400ms;
+    cursor: pointer;
+    user-select: none;
+}
+
+.eye-switch-pw-type:hover {
+    fill: rgb(55, 57, 63);
+    stroke: rgb(55, 57, 63);
+}
+
+.eye-line {
+    transition: d 500ms ease;
+    pointer-events: none;
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    transition: stroke-dashoffset 400ms;
+}
+
+.eye-line[checked] {
+    stroke-dashoffset: 0;
+}
+
 
 @keyframes errorSlideDown {
     0% {
