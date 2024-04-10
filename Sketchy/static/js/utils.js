@@ -1,17 +1,32 @@
-export function getURLParameters() {
+export function encodeURL(url) {
+    const parameters = getURLParameters(url == undefined ? window.location.href : url);
+    for (let param in parameters) {
+        parameters[param] = encodeURIComponent(parameters[param]);
+    }
+
+    return formatURL((url == undefined ? window.location.href : url).split('?')[0], parameters)
+}
+
+
+export function decodeURL(url) {
+    return decodeURIComponent(url == undefined ? window.location.href : url);
+}
+
+
+export function getURLParameters(url) {
     const parameters = {};
-    const searchString = decodeURI(location.search.substr(1));
+    const searchString = decodeURL((url == undefined ? window.location.href : url).split('?')[1] || '');
     const pairs = searchString.split("&");
-    if (pairs.length == 1 && !pairs[0]) {
+    if (pairs.length < 2 && !pairs[0]) {
         return {};
     }
     let parts;
     for (let i = 0; i < pairs.length; i++) {
         parts = pairs[i].split("=");
-        const name = parts[0];
-        const data = decodeURI(parts[1]);
+        const [name, data] = parts;
         parameters[name] = data;
     }
+
     return parameters;
 }
 

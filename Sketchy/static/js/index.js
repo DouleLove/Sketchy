@@ -78,5 +78,10 @@ function setupSearch() {
     searchRules[0].dispatchEvent(new Event('mousedown', {view: window, bubbles: true, cancelable: false}));
 }
 
-setupAnimations();
-setupSearch();
+
+function main() {
+    setupAnimations();
+    setupSearch();
+}
+
+main();

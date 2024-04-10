@@ -1,3 +1,6 @@
+import {encodeURL} from './utils.js'
+
+
 function markActiveNavButton() {
     const currentUrl = window.location.href.split('?')[0];
     const navButtons = document.getElementsByClassName('nav-btn');
@@ -9,5 +12,11 @@ function markActiveNavButton() {
     }
 }
 
-markActiveNavButton();
-window.history.replaceState({}, '', encodeURI(window.location.href));
+
+function main() {
+    markActiveNavButton();
+    window.history.replaceState({}, '', encodeURL());
+}
+
+
+main();

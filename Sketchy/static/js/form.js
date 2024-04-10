@@ -8,4 +8,9 @@ function setupAnimations() {
     ).forEach((element) => animateOpacity(element, {0: 0, 0.5: 0, 1: 1}));
 }
 
-setupAnimations();
+
+function main() {
+    setupAnimations();
+}
+
+main();

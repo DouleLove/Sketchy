@@ -1,4 +1,4 @@
-import {getURLParameters, formatURL} from './utils.js'
+import {getURLParameters, formatURL, encodeURL} from './utils.js'
 
 
 function setSwitcher() {
@@ -9,19 +9,11 @@ function setSwitcher() {
 }
 
 
-function updateURL(url, parameters) {
-    if (url == undefined) {
-        url = window.location.href.split('?')[0];
-    }
-
-    if (!('referrer' in parameters)) {
-        parameters['referrer'] = document.referrer || window.location.origin;
-    }
-
-    url = formatURL(url, parameters)
-    window.history.replaceState({}, '', encodeURI(url));
-
-    return url
+function setReferrer() {
+    const url = window.location.href.split('?')[0];
+    const parameters = getURLParameters();
+    parameters['referrer'] = parameters.referrer || document.referrer || (window.location.origin + '/profile');
+    window.history.replaceState({}, '', encodeURL(formatURL(url, parameters)));
 }
 
 
@@ -34,7 +26,7 @@ function switchAuthTab() {
         currentURLParams['n'] = true;
     }
 
-    const url = updateURL(undefined, currentURLParams);
+    const url = formatURL(window.location.href.split('?')[0], currentURLParams);
     $.get(url, (data) => {
         $('#auth-form-inner').slideUp(350,
             function() {
@@ -43,7 +35,39 @@ function switchAuthTab() {
             }
         )
     });
+
+    window.history.replaceState({}, '', encodeURL(url));
 }
 
-setSwitcher();
-updateURL(undefined, getURLParameters());
+
+function onSubmit(e) {
+    e.preventDefault();
+
+    const xhr = new XMLHttpRequest();
+
+    $.ajax({
+        type: 'POST',
+        url: window.location.href,
+        data: $(this).serialize(),
+        xhr: function() { return xhr; },
+        success: (data) => {
+            if (xhr.responseURL !== window.location.href) {
+                window.location.href = xhr.responseURL;  // server returned redirect, auth successful
+                return;
+            }
+
+            $('#auth-form').html($(data).find('#auth-form-inner'));
+            setSwitcher();
+        }
+    });
+}
+
+
+function main() {
+    setSwitcher();
+    setReferrer();
+    document.getElementById('auth-form').addEventListener('submit', onSubmit);
+}
+
+
+main();
