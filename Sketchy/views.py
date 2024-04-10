@@ -3,7 +3,7 @@ __all__ = ()
 import os
 
 from flask import Blueprint, redirect, render_template, url_for, request
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, current_user
 
 from database import User, Session
 from forms import LoginForm
@@ -43,6 +43,9 @@ def sketch_view():
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
 def auth():
+    if current_user.is_authenticated:
+        return redirect('/profile')
+
     form = LoginForm(new=bool(request.args.get('n')))
 
     if (user := form.validate_on_submit()) is False:  # validation failed or form just created
