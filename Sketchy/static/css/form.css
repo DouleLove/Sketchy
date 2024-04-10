@@ -90,7 +90,7 @@ html, body, main {
 
 .form-field-wrapper {
     border-bottom: 3px solid rgb(227, 227, 227);
-    margin-block: 1.5rem;
+    margin-top: 1.5rem;
     transition: outline 500ms ease;
 }
 
@@ -103,6 +103,7 @@ html, body, main {
     height: 0;
     border-bottom: 3px solid rgb(69, 69, 68);
     transition: width 700ms ease;
+    z-index: 2;
 }
 
 .form-field-wrapper:focus-within::after {
@@ -113,6 +114,7 @@ html, body, main {
     width: 100%;
     padding: 5px;
     color: rgb(69, 69, 68);
+    font-size: 18px;
 }
 
 .button-submit {
@@ -149,4 +151,28 @@ html, body, main {
 
 .additional-buttons-container > *:hover {
     background-color: rgb(242, 242, 242);
+}
+
+.form-field-errors-container {
+    margin-bottom: 1.5rem;
+}
+
+.error {
+    color: red;
+    position: relative;
+    animation: errorSlideDown 300ms ease;
+    font-size: 13px;
+}
+
+@keyframes errorSlideDown {
+    0% {
+        top: -10px;
+        left: 0;
+        opacity: 0;
+    }
+    100% {
+        top: 0;
+        left: 0;
+        opacity: 1;
+    }
 }
