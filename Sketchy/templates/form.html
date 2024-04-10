@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
 {% endblock %}
 
@@ -44,7 +45,7 @@
                 {{ form.csrf_token }}
             </div>
             {% for field in form if field.name not in ('csrf_token', 'submit') %}
-                <div class="form-field-wrapper">
+                <div class="form-field-wrapper{{ ' has-errors' if field.errors else '' }}">
                     {{ field(class_='form-field-input', spellcheck='false', autocomplete='off', placeholder=field.label.text) }}
                 </div>
                 <div class="form-field-errors-container">
@@ -62,5 +63,9 @@
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
 <script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/form.js') }}" defer></script>
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 {% endblock %}
 
@@ -130,5 +131,9 @@
     </div>
 </section>
 <div class="tmp" style="margin-bottom: 500px;"></div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
 <script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
