@@ -9,7 +9,7 @@ function setSwitcher() {
 }
 
 
-function setPwToggler() {
+function setPwTogglers() {
     document.getElementById('auth-form').addEventListener('submit', onSubmit);
     [].forEach.call(
         document.getElementsByClassName('eye-switch-pw-type'),
@@ -51,6 +51,8 @@ function switchAuthTab() {
             function() {
                 $('#auth-form').html($(data).find('#auth-form-inner'));
                 $('#auth-form-inner').hide().slideDown(350, setSwitcher);
+                setPwTogglers();
+                setSwitcher();
             }
         )
     });
@@ -78,7 +80,7 @@ function onSubmit(e) {
 
             $('#auth-form').html($(data).find('#auth-form-inner'));
             setSwitcher();
-            setPwToggler();
+            setPwTogglers();
         }
     });
 }
@@ -87,7 +89,7 @@ function onSubmit(e) {
 function main() {
     setSwitcher();
     setReferrer();
-    setPwToggler();
+    setPwTogglers();
 }
 
 
