@@ -2,10 +2,12 @@ __all__ = ()
 
 import os
 
+import sqlalchemy
 from flask import Blueprint, redirect, render_template, url_for, request
 from flask_login import LoginManager, login_user, current_user
 
-from database import User, Session
+from database._models import User, Sketch
+from database._session import Session
 from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH
 
@@ -69,3 +71,36 @@ def profile():
     # uid = request.args.get('uid', current_user.id)
 
     return render_template('base.html')
+
+
+# session = Session()
+# user = User()
+# user.login = 'Alex'
+# user.password = 'porn'
+# sketch = Sketch()
+# sketch.name = 'painting'
+# sketch.place = 'Moscow'
+# user.sketches = [sketch]
+# session.add(user)
+# session.commit()
+# bruh tests
+
+def coincidence(s1, s2):
+    if len(s1) > len(s2):
+        s1, s2 = s2, s1
+    p = 0
+    for i in range(len(s1)):
+        if s1[i] == s2[i]:
+            p += 1
+    return int(p / len(s1) * 100)
+
+
+@blueprint.route('/api/<benchmark>/<rule>', methods=['GET'])
+def render_sketches(benchmark, rule):
+    all_sketches = Session().execute(Session().query(eval(f'Sketch.{benchmark}'))).fetchall()
+    all_out = ''
+    for el in all_sketches:
+        if coincidence(el[0], rule) >= 70:
+            all_out += el[0]
+            # all_out += render_template('sketch.html', sketch=sketch)
+    return str(all_out)
