@@ -105,5 +105,3 @@ def render_sketches(benchmark, rule):
             # all_out += render_template('sketch.html', sketch=sketch)
     return str(all_out)
 
-
-print(render_sketches('name', 'painting'))
