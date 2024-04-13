@@ -95,12 +95,15 @@ def coincidence(s1, s2):
     return int(p / len(s1) * 100)
 
 
-@blueprint.route('/api/<benchmark>/<rule>', methods=['GET'])
 def render_sketches(benchmark, rule):
-    all_sketches = Session().execute(Session().query(eval(f'Sketch.{benchmark}'))).fetchall()
+    all_sketches = Session().query(Sketch).all()
     all_out = ''
-    for el in all_sketches:
-        if coincidence(el[0], rule) >= 70:
-            all_out += el[0]
+    for sketch in all_sketches:
+        sketch_benchmark = eval(f'sketch.{benchmark}')
+        if coincidence(sketch_benchmark, rule) >= 70:
+            all_out += sketch_benchmark
             # all_out += render_template('sketch.html', sketch=sketch)
     return str(all_out)
+
+
+print(render_sketches('name', 'painting'))
