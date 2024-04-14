@@ -30,6 +30,7 @@ export function getURLParameters(url) {
     return parameters;
 }
 
+
 export function formatURL(partial, parameters) {
     let joinedParams =  ''
     for (const key in parameters) {
@@ -45,14 +46,17 @@ export function formatURL(partial, parameters) {
     return partial + joinedParams;
 }
 
+
 export function getBrightness(elem) {
     let styleBrightness = getComputedStyle(elem).getPropertyValue('filter');
     return +(styleBrightness.replace(/[a-zA-Z()]+/g, ''));
 }
 
+
 export function clearAnimations(elem) {
     elem.getAnimations().forEach((animation) => animation.cancel());
 }
+
 
 export function animateBrightness(elem, from=undefined, to=undefined, duration=300) {
     if (from === undefined) {
@@ -80,6 +84,7 @@ export function animateBrightness(elem, from=undefined, to=undefined, duration=3
         }
     );
 }
+
 
 export function animateOpacity(elem, values, duration=1000) {
     const keyframes = [];
