@@ -2,7 +2,7 @@ import sqlalchemy.orm as orm
 
 BaseModel = orm.declarative_base()
 
-from ._models import *  # NOQA
-from ._session import *  # NOQA
+from .models import *  # NOQA
+from .session import *  # NOQA
 
 del orm
