@@ -72,6 +72,8 @@ function onSubmit(e) {
         url: window.location.href,
         data: $(this).serialize(),
         xhr: function() { return xhr; },
+        async: true,
+        cache: false,
         success: (data) => {
             if (xhr.responseURL !== window.location.href) {
                 window.location.href = xhr.responseURL;  // server returned redirect, auth successful
