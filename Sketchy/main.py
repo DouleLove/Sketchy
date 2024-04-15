@@ -4,6 +4,7 @@ from pathlib import Path
 
 from flask import Flask, Blueprint
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 
 from settings import SERVER_HOST, SERVER_PORT, DEBUG, APP_CONFIG, APPLICATION_PATH
 
@@ -19,11 +20,13 @@ def _setup(app):
 
         module = __import__(filename)  # import module
 
-        for obj in module.__dict__.values():  # iterating globals of file
+        for obj in module.__dict__.values():  # iterating globals of an imported module
             if isinstance(obj, Blueprint):
                 app.register_blueprint(obj)  # register blueprint (flask.Blueprint instance)
             elif isinstance(obj, LoginManager):
                 obj.init_app(app)  # register login manager (flask_login.LoginManager instance)
+    # register csrf-token to be able to generate it right into jinja2 template like value="{{ csrf_token() }}"
+    CSRFProtect().init_app(app)
 
 
 def run():

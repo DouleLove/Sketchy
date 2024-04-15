@@ -5,7 +5,6 @@ __all__ = (
 from functools import cache
 
 from flask_wtf import FlaskForm
-from sqlalchemy import func
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -26,14 +25,16 @@ class LoginForm(FlaskForm):
     @cache
     def _get_user(self):
         session = Session()
-        user = session.query(User).filter(func.lower(User.login) == func.lower(self.login.data)).first()
+        user = session.query(User).filter(User.unique_name == self.login.data).first()
 
         return user
 
-    def validate_login(self, _):
+    def validate_login(self, field):
         if self._new:
             if self._get_user():
                 raise ValidationError('Этот логин уже занят')
+            if len(field.data) > 20:
+                raise ValidationError('Слишком длинный логин (максимум 20)')
             return  # validation passed, ready to create new user
 
         if not self._get_user():

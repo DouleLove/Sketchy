@@ -44,15 +44,6 @@ html, body, main {
     transform: rotate(45deg);
 }
 
-#crc-nb {
-    height: 75%;
-    width: 75%;
-    transform: rotate(225deg);
-    grid-row: 2 / 6;
-    grid-column: 2 / 6;
-    display: none;
-}
-
 #dots-nb {
     grid-row: 3 / 6;
     grid-column: 9;
