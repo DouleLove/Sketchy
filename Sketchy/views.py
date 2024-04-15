@@ -6,11 +6,11 @@ import uuid
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user
 
-from database._models import User, Sketch
-from database._session import Session
+from database import Session, User
 from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
 
+# from stuff import render_sketches На будущее
 blueprint = Blueprint(
     name='views',
     import_name=__name__,
@@ -145,24 +145,4 @@ def profile():
 # session.add(user)
 # session.commit()
 # bruh tests
-
-def coincidence(s1, s2):
-    if len(s1) > len(s2):
-        s1, s2 = s2, s1
-    p = 0
-    for i in range(len(s1)):
-        if s1[i] == s2[i]:
-            p += 1
-    return int(p / len(s1) * 100)
-
-
-def render_sketches(benchmark, rule):
-    all_sketches = Session().query(Sketch).all()
-    all_out = ''
-    for sketch in all_sketches:
-        sketch_benchmark = eval(f'sketch.{benchmark}')
-        if coincidence(sketch_benchmark, rule) >= 70:
-            all_out += sketch_benchmark
-            # all_out += render_template('sketch.html', sketch=sketch)
-    return str(all_out)
 
