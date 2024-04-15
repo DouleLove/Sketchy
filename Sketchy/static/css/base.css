@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --nav-height: 4rem;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+textarea {
+    -moz-appearance: none;
+    outline: 0px none transparent;
+    border: none;
+    resize: none;
+    overflow: hidden;
+}
+
+[data-title] {
+    position: relative;
+}
+
+[data-title]::after {
+    content: attr(data-title);
+    background-color: white;
+    border: 1px solid rgb(225, 225, 225);
+    border-radius: 10px;
+    color: black;
+    position: absolute;
+    bottom: -1.4em;
+    left: 1.4rem;
+    white-space: nowrap;
+    box-shadow: 1px 1px 3px rgb(145, 144, 146);
+    opacity: 0;
+    z-index: 10000;
+    visibility: hidden;
+    font-size: 14px;
+    padding-inline: 8px;
+    transition: visibility 200ms ease, opacity 200ms ease;
+}
+
+[data-title]:hover::after {
+    opacity: 1;
+    transition: all 200ms ease 500ms;
+    visibility: visible;
+}
+
+input {
+    outline: none;
+    border: none;
+}
+
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button,
+input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100vw;
+}
+
+#nav-wrapper {
+    background-color: rgba(0, 0, 0, .7);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
+    height: var(--nav-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#img-logo-nav-wrapper {
+    height: 80%;
+    width: 20%;
+    margin-left: 1rem;
+}
+
+#img-logo-nav {
+    height: 100%;
+    width: 100%;
+}
+
+.nav-buttons {
+    margin-right: 1rem;
+    display: flex;
+    height: 100%;
+}
+
+.nav-btn {
+    display: flex;
+    height: 100%;
+    padding-inline: 2rem;
+    color: rgba(235, 237, 240, .8);
+    fill: rgba(235, 237, 240, .8);
+    font-weight: 500;
+    font-size: 20px;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    transition: color 300ms;
+}
+
+.nav-btn:hover {
+    color: rgb(235, 237, 240);
+}
+
+.nav-btn.active {
+    color: rgb(91, 133, 227);
+}
+
+#user-avatar {
+    height: 75%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 2px solid rgba(235, 237, 240, .8);
+    border-radius: 50%;
+    transition: border-radius 300ms, border-color 300ms;
+}
+
+.nav-btn:hover > #user-avatar {
+    border-color: rgb(235, 237, 240);
+    border-radius: 40%;
+}
+
+.nav-btn.active > #user-avatar {
+    border-color: rgb(91, 133, 227);
+    border-radius: 40%;
+    transition: border-color 300ms
+}

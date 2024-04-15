@@ -1,0 +1,221 @@
+html, body, main {
+    height: 100%;
+}
+
+.main-inner {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+}
+
+#section-user-info {
+    width: 15%;
+    align-self: center;
+}
+
+#section-user-sketches {
+    width: 40%;
+}
+
+.wrapper-avatar {
+    width: 15vw;
+    height: 15vw;
+}
+
+#user-avatar-pr {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgb(225, 225, 225);
+    transition: filter 600ms ease;
+}
+
+#input-load-avatar {
+    display: none;
+}
+
+.icon-load-wrapper {
+    position: relative;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    z-index: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#icon-load {
+    height: 50%;
+    width: 7.5vw;
+    z-index: 1;
+    fill: rgb(225, 225, 225);
+    opacity: 0;
+    filter: drop-shadow(2px 2px 3px rgb(205, 205, 205, 0.8));
+    transition: opacity 500ms ease;
+}
+
+.icon-load-wrapper:hover > #icon-load {
+    opacity: 0.95;
+}
+
+.wrapper-avatar:has(.icon-load-wrapper:hover) > #user-avatar-pr {
+    filter: brightness(55%);
+}
+
+.editable-field {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    cursor: text;
+}
+
+.editable-field > *:not(svg) {
+    width: 80%;
+}
+
+.editable-field:hover > .btn-edit-field, .editable-field:focus-within > .btn-edit-field {
+    opacity: 1;
+}
+
+.editable-field:focus-within > .btn-edit-field > path {
+    opacity: 1;
+    stroke: rgb(55, 57, 63);
+}
+
+.f-editable {
+    width: 100%;
+}
+
+.btn-edit-field {
+    width: 1.5rem;
+    height: 1.5rem;
+    opacity: 0;
+    transition: opacity 100ms ease;
+    cursor: pointer;
+}
+
+.usernames-container {
+    display: flex;
+    flex-direction: column;
+    margin-block: 1rem;
+}
+
+#user-visible-username {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: rgb(55, 57, 63);
+}
+
+#user-visible-username::placeholder {
+    color: rgb(55, 57, 63);
+    font-size: 1.3rem;
+    font-weight: bold;
+    opacity: 0.8;
+    transform: translateY(15%);
+}
+
+#user-real-username {
+    margin: 0;
+    margin-top: -0.7rem;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: rgb(185, 185, 185);
+}
+
+.stl {
+    margin: 0;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: arial;
+    color: rgb(55, 57, 63);
+}
+
+#user-description {
+    color: rgb(85, 87, 83);
+    font-size: 13px;
+    margin-bottom: 0.7rem;
+    margin-top: 0.8rem;
+}
+
+#user-description::placeholder {
+    color: rgb(85, 87, 83);
+}
+
+.container-followers-followed {
+    display: flex;
+    align-items: center;
+}
+
+.fake-link {
+    cursor: pointer;
+}
+
+.fake-link:hover > * {
+    color: rgb(91, 133, 227);
+}
+
+.bullet {
+    margin-inline: 5px;
+    cursor: default;
+    opacity: 0.5;
+}
+
+.spn-default, .spn-bold {
+    font-size: 13px;
+    color: rgb(85, 87, 83);
+}
+
+.spn-bold {
+    font-weight: bold;
+}
+
+.action-buttons-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-button > svg {
+    height: 1.2rem;
+    width: 1.2rem;
+    cursor: pointer;
+}
+
+.icon-supports-fill {
+    fill: rgb(165, 165, 165);
+    transition: fill 300ms;
+}
+
+.icon-supports-fill:hover {
+    fill: rgb(55, 57, 63);
+}
+
+.icon-supports-stroke > path {
+    stroke: rgb(165, 165, 165);
+    transition: stroke 300ms;
+}
+
+.icon-supports-stroke:hover > path {
+    stroke: rgb(55, 57, 63);
+}
+
+.icon-supports-stroke.btn-edit-field.error, .icon-supports-stroke.btn-edit-field.error > path {
+    stroke: red;
+    opacity: 1;
+}
+
+#button-logout > svg {
+    transform: rotate(180deg);
+}
+
+#button-to-favorites {
+    border: none;
+    outline: none;
+    background: none;
+}
