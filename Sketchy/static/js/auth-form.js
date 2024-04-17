@@ -1,4 +1,4 @@
-import {getURLParameters, formatURL, encodeURL} from './utils.js'
+import {getURLParameters, formatURL, encodeURL} from './utils.js';
 
 
 function setSwitcher() {

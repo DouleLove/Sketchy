@@ -1,4 +1,5 @@
-import {animateBrightness, animateOpacity} from './utils.js'
+import {animateBrightness, animateOpacity} from './utils.js';
+
 
 function setupAnimations() {
     const showcases = Array.from(document.getElementsByClassName('preview-showcase'));

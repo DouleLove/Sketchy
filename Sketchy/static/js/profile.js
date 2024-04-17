@@ -1,12 +1,67 @@
-function handlePostError(data) {
-    for (let name in data.errors) {
-        $(`.f-editable[name='${name}']`).parent().next().addClass('error');
+import {addRendered} from './base.js';
+import {getURLParameters, formatURL, encodeURL} from './utils.js';
+import {ViewLoader} from './loaders.js';
+
+
+var loader;
+
+
+function loadMessages(data) {
+    $('<div>' + data.rendered + '</div>').find('.response-status-message').each(function() {
+        addRendered(this);
+    });
+}
+
+
+function reqView(sender) {
+    if (sender) {
+        document.getElementById('views-container').innerHTML = '';
+        loader = new ViewLoader();
+        loader.view = sender.getAttribute('data-view');
+        loader.limit = loader.view == 'sketches' ? 10 : 30;
+    }
+    const urlParams = getURLParameters();
+    urlParams.uid = $('meta[name="uid"]').attr('content');
+    urlParams.view = loader.view;
+    const shareURL = encodeURL(formatURL(window.location.href.split('?')[0], urlParams));
+    window.history.replaceState({}, '', shareURL);
+    document.getElementById('view-title').innerHTML = {'sketches': 'Скетчи',
+                                                       'followers': 'Подписчики',
+                                                        'follows': 'Подписки'}[urlParams.view];
+
+    try {
+        if (loader.is_active()) {
+            $('#btn-load-more').show();
+        }
+        loader.request().then((data) => {
+            $('#views-container').append(data.rendered);
+            if (!$.trim($('#views-container').html()).length) {
+                $('#views-container').append('<p style="width: 650px;">Здесь пока ничего нет</p>')
+            }
+            console.log(loader.is_active());
+            if (!loader.is_active()) {
+                $('#btn-load-more').hide();
+            }
+        });
+    } catch (e) {
+        if (e instanceof TypeError) {
+            return;
+        }
     }
 }
 
 
-function reqPost(form, onsuccess=undefined, onerror=handlePostError) {
-    formData = new FormData();
+function handlePostResponse(data) {
+    for (let name in data.errors || []) {
+        $(`.f-editable[name='${name}']`).parent().next().addClass('error');
+    }
+
+    loadMessages(data);
+}
+
+
+function reqPost(form, onsuccess=handlePostResponse, onerror=handlePostResponse) {
+    const formData = new FormData();
 
     [].forEach.call(
         form.children,
@@ -31,8 +86,9 @@ function reqPost(form, onsuccess=undefined, onerror=handlePostError) {
         success: (data) => {
             if (data.status == 200) {
                 if (onsuccess) {
-                    return onsuccess(data);
+                    onsuccess(data);
                 }
+                return;
             }
             if (onerror) {
                 return onerror(data);
@@ -107,8 +163,27 @@ function setupEditable() {
                     inp.value = val;
                 }
             });
+            inp.addEventListener('focus', (e) => {
+                e.currentTarget.setAttribute('data-value-onfocus', e.currentTarget.value);
+            });
             inp.addEventListener('focusout', (e) => {
-                reqPost(e.currentTarget.parentElement);
+                if (e.currentTarget.getAttribute('data-value-onfocus') != e.currentTarget.value) {
+                    reqPost(e.currentTarget.parentElement, function(tgt, data) {
+                        handlePostResponse(data);
+                        [].forEach.call(
+                            document.getElementsByClassName('author-username') || [],
+                            (elem) => {
+                                elem.innerHTML = tgt.value;
+                                const ctl = elem.getAttribute('data-title');
+                                const sl = tgt.getAttribute('data-value-onfocus').length;
+                                elem.setAttribute('data-title', tgt.value + ctl.slice(sl, ctl.length))
+                            }
+                        );
+                        tgt.removeAttribute('data-value-onfocus');
+                    }.bind(this, e.currentTarget));
+                } else {
+                    e.currentTarget.removeAttribute('data-value-onfocus');
+                }
             });
             inp.addEventListener('input', (e) => {
                 const iconEdit = e.currentTarget.parentElement.nextElementSibling;
@@ -144,18 +219,42 @@ function main() {
             if (!inp) {
                 return;
             }
+            inp.addEventListener('cancel', (e) => {
+                if (e.handled == true) {
+                    return;
+                }
+                e.handled = true;
+                e.currentTarget.dispatchEvent(new Event('change'))
+            });
             inp.addEventListener('change',
                 (e) => {
+                    if (e.handled == true) {
+                        return;
+                    }
+                    e.handled = true;
                     reqPost(e.currentTarget.parentElement, function(response) {
                         const upl = document.getElementById('user-avatar').src.split('/').slice(0, -1).join('/');
-                        const pt = upl + '/' + response.data.avatar
+                        const pt = upl + '/' + response.user_data.avatar
                         document.getElementById('user-avatar').src = pt;
                         document.getElementById('user-avatar-pr').src = pt;
+
+                        handlePostResponse(response);
                     });
-                }, {once: true});
+                });
             inp.click();
         }
     );
+    [].forEach.call(
+        document.getElementsByClassName('fake-link'),
+        (flk) => flk.addEventListener('click', (e) => reqView(e.currentTarget))
+    );
+
+    let dispatcher = $(`.fake-link[data-view="${getURLParameters().view}"]`);
+    dispatcher = (dispatcher.length ? dispatcher : $('.fake-link').first()).get(0);
+    dispatcher.dispatchEvent(new Event('click'));
+    document.getElementById('btn-load-more').addEventListener('click', () => {
+        reqView();
+    });
 }
 
 

@@ -1,4 +1,4 @@
-import {getBrightness, animateBrightness, animateOpacity} from './utils.js'
+import {getBrightness, animateBrightness, animateOpacity} from './utils.js';
 
 function setupAnimations() {
     animateOpacity(document.getElementById('background-container'), {0: 0, 0.2: 0, 1: 1});

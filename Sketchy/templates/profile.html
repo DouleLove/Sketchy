@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
+{% block meta %}
+{{ super() }}
+<meta name="uid" content="{{ user.id }}">
+{% endblock %}
+
 {% block stylesheets %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sketch-preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user-preview.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -61,21 +68,21 @@
                 <p id="user-description">{{ user.description }}</p>
                 {% endif %}
                 <div class="container-followers-followed">
-                    <div class="fake-link">
-                        {% set posts_num = user.posts | length %}
-                        {% set p = 'запись' if posts_num % 10 == 1 and posts_num != 11 else ('записи' if posts_num in (3, 4) or posts_num % 10 == 2 and posts_num != 12 else 'записей') %}
+                    <div class="fake-link" data-view="sketches">
+                        {% set posts_num = user.sketches | length %}
+                        {% set p = 'скетч' if posts_num % 10 == 1 and posts_num != 11 else ('скетча' if posts_num in (3, 4) or posts_num % 10 == 2 and posts_num != 12 else 'скетчей') %}
                         <span class="spn-bold" id="posts-num">{{ posts_num }}</span>
                         <span class="spn-default">{{ p }}</span>
                     </div>
                     <span class="bullet spn-default">&#8226;</span>
-                    <div class="fake-link">
+                    <div class="fake-link" data-view="followers">
                         {% set followers_num = user.followers | length %}
                         <span class="spn-bold" id="followers-num">{{ followers_num }}</span>
                         {% set p = 'Подписчик' if followers_num % 10 == 1 and followers_num != 11 else ('Подписчика' if followers_num in (3, 4) or followers_num % 10 == 2 and followers_num != 12 else 'Подписчиков') %}
                         <span class="spn-default" id="followers-m">{{ p }}</span>
                     </div>
                     <span class="bullet spn-default">&#8226;</span>
-                    <div class="fake-link">
+                    <div class="fake-link" data-view="follows">
                         {% set posts_num = user.follows | length %}
                         {% set p = 'Подписка' if posts_num % 10 == 1 and posts_num != 11 else ('Подписки' if posts_num in (3, 4) or posts_num % 10 == 2 and posts_num != 12 else 'Подписок') %}
                         <span class="spn-bold" id="followed-num">{{ user.follows | length }}</span>
@@ -110,14 +117,21 @@
             {% endif %}
         </div>
     </section>
-    <section id="section-user-sketches">
-        <div class="user-sketches-container"></div>
+    <section id="section-content">
+        <span id="view-title">Скетчи</span>
+        <div id="views-container"></div>
+        <div id="wrapper-btn-load-more">
+            <div id="btn-load-more">
+                <svg id="icon-load-more" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.93 511.93" xml:space="preserve">
+                    <path d="M476.738,280.436c-4.16-4.16-10.88-4.16-15.04,0l-195.2,195.2V10.996c0-5.333-3.84-10.133-9.067-10.88 c-6.613-0.96-12.267,4.16-12.267,10.56v464.96l-195.093-195.2c-4.267-4.053-10.987-3.947-15.04,0.213 c-3.947,4.16-3.947,10.667,0,14.827L248.365,508.81c4.16,4.16,10.88,4.16,15.04,0l213.333-213.333 C480.898,291.423,480.898,284.596,476.738,280.436z"/>
+                </svg>
+            </div>
+        </div>
     </section>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script rel="text/javascript" src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
-<script rel="text/javascript" src="{{ url_for('static', filename='js/sketch-loader.js') }}" defer></script>
+<script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
 {% endblock %}
