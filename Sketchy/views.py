@@ -6,12 +6,12 @@ import uuid
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user
 
-from Sketchy.database import Sketch
 from database import User, Session
 from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
 from utils import lazy_loader, get_session
 
+# from stuff import render_sketches На будущее
 blueprint = Blueprint(
     name='views',
     import_name=__name__,
