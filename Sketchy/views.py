@@ -6,9 +6,10 @@ import uuid
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user
 
-from database import Session, User
+from database import User, Session
 from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
+from utils import lazy_loader, get_session
 
 # from stuff import render_sketches На будущее
 blueprint = Blueprint(
@@ -18,12 +19,11 @@ blueprint = Blueprint(
 )
 login_manager = LoginManager()
 
-session = Session()
 
-
+@lazy_loader
 @login_manager.user_loader
 def load_user(uid):
-    return session.query(User).get(uid)
+    return Session().query(User).get(uid)
 
 
 @blueprint.route('/')
@@ -56,7 +56,6 @@ def auth():
         return render_template('signin-form.html' if request.args.get('n') is None else 'signup-form.html', form=form)
 
     if user is None:
-        # create new user
         session = Session()
         user = User()
         user.login = form.login.data
@@ -79,18 +78,35 @@ def profile():
     if request.args.get('uid', current_user.is_authenticated) is False:
         return redirect('/auth')  # non-authenticated user tries to check their account, redirect to auth
 
-    # tries to get uid from request args. Loads current user if uid is not specified
-    # (getattr will never return default, it just prevents raising AttributeError for
-    # cases where uid is specified but user is not logged in)
-    user = load_user(request.args.get('uid', getattr(current_user, 'id', -1)))
+    user = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
+    # if not user.sketches:
+    #     session = Session()
+    #     for i in range(100):
+    #         sk = Sketch()
+    #         sk.name = f'sketch_{i}'
+    #         sk.image = f'../preview-sketch-{i % 3 + 1}.jpg'
+    #         sk.place = 'Москва, Красная площадь'
+    #         sk.author_id = user.id
+    #         session.add(sk)
+    #     session.commit()
     if user is None:
         abort(404)  # request provided invalid uid
 
     if request.method == 'GET':
-        return render_template('profile.html', user=user)
+        is_system_call = request.args.get('limit') is not None and request.args.get('offset') is not None
+        limit = request.args.get('limit', 10, type=int)
+        offset = request.args.get('offset', 0, type=int)
+        view = request.args.get('view', 'sketches')
+        if not is_system_call or getattr(user, view, None) is None:
+            return render_template('profile.html', user=user)
+        results_left = max(len(getattr(user, view)) - offset - limit, 0)
+        return jsonify(status=200, data={'results_left': results_left}, rendered='\n'.join(render_template(
+            'sketch-preview.html' if view == 'sketches' else 'user-preview.html',
+            sketch=item, user=item, author_context=False
+        ) for item in getattr(user, view)[offset:offset + limit]))
 
     errors = {}
-    params = request.form  # making mutable
+    params = request.form
     attachments = dict((field.split('-')[0], files) for field, files in request.files.items())
 
     for param, value in params.items():
@@ -120,29 +136,25 @@ def profile():
             user.image = image_name
             attachment.save(os.path.join(UPLOAD_PATH, user.image))  # save filename to uploads folder
         if param == 'followers':
+            # merge current_user to user's session to not access current_user in different threads
+            merged = get_session(user).merge(current_user)
             if value == 'false' and current_user not in user.followers:
-                user.followers.append(current_user)
+                user.followers.append(merged)
             elif value == 'true' and current_user in user.followers:
-                user.followers.remove(current_user)
+                user.followers.remove(merged)
             else:
-                errors[param] = 'Ошибка синхронизации. Попробуйте перезагрузить страницу'
+                errors[param] = 'Не удалось синхронизировать данные с сервером'
 
     if errors:
-        return jsonify(status=400, errors=errors, rendered='')
+        return jsonify(status=400, errors=errors, rendered=render_template(
+            'response-message.html', status=400, description='\n'.join(errors[error] for error in errors)
+        ))
 
-    session.commit()
-    return jsonify(status=200, data={'avatar': user.image})
-
-
-# session = Session()
-# user = User()
-# user.login = 'Alex'
-# user.password = 'porn'
-# sketch = Sketch()
-# sketch.name = 'painting'
-# sketch.place = 'Moscow'
-# user.sketches = [sketch]
-# session.add(user)
-# session.commit()
-# bruh tests
-
+    # creating response json before commit because it will close user's session
+    ret = jsonify(
+        status=200, user_data={'avatar': user.image}, rendered=render_template(
+            'response-message.html', status=200, description='Изменения профиля сохранены'
+        )
+    )
+    get_session(user).commit()
+    return ret
