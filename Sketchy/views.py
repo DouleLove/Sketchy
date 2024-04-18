@@ -9,9 +9,11 @@ from flask_login import LoginManager, login_user, current_user, logout_user
 
 from Sketchy.database import Sketch
 from database import User, Session
-from forms import LoginForm
+from forms import LoginForm, SketchCreate
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
 from utils import lazy_loader, get_session, coincidence
+import datetime
+from PIL import Image
 
 blueprint = Blueprint(
     name='views',
@@ -204,3 +206,29 @@ def profile():
     )
     get_session(user).commit()
     return ret
+
+
+@blueprint.route('/sketch_create', methods=['GET', 'POST'])
+def sketch_create():
+    if not current_user.is_authenticated:
+        return redirect('/auth')
+    form = SketchCreate()
+    session = Session()
+    user_load = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
+    if (user := form.validate_on_submit()) is False:  # validation failed or form just created
+        return render_template('form.html', form=form)
+    sk = Sketch()
+
+    sk.name = form.name.data
+    sk.place = form.place.data
+    sk.author_id = user_load.id
+    image_name = form.image
+    print()
+    tp = 'png'
+    while (image_name := f'{uuid.uuid4()}.{tp}') in os.listdir(UPLOAD_PATH):
+        pass
+    sk.image_name = image_name
+    sk.time_created = datetime.datetime.now()
+    session.add(sk)
+    session.commit()
+    return redirect(request.args.get('referrer', '/profile'))

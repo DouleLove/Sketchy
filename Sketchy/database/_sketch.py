@@ -17,6 +17,7 @@ class Sketch(BaseModel):
     place = sqlalchemy.Column(sqlalchemy.String)
     image_name = sqlalchemy.Column(sqlalchemy.String)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
+    time_created = sqlalchemy.Column(sqlalchemy.DateTime)
 
     author = orm.relationship('User')
 
