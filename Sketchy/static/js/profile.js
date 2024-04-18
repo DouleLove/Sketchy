@@ -2,7 +2,6 @@ import {addRendered} from './base.js';
 import {getURLParameters, formatURL, encodeURL} from './utils.js';
 import {ViewLoader} from './loaders.js';
 
-
 var loader;
 
 
@@ -30,7 +29,7 @@ function reqView(sender) {
                                                         'follows': 'Подписки'}[urlParams.view];
 
     try {
-        if (loader.is_active()) {
+        if (loader.active) {
             $('#btn-load-more').show();
         }
         loader.request().then((data) => {
@@ -38,8 +37,7 @@ function reqView(sender) {
             if (!$.trim($('#views-container').html()).length) {
                 $('#views-container').append('<p style="width: 650px;">Здесь пока ничего нет</p>')
             }
-            console.log(loader.is_active());
-            if (!loader.is_active()) {
+            if (!loader.active) {
                 $('#btn-load-more').hide();
             }
         });

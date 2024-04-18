@@ -1,4 +1,52 @@
 import {animateBrightness, animateOpacity} from './utils.js';
+import {SearchLoader} from './loaders.js';
+
+var loader;
+
+
+function reqLoad(additional=false) {
+    const rule = $('.search-rule.selected').attr('data-rule');
+    const query = $('.search-input').val();
+
+    if (!loader || loader.rule != rule || additional == false) {
+        loader = new SearchLoader();
+        loader.limit = 30;
+        loader.rule = rule;
+        loader.query = query;
+    }
+
+    try {
+        if (loader.active) {
+            $('#btn-load-more').show();
+        }
+        let cd = '';
+        loader.request().then((data) => {
+            if (additional == false) {
+                $('#container-sketches-inner-ctn').empty();
+            }
+            let d = $('<div>' + data.rendered + '</div>').find('.sketch-item');
+            let l_ = d.length;
+            d.each((i, elem) => {
+                cd += $(elem).get(0).outerHTML;
+                let e = '<div class="sketches-row">' + cd + '</div>';
+                if ($(e).find('.sketch-item').length == 2) {
+                    cd = '';
+                    $('#container-sketches-inner-ctn').append(e);
+                }
+                if (i == l_ - 1 && $(e).find('.sketch-item').length == 1) {
+                    $('#container-sketches-inner-ctn').append(e);
+                }
+            });
+            if (!loader.active) {
+                $('#btn-load-more').hide();
+            }
+        });
+    } catch (e) {
+        if (e instanceof TypeError) {
+            return;
+        }
+    }
+}
 
 
 function setupAnimations() {
@@ -50,10 +98,7 @@ function setupAnimations() {
                                              {bubbles: true, view: window, cancelable: false, detail: {forced: true}}))
     );
 
-    Array.from(document.getElementsByClassName('step-icon')).concat(
-        Array.from(document.getElementsByClassName('step-arrow')), document.getElementById('random-sketch-clickable'),
-        document.getElementsByClassName('search-line-outer')[0], document.getElementById('preview-text')
-    ).forEach((element) => animateOpacity(element, {0: 0, 0.5: 0, 1: 1}));
+    animateOpacity(document.getElementById('preview-text'), {0: 0, 0.5: 0, 1: 1})
 }
 
 function setupSearch() {
@@ -83,6 +128,14 @@ function setupSearch() {
 function main() {
     setupAnimations();
     setupSearch();
+    document.getElementById('form-search').addEventListener('submit', (e) => {
+        e.preventDefault();
+        reqLoad();
+    });
+    document.getElementById('btn-load-more').addEventListener('click', () => {
+        reqLoad(true);
+    });
+    reqLoad();
 }
 
 main();

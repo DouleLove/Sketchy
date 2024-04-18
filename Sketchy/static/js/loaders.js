@@ -1,24 +1,28 @@
 import {getURLParameters, encodeURL, formatURL} from './utils.js';
 
 
-export class ViewLoader {
+class _Loader {
 
-    constructor(limit=0, offset=0, view='sketches') {
-        this.limit = limit || 0;
-        this.offset = offset || 0;
-        this.view = view;
+    constructor(limit=0, offset=0, kwds) {
+        this.limit = limit;
+        this.offset = offset;
+        this._kwds = kwds;
         this._active = true;
     }
 
-    is_active() {
+    get active() {
         return this._active;
     }
 
     _doRequest() {
         const urlParams = getURLParameters();
-        urlParams.view = this.view;  // dont ignore the same view since new entries may appear
-        urlParams.offset = this.offset;
+
         urlParams.limit = this.limit;
+        urlParams.offset = this.offset;
+        for (let key in this._kwds) {
+            urlParams[key] = this._kwds[key];
+        }
+
         const reqURL = encodeURL(formatURL(window.location.href.split('?')[0], urlParams));
 
         return Promise.resolve($.get(reqURL));
@@ -30,7 +34,47 @@ export class ViewLoader {
         }
         const response = this._doRequest();
         this.offset += this.limit;
-        response.then((data) => {if ((data.data.results_left || 0) == 0) { this._active = false; }})
+        response.then((data) => {console.log(data.data.results_left); if ((data.data.results_left || 0) == 0) { this._active = false; }})
         return response;
+    }
+}
+
+
+export class SearchLoader extends _Loader {
+
+    constructor(limit=0, offset=0, rule='any', query='') {
+        super(limit, offset, {'rule': rule});
+    }
+
+    get rule() {
+        return this._kwds.rule;
+    }
+
+    set rule(value) {
+        this._kwds.rule = value;
+    }
+
+    get query() {
+        return this._kwds.query
+    }
+
+    set query(value) {
+        this._kwds.query = value;
+    }
+}
+
+
+export class ViewLoader extends _Loader {
+
+    constructor(limit=0, offset=0, view='sketches') {
+        super(limit, offset, {'view': view});
+    }
+
+    get view() {
+        return this._kwds.view;
+    }
+
+    set view(value) {
+        this._kwds.view = value;
     }
 }

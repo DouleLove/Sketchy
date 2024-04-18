@@ -16,7 +16,7 @@ DEBUG = False
 APP_CONFIG = {
     'SECRET_KEY': os.environ.get('flask-app-secretkey', 'tmp-secretkey-should-be-replaced'),
 }
-API_GEOCODER = '2a3270c9-8a5c-4543-b243-1b5f0010a2ac' # через environ.get в будущем
+APIKEY_GEOCODER = os.environ.get('geocoder-apikey', '2a3270c9-8a5c-4543-b243-1b5f0010a2ac')
 
 ALLOWED_MEDIA_EXTENSIONS = ['JPEG', 'JPG', 'PNG', 'GIF', 'TIFF']
 

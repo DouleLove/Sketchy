@@ -2,6 +2,7 @@ __all__ = ()
 
 import os
 import uuid
+from random import randint
 
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user
@@ -10,9 +11,8 @@ from Sketchy.database import Sketch
 from database import User, Session
 from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
-from utils import lazy_loader, get_session
+from utils import lazy_loader, get_session, coincidence
 
-# from stuff import render_sketches На будущее
 blueprint = Blueprint(
     name='views',
     import_name=__name__,
@@ -29,21 +29,63 @@ def load_user(uid):
 
 @blueprint.route('/')
 def index():
-    previews = [
-        url_for('static', filename=f'img/{filename}')
-        for filename in os.listdir(MEDIA_PATH) if filename.startswith('preview-sketch')
-    ]  # gets previews filenames and then convert them to relative path (from static)
+    is_system_call = request.args.get('rule') is not None and request.args.get('query') is not None
 
-    return render_template('index.html', previews=previews)
+    if not is_system_call:
+        previews = [
+            url_for('static', filename=f'img/{filename}')
+            for filename in os.listdir(MEDIA_PATH) if filename.startswith('preview-sketch')
+        ]  # gets previews filenames and then convert them to relative path (from static)
+
+        return render_template('index.html', previews=previews)
+
+    limit = request.args.get('limit', 0, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    rule = request.args.get('rule', 'any')
+    query = request.args.get('query')
+
+    session = Session()
+
+    matching = []
+    for entry in session.query(Sketch).all():
+        if rule == 'author':
+            values = (entry.author.username, entry.author.login)
+        elif rule == 'place':
+            values = (entry.place,)
+        elif rule == 'title':
+            values = (entry.name,)
+        elif rule == 'any':
+            values = (entry.name, entry.place, entry.author.username, entry.author.login)
+        else:
+            return abort(404)
+
+        mc = 0
+        match = False
+        for value in values:
+            c = coincidence(value, query)
+            if c > mc:
+                mc = c
+            if query in value:
+                match = True
+
+        if mc >= 0.7 or match is True and entry not in map(lambda x: x[0], matching):
+            matching.append((entry, mc))
+
+    matching.sort(key=lambda m: m[1], reverse=True)
+    return jsonify(status=200, data={'results_left': max(len(matching) - offset - limit, 0)},
+                   rendered='\n'.join(render_template('sketch-preview.html', sketch=match[0])
+                                      for match in matching[offset:offset + limit]))
 
 
 @blueprint.route('/sketch')
 def sketch():
-    # sketch_id = request.args.get('sid')
-    # if sketch_id is None:
-    #     # sketch_id = randint(1, 12)  # fetch random sketch_id from db here
+    sid = request.args.get('sid')
 
-    return render_template('base.html')  # render template here
+    if sid is None:
+        sid = randint(1, Session().query(Sketch).count())
+        return redirect(f'/sketch?{sid=}')
+
+    return render_template('sketch.html')  # render template here
 
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
@@ -80,26 +122,29 @@ def profile():
         return redirect('/auth')  # non-authenticated user tries to check their account, redirect to auth
 
     user = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
-    # if not user.sketches:
-    #     session = Session()
-    #     for i in range(100):
-    #         sk = Sketch()
-    #         sk.name = f'sketch_{i}'
-    #         sk.image = f'../preview-sketch-{i % 3 + 1}.jpg'
-    #         sk.place = 'Москва, Красная площадь'
-    #         sk.author_id = user.id
-    #         session.add(sk)
-    #     session.commit()
+    if not user.sketches:
+        session = Session()
+        for i in range(100):
+            sk = Sketch()
+            sk.name = f'sketch_{i}'
+            sk.image = f'../preview-sketch-{i % 3 + 1}.jpg'
+            sk.place = 'Москва, Красная площадь'
+            sk.author_id = user.id
+            session.add(sk)
+        session.commit()
     if user is None:
-        abort(404)  # request provided invalid uid
+        return abort(404)  # request provided invalid uid
 
     if request.method == 'GET':
         is_system_call = request.args.get('limit') is not None and request.args.get('offset') is not None
-        limit = request.args.get('limit', 10, type=int)
+        limit = request.args.get('limit', 0, type=int)
         offset = request.args.get('offset', 0, type=int)
         view = request.args.get('view', 'sketches')
         if not is_system_call or getattr(user, view, None) is None:
-            return render_template('profile.html', user=user)
+            # passing sketches_num, followers_num and follows_num as render_template params
+            # since jinja cannot access these attributes with getattr(user, ...) due to lazy_loader
+            return render_template('profile.html', user=user, sketches_num=len(user.sketches),
+                                   followers_num=len(user.followers), follows_num=len(user.follows))
         results_left = max(len(getattr(user, view)) - offset - limit, 0)
         return jsonify(status=200, data={'results_left': results_left}, rendered='\n'.join(render_template(
             'sketch-preview.html' if view == 'sketches' else 'user-preview.html',
