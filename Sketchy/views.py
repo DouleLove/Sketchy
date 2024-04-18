@@ -12,6 +12,7 @@ from forms import LoginForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
 from utils import lazy_loader, get_session
 
+# from stuff import render_sketches На будущее
 blueprint = Blueprint(
     name='views',
     import_name=__name__,
