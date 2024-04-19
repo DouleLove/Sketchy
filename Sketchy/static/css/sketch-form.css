@@ -1,0 +1,9 @@
+.form-field-input[type='file'] {
+    color: rgba(69, 69, 68, 0.6);
+    font-size: 18px;
+    font-weight: 470;
+}
+
+.form-field-input[type='file']::file-selector-button {
+    display: none;
+}
