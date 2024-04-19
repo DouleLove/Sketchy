@@ -14,7 +14,7 @@ class Sketch(BaseModel):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, unique=True)
     name = sqlalchemy.Column(sqlalchemy.String)
-    place = sqlalchemy.Column(sqlalchemy.String)
+    place = sqlalchemy.Column(sqlalchemy.String, nullable=True, default=None)
     image_name = sqlalchemy.Column(sqlalchemy.String)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     time_created = sqlalchemy.Column(sqlalchemy.DateTime)
