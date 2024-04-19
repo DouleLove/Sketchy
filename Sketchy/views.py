@@ -2,6 +2,7 @@ __all__ = ()
 
 import os
 import uuid
+from datetime import datetime
 from random import randint
 
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
@@ -9,11 +10,9 @@ from flask_login import LoginManager, login_user, current_user, logout_user
 
 from Sketchy.database import Sketch
 from database import User, Session
-from forms import LoginForm, SketchCreate
+from forms import LoginForm, SketchForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
 from utils import lazy_loader, get_session, coincidence
-import datetime
-from PIL import Image
 
 blueprint = Blueprint(
     name='views',
@@ -44,7 +43,7 @@ def index():
     limit = request.args.get('limit', 0, type=int)
     offset = request.args.get('offset', 0, type=int)
     rule = request.args.get('rule', 'any')
-    query = request.args.get('query')
+    query = request.args.get('query', '')
 
     session = Session()
 
@@ -124,16 +123,6 @@ def profile():
         return redirect('/auth')  # non-authenticated user tries to check their account, redirect to auth
 
     user = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
-    if not user.sketches:
-        session = Session()
-        for i in range(100):
-            sk = Sketch()
-            sk.name = f'sketch_{i}'
-            sk.image = f'../preview-sketch-{i % 3 + 1}.jpg'
-            sk.place = 'Москва, Красная площадь'
-            sk.author_id = user.id
-            session.add(sk)
-        session.commit()
     if user is None:
         return abort(404)  # request provided invalid uid
 
@@ -208,27 +197,35 @@ def profile():
     return ret
 
 
-@blueprint.route('/sketch_create', methods=['GET', 'POST'])
+@blueprint.route('/sketch/create', methods=['GET', 'POST'])
 def sketch_create():
     if not current_user.is_authenticated:
         return redirect('/auth')
-    form = SketchCreate()
+
+    form = SketchForm()
     session = Session()
     user_load = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
-    if (user := form.validate_on_submit()) is False:  # validation failed or form just created
-        return render_template('form.html', form=form)
+
+    if not form.validate_on_submit():  # validation failed or form just created
+        return render_template('sketch-form.html', form=form)
     sk = Sketch()
 
     sk.name = form.name.data
     sk.place = form.place.data
     sk.author_id = user_load.id
-    image_name = form.image
-    print()
-    tp = 'png'
+
+    tp = form.image.data.content_type.split('/')[1].lower()
     while (image_name := f'{uuid.uuid4()}.{tp}') in os.listdir(UPLOAD_PATH):
         pass
+
+    form.image.data.save(os.path.join(UPLOAD_PATH, image_name))
+    if sk.image_name in os.listdir(UPLOAD_PATH):
+        os.remove(os.path.join(UPLOAD_PATH, sk.image_name))
+
     sk.image_name = image_name
-    sk.time_created = datetime.datetime.now()
+    sk.time_created = datetime.now()
+
     session.add(sk)
     session.commit()
+
     return redirect(request.args.get('referrer', '/profile'))
