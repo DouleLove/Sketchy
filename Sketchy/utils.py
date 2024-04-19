@@ -15,20 +15,20 @@ from settings import APIKEY_GEOCODER
 
 
 def is_existing_place(place):
+    url = f'http://geocode-maps.yandex.ru/1.x/'
     params = {
         'apikey': APIKEY_GEOCODER,
         'geocode': place,
         'format': 'json'
     }
-    url = f'http://geocode-maps.yandex.ru/1.x/'
 
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
         return bool(int(response.json()["response"]["GeoObjectCollection"]
-                                       ["metaDataProperty"]["GeocoderResponseMetaData"]['found']))
+                        ["metaDataProperty"]["GeocoderResponseMetaData"]['found']))
 
-    return response.status_code
+    return False
 
 
 def coincidence(a, b):
