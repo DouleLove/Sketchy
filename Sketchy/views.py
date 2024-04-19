@@ -137,10 +137,13 @@ def profile():
             return render_template('profile.html', user=user, sketches_num=len(user.sketches),
                                    followers_num=len(user.followers), follows_num=len(user.follows))
         results_left = max(len(getattr(user, view)) - offset - limit, 0)
+        it = getattr(user, view)[offset:offset + limit]
+        if len(getattr(user, view)) and hasattr(getattr(user, view)[0], 'time_created'):
+            it.sort(key=lambda i: i.time_created, reverse=True)
         return jsonify(status=200, data={'results_left': results_left}, rendered='\n'.join(render_template(
             'sketch-preview.html' if view == 'sketches' else 'user-preview.html',
             sketch=item, user=item, author_context=False
-        ) for item in getattr(user, view)[offset:offset + limit]))
+        ) for item in it))
 
     errors = {}
     params = request.form

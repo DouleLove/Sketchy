@@ -271,3 +271,26 @@ html, body, main {
      width: 50%;
      height: 50%
 }
+
+.view-upper-panel {
+    display: flex;
+    max-height: 5rem;
+    align-items: end;
+}
+
+#btn-add-sketch {
+    background-color: rgb(91, 133, 227);
+    margin-bottom: 10px;
+    padding-block: 6px;
+    padding-inline: 20px;
+    color: white;
+    border-radius: 15px;
+    transition: background-color 400ms ease;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 450;
+}
+
+#btn-add-sketch:hover {
+    background-color: rgb(70, 121, 235);
+}

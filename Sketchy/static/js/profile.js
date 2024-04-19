@@ -27,6 +27,11 @@ function reqView(sender) {
     document.getElementById('view-title').innerHTML = {'sketches': 'Скетчи',
                                                        'followers': 'Подписчики',
                                                         'follows': 'Подписки'}[urlParams.view];
+    if (urlParams.view == 'sketches') {
+        document.getElementById('btn-add-sketch').style.display = 'block';
+    } else {
+        document.getElementById('btn-add-sketch').style.display = 'none';
+    }
 
     try {
         if (loader.active) {
@@ -168,14 +173,12 @@ function setupEditable() {
                 if (e.currentTarget.getAttribute('data-value-onfocus') != e.currentTarget.value) {
                     reqPost(e.currentTarget.parentElement, function(tgt, data) {
                         handlePostResponse(data);
+                        if (tgt.id !== 'user-visible-username') {
+                            return;
+                        }
                         [].forEach.call(
                             document.getElementsByClassName('author-username') || [],
-                            (elem) => {
-                                elem.innerHTML = tgt.value;
-                                const ctl = elem.getAttribute('data-title');
-                                const sl = tgt.getAttribute('data-value-onfocus').length;
-                                elem.setAttribute('data-title', tgt.value + ctl.slice(sl, ctl.length))
-                            }
+                            (elem) => elem.innerHTML = tgt.value
                         );
                         tgt.removeAttribute('data-value-onfocus');
                     }.bind(this, e.currentTarget));
