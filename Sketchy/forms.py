@@ -1,5 +1,6 @@
 __all__ = (
     'LoginForm',
+    'SketchForm'
 )
 
 from functools import cache
@@ -7,23 +8,11 @@ from functools import cache
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
-from flask_wtf.file import FileRequired, FileField, FileAllowed
+from flask_wtf.file import FileField, FileRequired
+
 from database import Session, User
+from settings import ALLOWED_MEDIA_EXTENSIONS
 from utils import is_existing_place
-
-
-class ImageAllowed(FileAllowed):
-
-    def __init__(self, upload_set=('jpg', 'jpeg', 'png'), message=None):
-        super().__init__(upload_set, message)
-        mime_types = []
-        for allowed_type in upload_set:
-            if allowed_type.startswith('image/'):
-                mime_type = allowed_type
-            else:
-                mime_type = f'image/{allowed_type}'
-            mime_types.append(mime_type)
-        self.field_flags = {'accept': ', '.join(mime_types)}
 
 
 class LoginForm(FlaskForm):
@@ -63,19 +52,19 @@ class LoginForm(FlaskForm):
         return self._get_user() if super().validate_on_submit(extra_validators=extra_validators) else False
 
 
-class SketchCreate(FlaskForm):
+class SketchForm(FlaskForm):
     name = StringField('Название скетча', validators=[DataRequired(message='Название скетча не указано')])
-    place = StringField('Место',
-                        validators=[DataRequired(message='Место, где был нарисован скетч не указано')])
-    image = FileField(validators=[ImageAllowed(['jpeg', 'jpg', 'png'])])
-    submit = SubmitField('Создать')
-
-    def validate_place(self, field):
-        if not is_existing_place(field.data):
-            return ValidationError('Такого места не сущетсвует')
+    place = StringField('Место')
+    image = FileField('Изображение', validators=[FileRequired(message='Изображение не прикреплено')])
+    submit = SubmitField('Продолжить')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def validate_on_submit(self, extra_validators=None):
-        return True if super().validate_on_submit(extra_validators=extra_validators) else False
+    def validate_image(self, _):
+        if self.image.data.content_type.split('/')[1].upper() not in ALLOWED_MEDIA_EXTENSIONS:
+            raise ValidationError('Неподдерживаемый тип файла')
+
+    def validate_place(self, _):
+        if self.place.data and not is_existing_place(self.place.data):
+            raise ValidationError('Указанное место не найдено')
