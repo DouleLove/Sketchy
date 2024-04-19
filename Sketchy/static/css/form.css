@@ -60,7 +60,7 @@ html, body, main {
     align-items: center;
 }
 
-#auth-form {
+#form {
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -101,6 +101,11 @@ html, body, main {
     width: 100%;
 }
 
+.form-field-wrapper:has(.form-field-input[type='file']),
+.form-field-wrapper:has(.form-field-input[type='file']) > .form-field-inner > input {
+    cursor: pointer;
+}
+
 .form-field-inner {
     display: flex;
 }
@@ -110,6 +115,23 @@ html, body, main {
     padding: 5px;
     color: rgb(69, 69, 68);
     font-size: 18px;
+}
+
+.form-field-input[type='file'] {
+    display: none;
+}
+
+.form-field-input-file-icon-add {
+    height: 1.5rem;
+    width: 1.5rem;
+    align-self: center;
+    fill: rgb(201, 201, 201);
+    transition: fill 400ms ease;
+}
+
+.form-field-wrapper:hover > .form-field-inner > .form-field-input-file-icon-add,
+.form-field-wrapper:focus-within > .form-field-inner > .form-field-input-file-icon-add{
+    fill: rgb(55, 57, 63);
 }
 
 .button-submit {
