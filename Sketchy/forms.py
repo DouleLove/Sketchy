@@ -17,16 +17,19 @@ from utils import is_existing_place
 
 # class ImageAllowed(FileAllowed):
 #
-#    def __init__(self, upload_set=('jpg', 'jpeg', 'png'), message=None):
-#        super().__init__(upload_set, message)
-#        mime_types = []
-#        for allowed_type in upload_set:
-#            if allowed_type.startswith('image/'):
-#                mime_type = allowed_type
-#            else:
-#                mime_type = f'image/{allowed_type}'
-#            mime_types.append(mime_type)
-#        self.field_flags = {'accept': ', '.join(mime_types)}
+#     def __init__(self, upload_set=ALLOWED_MEDIA_EXTENSIONS, message=None):
+#         upload_set = tuple(map(str.lower, upload_set))
+#
+#         super().__init__(upload_set, message)
+#
+#         mime_types = []
+#         for allowed_type in upload_set:
+#             if allowed_type.startswith('image/'):
+#                 mime_type = allowed_type
+#             else:
+#                 mime_type = f'image/{allowed_type.lower()}'
+#             mime_types.append(mime_type)
+#         self.field_flags = {'accept': ', '.join(mime_types)}
 
 
 class LoginForm(FlaskForm):
@@ -75,10 +78,17 @@ class SketchForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def validate_image(self, _):
-        if self.image.data.content_type.split('/')[1].upper() not in ALLOWED_MEDIA_EXTENSIONS:
+    @staticmethod
+    def validate_name(_, field):
+        if len(field.data) > 40:
+            raise ValidationError('Слишком длинное название (максимум 40)')
+
+    @staticmethod
+    def validate_image(_, field):
+        if field.data.content_type.split('/')[1].upper() not in ALLOWED_MEDIA_EXTENSIONS:
             raise ValidationError('Неподдерживаемый тип файла')
 
-    def validate_place(self, _):
-        if self.place.data and not is_existing_place(self.place.data):
+    @staticmethod
+    def validate_place(_, field):
+        if field.data and not is_existing_place(field.data):
             raise ValidationError('Указанное место не найдено')

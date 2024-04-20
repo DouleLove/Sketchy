@@ -13,7 +13,7 @@ class Sketch(BaseModel):
     __tablename__ = 'sketches'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, unique=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
+    name = sqlalchemy.Column(sqlalchemy.String(length=40))
     place = sqlalchemy.Column(sqlalchemy.String, nullable=True, default=None)
     image_name = sqlalchemy.Column(sqlalchemy.String)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))

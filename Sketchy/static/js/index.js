@@ -1,7 +1,20 @@
-import {animateBrightness, animateOpacity} from './utils.js';
+import {animateBrightness, animateOpacity, getURLParameters} from './utils.js';
 import {SearchLoader} from './loaders.js';
+import {loadPopUp} from './base.js'
 
 var loader;
+
+
+function loadSketchPopUp(sid) {
+    sid = sid ? sid : getURLParameters().sid;
+
+    const params = {}
+    if (sid) {
+        params.sid = sid;
+    }
+
+    loadPopUp(window.location.origin + '/sketch', params);
+}
 
 
 function reqLoad(additional=false) {
@@ -16,9 +29,6 @@ function reqLoad(additional=false) {
     }
 
     try {
-        if (loader.active) {
-            $('#btn-load-more').show();
-        }
         let cd = '';
         loader.request().then((data) => {
             if (additional == false) {
@@ -36,9 +46,17 @@ function reqLoad(additional=false) {
                 if (i == l_ - 1 && $(e).find('.sketch-item').length == 1) {
                     $('#container-sketches-inner-ctn').append(e);
                 }
+                const r = $('#container-sketches-inner-ctn').children().last();
+                if (r) {
+                    $(r).children().each((i, elem) => elem.addEventListener('click',
+                        (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid')))
+                    );
+                }
             });
             if (!loader.active) {
                 $('#btn-load-more').hide();
+            } else {
+                $('#btn-load-more').show();
             }
         });
     } catch (e) {
@@ -136,6 +154,12 @@ function main() {
         reqLoad(true);
     });
     reqLoad();
+
+    const sid = +(getURLParameters().sid || 0)
+    if (sid) {
+        loadSketchPopUp(sid);
+    }
+    $('#random-sketch-wrapper').on('click', () => loadSketchPopUp());
 }
 
 main();

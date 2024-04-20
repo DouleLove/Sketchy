@@ -5,14 +5,13 @@ import uuid
 from datetime import datetime
 from random import randint
 
-from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify
+from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify, g
 from flask_login import LoginManager, login_user, current_user, logout_user
 
-from Sketchy.database import Sketch
-from database import User, Session
+from database import User, Sketch, Session
 from forms import LoginForm, SketchForm
 from settings import TEMPLATES_PATH, MEDIA_PATH, ALLOWED_MEDIA_EXTENSIONS, UPLOAD_PATH
-from utils import lazy_loader, get_session, coincidence
+from utils import get_session, coincidence
 
 blueprint = Blueprint(
     name='views',
@@ -22,10 +21,20 @@ blueprint = Blueprint(
 login_manager = LoginManager()
 
 
-@lazy_loader
+@blueprint.before_request
+def before():
+    g.session = Session()
+
+
+@blueprint.after_request
+def after(response):
+    g.session.connection().close()
+    return response
+
+
 @login_manager.user_loader
 def load_user(uid):
-    return Session().query(User).get(uid)
+    return g.session.query(User).get(uid)
 
 
 @blueprint.route('/')
@@ -43,9 +52,9 @@ def index():
     limit = request.args.get('limit', 0, type=int)
     offset = request.args.get('offset', 0, type=int)
     rule = request.args.get('rule', 'any')
-    query = request.args.get('query', '')
+    query = request.args.get('query', '').lower()
 
-    session = Session()
+    session = g.session
 
     matching = []
     for entry in session.query(Sketch).all():
@@ -63,16 +72,16 @@ def index():
         mc = 0
         match = False
         for value in values:
-            c = coincidence(value, query)
+            c = coincidence(value.lower(), query)
             if c > mc:
                 mc = c
-            if query in value:
+            if query in value.lower():
                 match = True
 
         if mc >= 0.7 or match is True and entry not in map(lambda x: x[0], matching):
             matching.append((entry, mc))
 
-    matching.sort(key=lambda m: m[1], reverse=True)
+    matching.sort(key=lambda m: (m[1] if query else True, m[0].time_created, m[0].id), reverse=True)
     return jsonify(status=200, data={'results_left': max(len(matching) - offset - limit, 0)},
                    rendered='\n'.join(render_template('sketch-preview.html', sketch=match[0])
                                       for match in matching[offset:offset + limit]))
@@ -83,10 +92,18 @@ def sketch():
     sid = request.args.get('sid')
 
     if sid is None:
-        sid = randint(1, Session().query(Sketch).count())
+        sid = randint(1, g.session.query(Sketch).count())
         return redirect(f'/sketch?{sid=}')
 
-    return render_template('sketch.html')  # render template here
+    sk = g.session.query(Sketch).get(sid)
+
+    if not sk:
+        abort(404)
+
+    return jsonify(
+        data={'sid': sid},
+        rendered=render_template('sketch.html', sketch=sk, author=sk.author, followers_num=len(sk.author.followers))
+    )
 
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
@@ -100,7 +117,7 @@ def auth():
         return render_template('signin-form.html' if request.args.get('n') is None else 'signup-form.html', form=form)
 
     if user is None:
-        session = Session()
+        session = g.session
         user = User()
         user.login = form.login.data
         user.password = form.password.data
@@ -137,13 +154,14 @@ def profile():
             return render_template('profile.html', user=user, sketches_num=len(user.sketches),
                                    followers_num=len(user.followers), follows_num=len(user.follows))
         results_left = max(len(getattr(user, view)) - offset - limit, 0)
-        it = getattr(user, view)[offset:offset + limit]
-        if len(getattr(user, view)) and hasattr(getattr(user, view)[0], 'time_created'):
-            it.sort(key=lambda i: i.time_created, reverse=True)
+        if view == 'sketches':
+            it = sorted(user.sketches, key=lambda s: (s.time_created, s.id), reverse=True)
+        else:
+            it = sorted(getattr(user, view), key=lambda u: (u.username, u.login))
         return jsonify(status=200, data={'results_left': results_left}, rendered='\n'.join(render_template(
             'sketch-preview.html' if view == 'sketches' else 'user-preview.html',
             sketch=item, user=item, author_context=False
-        ) for item in it))
+        ) for item in it[offset:offset + limit]))
 
     errors = {}
     params = request.form
@@ -206,7 +224,7 @@ def sketch_create():
         return redirect('/auth')
 
     form = SketchForm()
-    session = Session()
+    session = g.session
     user_load = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
 
     if not form.validate_on_submit():  # validation failed or form just created

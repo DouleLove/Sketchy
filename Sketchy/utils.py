@@ -1,7 +1,5 @@
 __all__ = (
-    'lazy_loader',
     'get_session',
-    'is_alive',
     'is_existing_place',
     'coincidence'
 )
@@ -37,20 +35,3 @@ def coincidence(a, b):
 
 def get_session(instance):
     return orm.Session.object_session(instance)
-
-
-def is_alive(session):
-    return bool(session and session.is_active and not session.dirty and not session.deleted and not session.new)
-
-
-def lazy_loader(fn):
-    cached = {}
-
-    def _wrapper(*args, **kwargs):
-        key = f'{args}{kwargs}'
-
-        if not cached.get(key) or not is_alive(get_session(cached[key])):
-            cached[key] = fn(*args, **kwargs)
-        return cached[key]
-
-    return _wrapper

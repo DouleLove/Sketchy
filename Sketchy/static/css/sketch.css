@@ -1,0 +1,85 @@
+.sketch-popup {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sketch-popup-inner {
+    width: 60%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(248, 249, 250);
+    border-radius: 20px;
+}
+
+.wrapper-sketch-image {
+    width: 100%;
+    height: 87%;
+}
+
+
+.sketch-image-popup {
+    width: 100%;
+    height: 100%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.author-avatar {
+    width: 3rem;
+    height: 3rem;
+}
+
+.sketch-info {
+    color: rgb(55, 57, 63);
+    font-family: arial;
+}
+
+.author-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.container-author-info {
+    display: flex;
+}
+
+.container-name {
+    margin-bottom: 5px;
+    display: block;
+}
+
+.sketch-name {
+    font-size: 23px;
+    font-weight: 700;
+}
+
+
+.text-author-info-container {
+    margin-left: 15px;
+}
+
+.author-usernames-container {
+    color: inherit;
+    display: block;
+    margin-bottom: -3px;
+}
+
+.author-visible-username {
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+.author-login {
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+.followers-num {
+    opacity: 0.7;
+    font-size: 13px;
+}
+
