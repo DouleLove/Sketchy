@@ -87,18 +87,27 @@ def index():
                                       for match in matching[offset:offset + limit]))
 
 
-@blueprint.route('/sketch')
+@blueprint.route('/sketch', methods=['GET', 'DELETE'])
 def sketch():
-    sid = request.args.get('sid')
+    sid = request.args.get('sid', type=int)
 
-    if sid is None:
+    if request.method == 'GET' and sid is None:
         sid = randint(1, g.session.query(Sketch).count())
         return redirect(f'/sketch?{sid=}')
 
     sk = g.session.query(Sketch).get(sid)
 
-    if not sk:
-        abort(404)
+    if not sk or current_user.id != sk.author.id:
+        if request.method == 'GET':
+            abort(404)
+        return jsonify(status=400, rendered=render_template(
+            'response-message.html', status=400, description='Что-то пошло не так'
+        ))
+
+    if request.method == 'DELETE':
+        g.session.delete(sk)
+        g.session.commit()
+        return jsonify(status=200)
 
     return jsonify(
         data={'sid': sid},
