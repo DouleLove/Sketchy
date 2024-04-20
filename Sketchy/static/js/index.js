@@ -1,6 +1,7 @@
-import {animateBrightness, animateOpacity, getURLParameters} from './utils.js';
+import {animateBrightness, animateOpacity, getURLParameters, encodeURL, formatURL} from './utils.js';
 import {SearchLoader} from './loaders.js';
 import {loadPopUp} from './base.js'
+import {setupSketchPopUp} from './sketch.js';
 
 var loader;
 
@@ -13,7 +14,7 @@ function loadSketchPopUp(sid) {
         params.sid = sid;
     }
 
-    loadPopUp(window.location.origin + '/sketch', params);
+    loadPopUp(window.location.origin + '/sketch', params, setupSketchPopUp);
 }
 
 
@@ -160,6 +161,20 @@ function main() {
         loadSketchPopUp(sid);
     }
     $('#random-sketch-wrapper').on('click', () => loadSketchPopUp());
+
+    const urlParams = getURLParameters();
+    if (urlParams.hook) {
+        const searchRule = urlParams.hook;
+        const val = urlParams[searchRule];
+        delete urlParams['hook'];
+        delete urlParams[searchRule];
+        window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
+        $(`.search-rule[data-rule="${searchRule}"]`).get(0).dispatchEvent(new Event('mousedown'));
+        $('input[name="search-input"]').val(val);
+        document.getElementById('form-search').dispatchEvent(new Event('submit'));
+        const y = document.getElementById('section-sketches').getBoundingClientRect().top - 65;
+        setTimeout(() => window.scroll({top: y, behavior: 'smooth'}), 100)  // wait for submit to be handled
+    }
 }
 
 main();
