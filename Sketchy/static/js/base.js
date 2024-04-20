@@ -17,9 +17,18 @@ export function loadPopUp(url, params, onsuccess=null) {
     url = encodeURL(formatURL(url.split('?')[0], p))
     $.get(url, (data) => {
         $('.wrapper-pop-up').html(data.rendered);
+        $('.wrapper-pop-up').children().eq(0).on('click', (e) => {
+            if (!$(e.currentTarget).find(e.target).length) {
+                $('#btn-pop-up-close').trigger('click');
+            }
+        });
         const urlParams = getURLParameters();
         urlParams.sid = data.data.sid;
         window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
+
+        if (onsuccess != null) {
+            onsuccess();
+        }
     });
 }
 

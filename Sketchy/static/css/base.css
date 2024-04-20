@@ -189,6 +189,7 @@ body:has(.wrapper-pop-up:not(:empty)) {
     height: 100%;
     pointer-events: none;
     justify-content: end;
+    z-index: 4;
 }
 
 .response-status-message {
