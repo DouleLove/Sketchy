@@ -15,18 +15,18 @@ from settings import ALLOWED_MEDIA_EXTENSIONS
 from utils import is_existing_place
 
 
-class ImageAllowed(FileAllowed):
-
-    def __init__(self, upload_set=('jpg', 'jpeg', 'png'), message=None):
-        super().__init__(upload_set, message)
-        mime_types = []
-        for allowed_type in upload_set:
-            if allowed_type.startswith('image/'):
-                mime_type = allowed_type
-            else:
-                mime_type = f'image/{allowed_type}'
-            mime_types.append(mime_type)
-        self.field_flags = {'accept': ', '.join(mime_types)}
+# class ImageAllowed(FileAllowed):
+#
+#    def __init__(self, upload_set=('jpg', 'jpeg', 'png'), message=None):
+#        super().__init__(upload_set, message)
+#        mime_types = []
+#        for allowed_type in upload_set:
+#            if allowed_type.startswith('image/'):
+#                mime_type = allowed_type
+#            else:
+#                mime_type = f'image/{allowed_type}'
+#            mime_types.append(mime_type)
+#        self.field_flags = {'accept': ', '.join(mime_types)}
 
 
 class LoginForm(FlaskForm):
@@ -69,8 +69,7 @@ class LoginForm(FlaskForm):
 class SketchForm(FlaskForm):
     name = StringField('Название скетча', validators=[DataRequired(message='Название скетча не указано')])
     place = StringField('Место')
-    image = FileField('Изображение', validators=[FileRequired(message='Изображение не прикреплено'),
-                                                 ImageAllowed(['jpg', 'png', 'jpeg'])])
+    image = FileField('Изображение', validators=[FileRequired(message='Изображение не прикреплено')])
     submit = SubmitField('Продолжить')
 
     def __init__(self, *args, **kwargs):
