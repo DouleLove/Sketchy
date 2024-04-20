@@ -1,6 +1,7 @@
 import {addRendered, loadPopUp} from './base.js';
 import {getURLParameters, formatURL, encodeURL} from './utils.js';
 import {ViewLoader} from './loaders.js';
+import {setupSketchPopUp} from './sketch.js';
 
 var loader;
 
@@ -12,7 +13,7 @@ function loadSketchPopUp(sid) {
         return;
     }
 
-    loadPopUp(window.location.origin + '/sketch', {'sid': sid});
+    loadPopUp(window.location.origin + '/sketch', {'sid': sid}, setupSketchPopUp);
 }
 
 
@@ -58,11 +59,10 @@ function reqView(sender) {
             if (!loader.active) {
                 $('#btn-load-more').hide();
             }
-            const i = $('.sketch-item').last().get(0);
-            if (i) {
-                i.addEventListener('click', (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid')))
-            }
-        });
+            [].forEach.call(
+                document.getElementsByClassName('sketch-item'),
+                (i) => i.onclick = (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid'))
+            )});
     } catch (e) {
         if (e instanceof TypeError) {
             return;
