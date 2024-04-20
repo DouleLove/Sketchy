@@ -4,6 +4,7 @@
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sketch-preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sketch.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -81,9 +82,9 @@
 </section>
 <section id="section-star-sky-random-sketch">
     <div id="random-sketch-bg">
-        <a id="random-sketch-wrapper" href="{{ origin_url }}/sketch">
+        <div id="random-sketch-wrapper">
             <div id="random-sketch-clickable"></div>
-        </a>
+        </div>
     </div>
 </section>
 <section id="section-sketches">

@@ -28,15 +28,6 @@ export function postForm(form, url=window.location.href, callback=null) {
 }
 
 
-function setupAnimations() {
-    animateOpacity(document.getElementById('background-container'), {0: 0, 0.2: 0, 1: 1});
-
-    Array.from(document.getElementsByClassName('bg-icon')).concat(
-        document.getElementById('form')
-    ).forEach((element) => animateOpacity(element, {0: 0, 0.5: 0, 1: 1}));
-}
-
-
 function setReferrer() {
     const url = window.location.href.split('?')[0];
     const parameters = getURLParameters();
@@ -45,9 +36,4 @@ function setReferrer() {
 }
 
 
-function main() {
-    setReferrer();
-    setupAnimations();
-}
-
-main();
+setReferrer();

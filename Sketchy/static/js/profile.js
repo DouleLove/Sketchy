@@ -1,8 +1,19 @@
-import {addRendered} from './base.js';
+import {addRendered, loadPopUp} from './base.js';
 import {getURLParameters, formatURL, encodeURL} from './utils.js';
 import {ViewLoader} from './loaders.js';
 
 var loader;
+
+
+function loadSketchPopUp(sid) {
+    sid = sid ? sid : getURLParameters().sid;
+
+    if (!sid) {
+        return;
+    }
+
+    loadPopUp(window.location.origin + '/sketch', {'sid': sid});
+}
 
 
 function loadMessages(data) {
@@ -27,10 +38,12 @@ function reqView(sender) {
     document.getElementById('view-title').innerHTML = {'sketches': 'Скетчи',
                                                        'followers': 'Подписчики',
                                                         'follows': 'Подписки'}[urlParams.view];
-    if (urlParams.view == 'sketches') {
-        document.getElementById('btn-add-sketch').style.display = 'block';
-    } else {
-        document.getElementById('btn-add-sketch').style.display = 'none';
+    if (document.getElementById('btn-add-sketch')) {
+        if (urlParams.view == 'sketches') {
+            document.getElementById('btn-add-sketch').style.display = 'block';
+        } else {
+            document.getElementById('btn-add-sketch').style.display = 'none';
+        }
     }
 
     try {
@@ -44,6 +57,10 @@ function reqView(sender) {
             }
             if (!loader.active) {
                 $('#btn-load-more').hide();
+            }
+            const i = $('.sketch-item').last().get(0);
+            if (i) {
+                i.addEventListener('click', (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid')))
             }
         });
     } catch (e) {
@@ -256,6 +273,7 @@ function main() {
     document.getElementById('btn-load-more').addEventListener('click', () => {
         reqView();
     });
+    loadSketchPopUp();
 }
 
 

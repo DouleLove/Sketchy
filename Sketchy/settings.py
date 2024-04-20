@@ -18,7 +18,7 @@ APP_CONFIG = {
 }
 APIKEY_GEOCODER = os.environ.get('geocoder-apikey', '2a3270c9-8a5c-4543-b243-1b5f0010a2ac')
 
-ALLOWED_MEDIA_EXTENSIONS = ['JPEG', 'JPG', 'PNG', 'GIF', 'TIFF']
+ALLOWED_MEDIA_EXTENSIONS = ('JPEG', 'JPG', 'PNG')
 
 del os
 del Path

@@ -23,6 +23,10 @@ function setupFileInput(selectedFile) {
             selectedFile = e.currentTarget.files[0];
         }
 
+        if (!selectedFile) {
+            return;
+        }
+
         const fullname = selectedFile.name;
         const shortname = fullname.split('.').slice(0, -1).join('.');
         let val;
@@ -36,13 +40,15 @@ function setupFileInput(selectedFile) {
         inp.val(val);
         inp.blur();
     });
+
+    $('#image').trigger('change');
 }
 
 
 function onSubmit(e) {
     e.preventDefault();
 
-    const f = $('#image').files ? $('#image').files[0] : undefined;
+    const f = document.getElementById('image').files.length ? document.getElementById('image').files[0] : undefined;
     postForm(this, window.location.href, () => setupFileInput(f));
 }
 

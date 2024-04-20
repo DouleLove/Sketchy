@@ -1,5 +1,5 @@
 {% set ctx = author_context | default(True) %}
-<a class="sketch-item" href="{{ origin_url }}/sketch?sid={{ sketch.id }}">
+<div class="sketch-item" data-sid="{{ sketch.id }}">
     <div class="sketch-image" style="background-image: url('{{ sketch.image }}')"></div>
     <div class="footer">
         {% if ctx %}
@@ -15,4 +15,4 @@
             <span class="ttl-more">Ещё</span>
         </div>
     </div>
-</a>
+</div>

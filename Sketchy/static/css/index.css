@@ -152,6 +152,7 @@
 #random-sketch-wrapper {
     height: 100%;
     width: 20%;
+    cursor: pointer;
 }
 
 #random-sketch-clickable {
@@ -283,7 +284,7 @@
     cursor: default !important;
 }
 
-#form-search:has(.search-input:not(:placeholder-shown)) > .search-rule-selected-icon-ppv-container {
+#form-search:focus-within > .search-rule-selected-icon-ppv-container {
     cursor: pointer !important;
 }
 
