@@ -97,22 +97,22 @@ def sketch():
 
     sk = g.session.query(Sketch).get(sid)
 
-    if not sk or current_user.id != sk.author.id:
-        if request.method == 'GET':
+    if request.method == 'GET':
+        if not sk:
             abort(404)
+        return jsonify(
+            data={'sid': sid},
+            rendered=render_template('sketch.html', sketch=sk, author=sk.author, followers_num=len(sk.author.followers))
+        )
+
+    if not sk or current_user.id != sk.author.id:
         return jsonify(status=400, rendered=render_template(
             'response-message.html', status=400, description='Что-то пошло не так'
         ))
 
-    if request.method == 'DELETE':
-        g.session.delete(sk)
-        g.session.commit()
-        return jsonify(status=200)
-
-    return jsonify(
-        data={'sid': sid},
-        rendered=render_template('sketch.html', sketch=sk, author=sk.author, followers_num=len(sk.author.followers))
-    )
+    g.session.delete(sk)
+    g.session.commit()
+    return jsonify(status=200)
 
 
 @blueprint.route('/auth', methods=['GET', 'POST'])
