@@ -18,7 +18,7 @@ function loadSketchPopUp(sid) {
 }
 
 
-function reqLoad(additional=false) {
+function reqLoad(additional=false, onsuccess=null) {
     const rule = $('.search-rule.selected').attr('data-rule');
     const query = $('.search-input').val();
 
@@ -58,6 +58,9 @@ function reqLoad(additional=false) {
                 $('#btn-load-more').hide();
             } else {
                 $('#btn-load-more').show();
+            }
+            if (onsuccess != null) {
+                onsuccess();
             }
         });
     } catch (e) {
@@ -149,7 +152,13 @@ function main() {
     setupSearch();
     document.getElementById('form-search').addEventListener('submit', (e) => {
         e.preventDefault();
-        reqLoad();
+        $('.search-input').blur();
+        reqLoad(false, () => {
+            if (!document.getElementById('container-sketches-inner-ctn').innerHTML) {
+                const HTMLMsg = '<span class="msg-nothing-found">По вашему запросу ничего не найдено</span>';
+                document.getElementById('container-sketches-inner-ctn').innerHTML = HTMLMsg;
+            }
+        });
     });
     document.getElementById('btn-load-more').addEventListener('click', () => {
         reqLoad(true);
@@ -168,10 +177,10 @@ function main() {
         $(`.search-rule[data-rule="${searchRule}"]`).get(0).dispatchEvent(new Event('mousedown'));
         $('input[name="search-input"]').val(val);
         document.getElementById('form-search').dispatchEvent(new Event('submit'));
-        const y = document.getElementById('section-sketches').getBoundingClientRect().top - 65;
         $(document).ready(
             () => {
                 window.scroll({top: 0, behavior: 'instant'});
+                const y = document.getElementById('section-sketches').getBoundingClientRect().top - 65;
                 setTimeout(() => window.scroll({top: y, behavior: 'smooth'}), 600)
             }  // wait 600ms before scroll
         );
