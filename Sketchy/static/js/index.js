@@ -154,7 +154,6 @@ function main() {
     document.getElementById('btn-load-more').addEventListener('click', () => {
         reqLoad(true);
     });
-    reqLoad();
 
     const sid = +(getURLParameters().sid || 0)
     if (sid) {
@@ -166,14 +165,18 @@ function main() {
     if (urlParams.hook) {
         const searchRule = urlParams.hook;
         const val = urlParams[searchRule];
-        delete urlParams['hook'];
-        delete urlParams[searchRule];
-        window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
         $(`.search-rule[data-rule="${searchRule}"]`).get(0).dispatchEvent(new Event('mousedown'));
         $('input[name="search-input"]').val(val);
         document.getElementById('form-search').dispatchEvent(new Event('submit'));
         const y = document.getElementById('section-sketches').getBoundingClientRect().top - 65;
-        setTimeout(() => window.scroll({top: y, behavior: 'smooth'}), 100)  // wait for submit to be handled
+        $(document).ready(
+            () => {
+                window.scroll({top: 0, behavior: 'instant'});
+                setTimeout(() => window.scroll({top: y, behavior: 'smooth'}), 600)
+            }  // wait 600ms before scroll
+        );
+    } else {
+        reqLoad();
     }
 }
 
