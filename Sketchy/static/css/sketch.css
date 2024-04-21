@@ -4,9 +4,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .sketch-popup-inner {
+    cursor: default;
     width: 60%;
     height: 80%;
     display: flex;
@@ -35,6 +37,7 @@
 
 .sketch-info {
     color: rgb(55, 57, 63);
+    margin-inline: 10px;
 }
 
 .author-avatar {
@@ -90,7 +93,6 @@
 
 .container-buttons-sketch {
     display: flex;
-    margin-right: 10px;
 }
 
 .sketch-action-button {
@@ -125,8 +127,6 @@
 #icon-sketch-place {
     width: 1rem;
     height: 1rem;
-    margin-right: 3px;
-    margin-bottom: 3px;
 }
 
 #btn-delete-sketch {
@@ -134,6 +134,7 @@
     height: 2rem;
     outline: none;
     border: none;
+    margin-right: 0;
 }
 
 #icon-delete-sketch {
