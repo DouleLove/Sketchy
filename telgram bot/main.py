@@ -1,5 +1,3 @@
-from unittest.mock import call
-import aiogram
 import telebot
 import random
 from slovar import *
