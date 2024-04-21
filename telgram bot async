@@ -1,0 +1,62 @@
+import logging
+import random
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import ParseMode
+from aiogram.utils import executor
+
+from slovar import *
+
+logging.basicConfig(level=logging.INFO)
+
+bot = Bot(token='6610379452:AAEDifcSHUytiykNE3OmaoJl82EQP_g7cGw')
+dp = Dispatcher(bot)
+
+
+@dp.message_handler(commands=['start'])
+async def send_welcome(message: types.Message):
+    await message.reply("Привет, напиши свое имя")
+    await Registration.name.set()
+
+
+class Registration(types.TelegramObject):
+    name = types.StringState()
+    age = types.StringState()
+
+
+@dp.message_handler(state=Registration.name)
+async def get_name(message: types.Message, state: types.FSMContext):
+    async with state.proxy() as data:
+        data['name'] = message.text
+    await message.reply("Напиши свой возраст")
+    await Registration.next()
+
+
+@dp.message_handler(state=Registration.age)
+async def get_age(message: types.Message, state: types.FSMContext):
+    async with state.proxy() as data:
+        data['age'] = message.text
+        keyboard = types.InlineKeyboardMarkup(row_width=2)
+        buttons = [
+            types.InlineKeyboardButton(text='Москва', callback_data='moscow'),
+            types.InlineKeyboardButton(text='Санкт-Петербург', callback_data='piter'),
+        ]
+        keyboard.add(*buttons)
+        await message.reply("Выбирай город о котором хочешь узнать.", reply_markup=keyboard)
+        await state.finish()
+
+
+@dp.callback_query_handler(lambda c: c.data in ['moscow', 'piter', 'volgograd', ...])
+async def handle_city_selection(callback_query: types.CallbackQuery):
+    city_data = {
+        'moscow': {'text': mos, 'photos': mos_photo},
+        'piter': {'text': pit, 'photos': pit_photo},
+    }
+    city_info = city_data.get(callback_query.data)
+    if city_info:
+        await bot.send_message(callback_query.message.chat.id, city_info['text'], parse_mode=ParseMode.HTML)
+        await bot.send_photo(callback_query.message.chat.id, random.choice(city_info['photos']))
+    await callback_query.answer()
+
+
+if __name__ == '__main__':
+    executor.start_polling(dp, skip_updates=True)
