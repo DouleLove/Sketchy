@@ -1,0 +1,14 @@
+{% extends "form.html" %}
+
+{% block form_title %}Авторизация{% endblock %}
+
+{% block additional_buttons %}
+<div class="switcher" id="button-signup-redirect">
+    <span>Зарегестрироваться</span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/auth-form.js') }}" defer></script>
+{% endblock %}
