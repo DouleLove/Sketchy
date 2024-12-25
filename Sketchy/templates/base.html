@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+{% set origin_url = request.url.replace('//', ' ').replace('/', '  ').split('  ')[0].replace(' ', '//') %}
+
+<html lang="en">
+    <head>
+        {% block meta %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% endblock %}
+        <title>{% block title %}{{ title | default('Sketchy') }}{% endblock %}</title>
+        <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}">
+        {% block stylesheets %}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div id="nav-wrapper">
+                    <a href="{{ origin_url }}" id="img-logo-nav-wrapper">
+                        <img id="img-logo-nav" src="{{ url_for('static', filename='img/logo-long.svg') }}">
+                    </a>
+                    <div class="nav-buttons">
+                        <a class="nav-btn" href="{{ origin_url }}">
+                            <span>Главная</span>
+                        </a>
+                        {% if current_user.is_authenticated %}
+                            <a class="nav-btn" id="user-avatar-wrapper" href="{{ origin_url }}/profile">
+                                <img id="user-avatar" src="{{ current_user.avatar }}">
+                            </a>
+                        {% else %}
+                            <a class="nav-btn" href="{{ origin_url }}/auth">
+                                <span>Войти</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main>
+            {% block main %}{% endblock %}
+            <section id="section-pop-ups">
+                <svg id="btn-pop-up-close" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" xml:space="preserve">
+                    <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
+                </svg>
+                <div class="wrapper-pop-up"></div>
+            </section>
+            <section id="section-messages"></section>
+            {% block scripts %}
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/base.js') }}" defer></script>
+            {% endblock %}
+        </main>
+    </body>
+</html>

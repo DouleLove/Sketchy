@@ -1,0 +1,446 @@
+#section-carousel {
+    width: 100vw;
+    height: 100vh;
+}
+
+.carousel {
+    background-color: rgba(0, 0, 0, .6);
+}
+
+.carousel-inner .carousel-item {
+  transition: -webkit-transform .5s;
+  transition: transform .5s;
+  transition: transform .5s, -webkit-transform .5s;
+}
+
+.d-block {
+    width: 100vw;
+    height: 100vh;
+    filter: brightness(85%);
+    object-fit: cover;
+}
+
+.preview-upper {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.preview-text-flex-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+#preview-text {
+    max-width: 25%;
+    margin-left: 5%;
+    margin-top: 10%;
+    display: flex;
+}
+
+#preview-text_span {
+    font-size: 70px;
+    font-weight: bold;
+    font-family: arial;
+    color: white;
+    text-shadow: 2px 2px 2px grey;
+    line-height: 95px;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.previews-overview-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.previews-overview {
+    display: flex;
+    justify-content: space-evenly;
+    margin-right: 5rem;
+}
+
+.preview-showcase {
+    width: 9rem;
+    height: 5rem;
+    margin: 1rem;
+    margin-top: 100%;
+    border-radius: 15px;
+    filter: brightness(40%);
+}
+
+.preview-showcase:not(.active) {
+    cursor: pointer;
+}
+
+.preview-title {
+    color: white;
+    font-size: 80px;
+}
+
+.container-steps {
+    display: flex;
+    justify-content: center;
+    margin-block: 5rem;
+}
+
+.wrapper-left-align {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.steps-ttl {
+    font-size: 48px;
+    font-weight: bold;
+    margin-left: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.container-bsteps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.container-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-bg {
+    background-image: linear-gradient(-45deg, rgb(165, 111, 199), rgb(91, 32, 128));
+    background-image: linear-gradient(-45deg, rgb(66, 95, 166), rgb(34, 63, 133));
+    background-size: 400% 100%;
+    animation: stepsGradient 10s ease infinite;
+    width: 15rem;
+    height: 15rem;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-desc {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.step-icon {
+    width: 50%;
+    height: 50%;
+}
+
+.container-step {
+    margin-inline: 3rem;
+}
+
+.double-arrow-steps {
+    height: 50px;
+    width: 50px;
+}
+
+#random-sketch-bg {
+    background-image: url('/static/img/stars-sky.jpg');
+    animation: bgZoomInOut 50s linear infinite;
+    background-size: cover;
+    width: 100%;
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#random-sketch-wrapper {
+    height: 100%;
+    width: 20%;
+    cursor: pointer;
+}
+
+#random-sketch-clickable {
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/img/logo.svg');
+    background-size: 60% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 1000ms;
+}
+
+#random-sketch-wrapper:hover > #random-sketch-clickable {
+    background-size: 80% auto;
+    transform: rotate(360deg);
+}
+
+.search-container {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+.search-line-outer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.search-line {
+    width: 40%;
+    border: 1px solid rgb(181, 181, 181);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    transition: box-shadow 200ms ease, border 100ms ease;
+    z-index: 1;
+}
+
+.search-line:focus-within:has(input[type='search']:focus) {
+    border: 1px solid rgb(91, 133, 227);
+    box-shadow: 3px 3px 27px rgba(91, 133, 227, 0.37);
+}
+
+.search-input {
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+    border-radius: inherit;
+}
+
+.search-rules-container {
+    width: 30%;
+    overflow: hidden;
+    height: 0px;
+    transition: height 300ms ease-in-out;
+    background-color: white;
+}
+
+.search-container:focus-within:has(input[type='search']:focus) > .search-rules-container {
+    height: 20rem;
+    overflow: hidden;
+    box-shadow: 3px 3px 9px 3px rgba(205, 205, 205, 0.75);
+}
+
+.search-rule {
+    display: flex;
+    width: 100%;
+    height: 5rem;
+    align-items: center;
+    border-block: 1px solid white;
+    box-shadow: 0 0 1px rgba(140, 140, 140, 0.75);
+    transition: background-color 100ms ease;
+    cursor: pointer;
+}
+
+.search-rule:hover {
+    background-color: rgb(245, 245, 245);
+}
+
+.search-rule-icon-container {
+    margin-left: 0.5rem;
+    background-color: rgb(195, 121, 237);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-rule-icon {
+    width: 50%;
+    height: 50%;
+}
+
+.search-rule-text-wrapper {
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.search-rule-title {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.search-rule-desc {
+    font-size: 13px;
+}
+
+.search-rule-selected-icon-ppv-container {
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    margin-left: 10px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: default !important;
+}
+
+#form-search:focus-within > .search-rule-selected-icon-ppv-container {
+    cursor: pointer !important;
+}
+
+.search-rule-selected-icon-ppv {
+    width: 75%;
+    height: 75%;
+}
+
+#form-search {
+    display: flex;
+    width: 100%;
+    border-radius: 15px;
+}
+
+#container-sketches {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#container-sketches-inner {
+    margin-top: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sketches-row {
+    display: flex;
+}
+
+.sketch-item {
+    margin-bottom: 50px;
+    margin-right: 25px;
+    margin-left: 25px;
+}
+
+#wrapper-btn-load-more {
+    width: 100%;
+    height: 3rem;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#btn-load-more {
+    background-color: rgb(248, 249, 250);
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: border 500ms ease;
+}
+
+#btn-load-more:hover {
+    border: 1.5px solid rgb(91, 133, 227);
+}
+
+#icon-load-more {
+     fill: rgb(91, 133, 227);
+     width: 50%;
+     height: 50%
+}
+
+#container-sketches-inner:has(.msg-nothing-found) {
+    margin-top: 120px;
+}
+
+.msg-nothing-found {
+    font-weight: bold;
+    font-size: 17px;
+    margin-bottom: 10rem;
+}
+
+@keyframes bgZoomInOut {
+    0%, 100% {
+        background-size: 100% 300%;
+    }
+    50% {
+        background-size: 103% 310%;
+    }
+}
+
+@keyframes stepsGradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@media screen and (max-width: 1300px) {
+    #preview-text_span {
+        font-size: 60px;
+        line-height: 65px;
+    }
+    .previews-overview {
+        margin-right: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .preview-text-flex-wrapper {
+        justify-content: center;
+    }
+    #preview-text_span {
+        font-size: 60px;
+        line-height: 65px;
+    }
+    #preview-text {
+        max-width: 100%;
+        margin-top: 35%;
+
+    }
+    #preview-additional {
+        max-width: 100%;
+    }
+    .preview-showcase {
+        width: 5rem;
+    }
+    .previews-overview-wrapper {
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    #preview-text_span {
+        font-size: 40px;
+        line-height: 45px;
+    }
+}
