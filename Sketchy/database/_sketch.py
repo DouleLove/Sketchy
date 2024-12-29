@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 __all__ = (
     'Sketch',
 )
 
+import random
+
 import sqlalchemy
 import sqlalchemy.orm as orm
-from flask import url_for
+from flask import url_for, g
 
 from . import BaseModel
 
@@ -28,3 +32,10 @@ class Sketch(BaseModel):
     @image.setter
     def image(self, value):
         self.image_name = value
+
+    @classmethod
+    def random(cls) -> Sketch:
+        query = g.session.query(cls)
+        row_count = int(query.count())
+        row = query.offset(random.randrange(row_count)).limit(1).first()
+        return row
