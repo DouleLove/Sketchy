@@ -1,3 +1,7 @@
+import {loadPopUp} from './base.js';
+import {setupSketchPopUp} from './sketch.js';
+
+
 export function encodeURL(url) {
     const parameters = getURLParameters(url == undefined ? window.location.href : url);
     for (let param in parameters) {
@@ -96,4 +100,16 @@ export function animateOpacity(elem, values, duration=1000) {
 
     keyframes.sort((a, b) => a['offset'] - b['offset']);
     elem.animate(keyframes, {'duration': duration, 'iterations': 1, 'fill': 'forwards'});
+}
+
+
+export function loadSketchPopUp(sid) {
+    sid = sid ? sid : getURLParameters().sid;
+
+    const params = {}
+    if (sid) {
+        params.sid = sid;
+    }
+
+    loadPopUp(window.location.origin + '/sketch', params, setupSketchPopUp);
 }

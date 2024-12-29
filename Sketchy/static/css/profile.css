@@ -190,6 +190,12 @@ html, body, main {
     justify-content: space-between;
 }
 
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .action-button > svg {
     height: 1.2rem;
     width: 1.2rem;
@@ -293,4 +299,120 @@ html, body, main {
 
 #btn-add-sketch:hover {
     background-color: rgb(70, 121, 235);
+}
+
+@media screen and (max-width: 1700px) {
+    #section-user-info {
+        left: 210px;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    #section-user-info {
+        width: 20%;
+    }
+    .wrapper-avatar {
+        width: 20vw;
+        height: 20vw;
+    }
+    #section-content {
+        margin-left: 360px;
+    }
+}
+
+@media screen and (max-width: 1500px) {
+    #section-user-info {
+        left: 230px;
+    }
+    #section-content {
+        margin-left: 400px;
+    }
+}
+
+@media screen and (max-width: 1340px) {
+    #section-user-info {
+        left: 100px;
+    }
+    #section-content {
+        margin-left: 360px;
+    }
+    #section-user-info {
+        width: 25%;
+    }
+    .wrapper-avatar {
+        width: 22vw;
+        height: 22vw;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    #section-user-info {
+        left: 70px;
+    }
+    #section-content {
+        margin-left: 360px;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .main-inner {
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        margin-top: 7rem;
+    }
+    #section-user-info {
+        position: static;
+        margin-left: 3rem;
+    }
+    #section-content {
+        margin-left: 0;
+    }
+    #section-content {
+        margin-top: 50px;
+    }
+    #section-user-info {
+        width: 35%;
+    }
+    .wrapper-avatar {
+        width: 27vw;
+        height: 27vw;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #section-user-info {
+        width: 45%;
+    }
+    .wrapper-avatar {
+        width: 33vw;
+        height: 33vw;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .view-upper-panel {
+        width: 95%;
+        margin-left: 2.5%;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    #section-user-info {
+        width: 55%;
+    }
+    .wrapper-avatar {
+        width: 43vw;
+        height: 43vw;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #section-user-info {
+        width: 80%;
+    }
+    .wrapper-avatar {
+        width: 53vw;
+        height: 53vw;
+    }
 }

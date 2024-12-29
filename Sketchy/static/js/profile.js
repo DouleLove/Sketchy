@@ -1,20 +1,9 @@
-import {addRendered, loadPopUp} from './base.js';
-import {getURLParameters, formatURL, encodeURL} from './utils.js';
+import {addRendered} from './base.js';
+import {getURLParameters, formatURL, encodeURL, loadSketchPopUp} from './utils.js';
 import {ViewLoader} from './loaders.js';
 import {setupSketchPopUp} from './sketch.js';
 
 var loader;
-
-
-function loadSketchPopUp(sid) {
-    sid = sid ? sid : getURLParameters().sid;
-
-    if (!sid) {
-        return;
-    }
-
-    loadPopUp(window.location.origin + '/sketch', {'sid': sid}, setupSketchPopUp);
-}
 
 
 function loadMessages(data) {
@@ -32,7 +21,9 @@ function reqView(sender) {
         loader.limit = loader.view == 'sketches' ? 10 : 30;
     }
     const urlParams = getURLParameters();
-    urlParams.uid = $('meta[name="uid"]').attr('content');
+    if (!urlParams.username) {
+        urlParams.uid = $('meta[name="uid"]').attr('content');
+    }
     urlParams.view = loader.view;
     const shareURL = encodeURL(formatURL(window.location.href.split('?')[0], urlParams));
     window.history.replaceState({}, '', shareURL);
@@ -273,7 +264,15 @@ function main() {
     document.getElementById('btn-load-more').addEventListener('click', () => {
         reqView();
     });
-    loadSketchPopUp();
+    const btnShare = document.getElementById('button-share');
+    btnShare.addEventListener('click', (e) => {
+        let href = window.location.href;
+        const partial = href.split('?')[0];
+        const urlParams = getURLParameters();
+        delete urlParams.view
+        href = encodeURL(formatURL(partial, urlParams))
+        window.navigator.clipboard.writeText(href);
+    })
 }
 
 

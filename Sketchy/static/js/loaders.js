@@ -22,6 +22,7 @@ class _Loader {
         for (let key in this._kwds) {
             urlParams[key] = this._kwds[key];
         }
+        urlParams['noload'] = true;
 
         const reqURL = encodeURL(formatURL(window.location.href.split('?')[0], urlParams));
 
@@ -41,16 +42,8 @@ class _Loader {
 
 export class SearchLoader extends _Loader {
 
-    constructor(limit=0, offset=0, rule='any', query='') {
-        super(limit, offset, {'rule': rule});
-    }
-
-    get rule() {
-        return this._kwds.rule;
-    }
-
-    set rule(value) {
-        this._kwds.rule = value;
+    constructor(limit=0, offset=0, query='') {
+        super(limit, offset, {'query': query});
     }
 
     get query() {

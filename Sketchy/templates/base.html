@@ -22,9 +22,27 @@
                     <a href="{{ origin_url }}" id="img-logo-nav-wrapper">
                         <img id="img-logo-nav" src="{{ url_for('static', filename='img/logo-long.svg') }}">
                     </a>
+                    <div class="search-container">
+                        <div class="search-line-outer">
+                            <div class="search-line">
+                                <form id="form-search" autocomplete="off">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="search-icon-container">
+                                        <svg class="search-icon" fill="rgba(235, 237, 240, .8)" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 590.4 590.4" xml:space="preserve">
+                                            <path d="M484.1,454.796l-110.5-110.6c29.8-36.3,47.6-82.8,47.6-133.4c0-116.3-94.3-210.6-210.6-210.6S0,94.496,0,210.796 s94.3,210.6,210.6,210.6c50.8,0,97.4-18,133.8-48l110.5,110.5c12.9,11.8,25,4.2,29.2,0C492.5,475.596,492.5,463.096,484.1,454.796z M41.1,210.796c0-93.6,75.9-169.5,169.5-169.5s169.6,75.9,169.6,169.5s-75.9,169.5-169.5,169.5S41.1,304.396,41.1,210.796z"/>
+                                        </svg>
+                                    </button>
+                                    <input spellcheck="false" name="search-input" class="search-input" type="search" placeholder="Поиск входновения">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <div class="nav-buttons">
                         <a class="nav-btn" href="{{ origin_url }}">
                             <span>Главная</span>
+                        </a>
+                        <a class="nav-btn" href="{{ origin_url }}/sketches">
+                            <span>Скетчи</span>
                         </a>
                         {% if current_user.is_authenticated %}
                             <a class="nav-btn" id="user-avatar-wrapper" href="{{ origin_url }}/profile">

@@ -1,74 +1,4 @@
-import {animateBrightness, animateOpacity, getURLParameters, encodeURL, formatURL} from './utils.js';
-import {SearchLoader} from './loaders.js';
-import {loadPopUp} from './base.js'
-import {setupSketchPopUp} from './sketch.js';
-
-var loader;
-
-
-function loadSketchPopUp(sid) {
-    sid = sid ? sid : getURLParameters().sid;
-
-    const params = {}
-    if (sid) {
-        params.sid = sid;
-    }
-
-    loadPopUp(window.location.origin + '/sketch', params, setupSketchPopUp);
-}
-
-
-function reqLoad(additional=false, onsuccess=null) {
-    const rule = $('.search-rule.selected').attr('data-rule');
-    const query = $('.search-input').val();
-
-    if (!loader || loader.rule != rule || additional == false) {
-        loader = new SearchLoader();
-        loader.limit = 30;
-        loader.rule = rule;
-        loader.query = query;
-    }
-
-    try {
-        let cd = '';
-        loader.request().then((data) => {
-            if (additional == false) {
-                $('#container-sketches-inner-ctn').empty();
-            }
-            let d = $('<div>' + data.rendered + '</div>').find('.sketch-item');
-            let l_ = d.length;
-            d.each((i, elem) => {
-                cd += $(elem).get(0).outerHTML;
-                let e = '<div class="sketches-row">' + cd + '</div>';
-                if ($(e).find('.sketch-item').length == 2) {
-                    cd = '';
-                    $('#container-sketches-inner-ctn').append(e);
-                }
-                if (i == l_ - 1 && $(e).find('.sketch-item').length == 1) {
-                    $('#container-sketches-inner-ctn').append(e);
-                }
-                const r = $('#container-sketches-inner-ctn').children().last();
-                if (r) {
-                    $(r).children().each((i, elem) => elem.addEventListener('click',
-                        (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid')))
-                    );
-                }
-            });
-            if (!loader.active) {
-                $('#btn-load-more').hide();
-            } else {
-                $('#btn-load-more').show();
-            }
-            if (onsuccess != null) {
-                onsuccess();
-            }
-        });
-    } catch (e) {
-        if (e instanceof TypeError) {
-            return;
-        }
-    }
-}
+import {animateBrightness, animateOpacity, loadSketchPopUp} from './utils.js';
 
 
 function setupAnimations() {
@@ -123,70 +53,17 @@ function setupAnimations() {
     animateOpacity(document.getElementById('preview-text'), {0: 0, 0.5: 0, 1: 1})
 }
 
-function setupSearch() {
-    const searchRules = Array.from(document.getElementsByClassName('search-rule'));
-    searchRules.forEach(
-        (elem) => elem.addEventListener('mousedown', (clickEvent) => {
-            clickEvent.preventDefault();  // cancel input to unfocus
-            const currentSelected = document.getElementsByClassName('search-rule selected')[0];
-            const newSelected = clickEvent.currentTarget;
-            if (newSelected == currentSelected) { return; }
-            if (currentSelected) {
-                currentSelected.classList.remove('selected');
-            }
-            newSelected.classList.add('selected');
-            const iconSVG = newSelected.children[0].children[0].cloneNode(true);
-            iconSVG.classList.remove(...iconSVG.classList);
-            iconSVG.classList.add('search-rule-selected-icon-ppv')
-            const ppv = document.getElementsByClassName('search-rule-selected-icon-ppv-container')[0];
-            ppv.replaceChildren();
-            ppv.appendChild(iconSVG);
-        })
-    );
-    searchRules[0].dispatchEvent(new Event('mousedown', {view: window, bubbles: true, cancelable: false}));
-}
-
 
 function main() {
     setupAnimations();
-    setupSearch();
-    document.getElementById('form-search').addEventListener('submit', (e) => {
-        e.preventDefault();
-        $('.search-input').blur();
-        reqLoad(false, () => {
-            if (!document.getElementById('container-sketches-inner-ctn').innerHTML) {
-                const HTMLMsg = '<span class="msg-nothing-found">По вашему запросу ничего не найдено</span>';
-                document.getElementById('container-sketches-inner-ctn').innerHTML = HTMLMsg;
-            }
-        });
-    });
-    document.getElementById('btn-load-more').addEventListener('click', () => {
-        reqLoad(true);
-    });
-
-    const sid = +(getURLParameters().sid || 0)
-    if (sid) {
-        loadSketchPopUp(sid);
-    }
     $('#random-sketch-wrapper').on('click', () => loadSketchPopUp());
-
-    const urlParams = getURLParameters();
-    if (urlParams.hook) {
-        const searchRule = urlParams.hook;
-        const val = urlParams[searchRule];
-        $(`.search-rule[data-rule="${searchRule}"]`).get(0).dispatchEvent(new Event('mousedown'));
-        $('input[name="search-input"]').val(val);
-        document.getElementById('form-search').dispatchEvent(new Event('submit'));
-        $(document).ready(
-            () => {
-                window.scroll({top: 0, behavior: 'instant'});
-                const y = document.getElementById('section-sketches').getBoundingClientRect().top - 65;
-                setTimeout(() => window.scroll({top: y, behavior: 'smooth'}), 600)
-            }  // wait 600ms before scroll
-        );
-    } else {
-        reqLoad();
-    }
+    addEventListener('resize', (e) => {
+        const step = document.getElementsByClassName('step-bg')[0];
+        const x = step.getBoundingClientRect().left;
+        const stepsTitle = document.getElementsByClassName('steps-ttl')[0];
+        stepsTitle.style.marginLeft = x + 'px';
+    })
+    window.dispatchEvent(new Event('resize'));
 }
 
 main();

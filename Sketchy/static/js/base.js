@@ -1,4 +1,5 @@
-import {encodeURL, getURLParameters, formatURL} from './utils.js'
+import {getURLParameters, encodeURL, formatURL, loadSketchPopUp} from './utils.js';
+import {setupSketchPopUp} from './sketch.js';
 
 
 export function addRendered(elem) {
@@ -39,6 +40,12 @@ function markActiveNavButton() {
 
     for (const btn of navButtons) {
         if (btn.href == currentUrl) {
+            const uid = $('meta[name="uid"]').attr('content');
+            const cuuid = $('meta[name="cu-uid"]').attr('content');
+            if (uid && cuuid && uid !== cuuid) {
+                return;
+            }
+            btn.onclick = (e) => {e.preventDefault()};
             return btn.classList.add('active');
         }
     }
@@ -56,6 +63,14 @@ function main() {
         }
         window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
     });
+    document.getElementById('form-search').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = $('input[name="search-input"]').val();
+        if (!val) {
+            return;
+        }
+        window.location.href = window.location.origin + `/sketches?query=${val}`;
+    })
 }
 
 

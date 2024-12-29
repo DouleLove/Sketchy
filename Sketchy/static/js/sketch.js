@@ -5,10 +5,14 @@ import {getURLParameters, formatURL, encodeURL} from './utils.js'
 export function setupSketchPopUp() {
     document.getElementById('btn-sketch-place').addEventListener('click', (e) => {
         window.location.href = encodeURL(
-            window.location.origin + `?hook=place&place=${e.currentTarget.children[1].innerHTML}`
+            window.location.origin + `/sketches?query=${e.currentTarget.children[1].innerHTML}`
         );
     })
-    document.getElementById('form-delete-sketch').addEventListener('submit', (e) => {
+    const btnDeleteSketch = document.getElementById('form-delete-sketch')
+    if (!btnDeleteSketch) {
+        return;
+    }
+    btnDeleteSketch.addEventListener('submit', (e) => {
         e.preventDefault();
 
         $.ajax({

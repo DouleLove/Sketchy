@@ -83,9 +83,9 @@ nav {
 }
 
 #img-logo-nav-wrapper {
-    height: 80%;
-    width: 20%;
-    margin-left: 1rem;
+    height: 12rem;
+    width: 16rem;
+    padding-left: 2rem;
 }
 
 #img-logo-nav {
@@ -127,17 +127,15 @@ nav {
     object-fit: cover;
     border: 2px solid rgba(235, 237, 240, .8);
     border-radius: 50%;
-    transition: border-radius 300ms, border-color 300ms;
+    transition: border-color 300ms;
 }
 
 .nav-btn:hover > #user-avatar {
     border-color: rgb(235, 237, 240);
-    border-radius: 40%;
 }
 
 .nav-btn.active > #user-avatar {
     border-color: rgb(91, 133, 227);
-    border-radius: 40%;
     transition: border-color 300ms
 }
 
@@ -244,4 +242,75 @@ body:has(.wrapper-pop-up:not(:empty)) {
 .response-description {
     font-size: 12px;
     color: rgb(55, 57, 63);
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.search-line-outer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.search-line {
+    width: 100%;
+    border: 1px solid rgb(181, 181, 181);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    transition: box-shadow 200ms ease, border 100ms ease;
+    z-index: 1;
+}
+
+.search-line:focus-within:has(input[type='search']:focus) {
+    border: 1px solid rgb(91, 133, 227);
+    box-shadow: 3px 3px 27px rgba(91, 133, 227, 0.37);
+}
+
+.search-input {
+    border-radius: 5px;
+    padding: 5px;
+    width: 20rem;
+    border-radius: inherit;
+    background-color: transparent;
+    color: rgba(235, 237, 240, .8);
+}
+
+.search-icon {
+    width: 75%;
+    height: 75%;
+}
+
+.search-icon-container {
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    margin-left: 10px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: default !important;
+}
+
+#form-search:focus-within > .search-icon-container {
+    cursor: pointer !important;
+}
+
+.search-icon {
+    width: 75%;
+    height: 75%;
+}
+
+#form-search {
+    display: flex;
+    width: 100%;
+    border-radius: 15px;
 }
