@@ -3,7 +3,6 @@ __all__ = ()
 import os
 import uuid
 from datetime import datetime
-from random import randint
 
 from flask import Blueprint, redirect, render_template, url_for, request, abort, jsonify, g
 from flask_login import LoginManager, login_user, current_user, logout_user
@@ -39,52 +38,13 @@ def load_user(uid):
 
 @blueprint.route('/')
 def index():
-    is_system_call = request.args.get('rule') is not None and request.args.get('query') is not None
+    previews = [
+        url_for('static', filename=f'img/{filename}')
+        for filename in os.listdir(MEDIA_PATH) if filename.startswith('preview-sketch')
+    ]  # gets previews filenames and then convert them to relative path (from static)
 
-    if not is_system_call:
-        previews = [
-            url_for('static', filename=f'img/{filename}')
-            for filename in os.listdir(MEDIA_PATH) if filename.startswith('preview-sketch')
-        ]  # gets previews filenames and then convert them to relative path (from static)
+    return render_template('index.html', previews=previews)
 
-        return render_template('index.html', previews=previews)
-
-    limit = request.args.get('limit', 0, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    rule = request.args.get('rule', 'any')
-    query = request.args.get('query', '').lower()
-
-    session = g.session
-
-    matching = []
-    for entry in session.query(Sketch).all():
-        if rule == 'author':
-            values = (entry.author.username, entry.author.login)
-        elif rule == 'place':
-            values = (entry.place,)
-        elif rule == 'title':
-            values = (entry.name,)
-        elif rule == 'any':
-            values = (entry.name, entry.place, entry.author.username, entry.author.login)
-        else:
-            return abort(404)
-
-        mc = 0
-        match = False
-        for value in values:
-            c = coincidence(value.lower(), query)
-            if c > mc:
-                mc = c
-            if query in value.lower():
-                match = True
-
-        if mc >= 0.7 or match is True and entry not in map(lambda x: x[0], matching):
-            matching.append((entry, mc))
-
-    matching.sort(key=lambda m: (m[1] if query else True, m[0].time_created, m[0].id), reverse=True)
-    return jsonify(status=200, data={'results_left': max(len(matching) - offset - limit, 0)},
-                   rendered='\n'.join(render_template('sketch-preview.html', sketch=match[0])
-                                      for match in matching[offset:offset + limit]))
 
 
 @blueprint.route('/sketch', methods=['GET', 'DELETE'])
@@ -92,10 +52,10 @@ def sketch():
     sid = request.args.get('sid', type=int)
 
     if request.method == 'GET' and sid is None:
-        sid = randint(1, g.session.query(Sketch).count())
+        sid = Sketch.random().id
         return redirect(f'/sketch?{sid=}')
 
-    sk = g.session.query(Sketch).get(sid)
+    sk = g.session.query(Sketch).filter(Sketch.id==sid).first()
 
     if request.method == 'GET':
         if not sk:
@@ -148,7 +108,18 @@ def profile():
     if request.args.get('uid', current_user.is_authenticated) is False:
         return redirect('/auth')  # non-authenticated user tries to check their account, redirect to auth
 
-    user = load_user(request.args.get('uid', getattr(current_user, 'id', None)))
+    uid = request.args.get('uid')
+    login = request.args.get('username')
+    if uid is not None and login is not None:
+        return abort(400)
+
+    if login is not None:
+        user = g.session.query(User).filter(User.unique_name==login).first()
+    elif uid is not None:
+        user = load_user(uid)
+    else:
+        user = current_user
+
     if user is None:
         return abort(404)  # request provided invalid uid
 
@@ -259,3 +230,46 @@ def sketch_create():
     session.commit()
 
     return redirect(request.args.get('referrer', '/profile'))
+
+
+@blueprint.route('/sketches', methods=['GET', 'POST'])
+def sketches():
+    is_system_call = request.args.get('limit') is not None and request.args.get('offset') is not None
+
+    if not is_system_call:
+        return render_template('sketches.html')
+
+    limit = request.args.get('limit', 30, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    query = request.args.get('query', '').lower()
+
+    session = g.session
+
+    matching = []
+    for entry in session.query(Sketch).all():
+        values = (
+            entry.name,
+            entry.place,
+            entry.author.username,
+            entry.author.login,
+        )
+
+        mc = 0
+        match = False
+        for value in map(str.lower, values):  # type: ignore
+            if query in value:
+                c = 0.95
+            elif value in query:
+                c = sum(coincidence(v, query) for v in values)
+            else:
+                c = coincidence(value, query)
+            if c > mc:
+                mc = c
+
+        if mc >= 0.7 or match is True and entry not in map(lambda x: x[0], matching):
+            matching.append((entry, mc))
+
+    matching.sort(key=lambda m: (m[1] if query else True, m[0].time_created, m[0].id), reverse=True)
+    return jsonify(status=200, data={'results_left': max(len(matching) - offset - limit, 0)},
+                   rendered='\n'.join(render_template('sketch-preview.html', sketch=match[0])
+                                      for match in matching[offset:offset + limit]))
