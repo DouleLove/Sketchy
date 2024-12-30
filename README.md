@@ -6,9 +6,10 @@ Website written with python/js/html/css stack, where people can share their sket
 <h2>Installing</h2>
 <b>Python 3.10+ is required</b>
 
-To clone repository use the following command:
+To clone repository and move into it use the following commands:
 <pre>
 git clone https://github.com/DouleLove/Sketchy
+cd Sketchy
 </pre>
 
 Then you should install dependencies with:
