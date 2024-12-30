@@ -9,18 +9,19 @@ from flask_wtf import CSRFProtect
 
 import sketchy.settings as settings
 from sketchy.database import Session, User
-from sketchy.utils import mkdirs_if_not_exist
 
 
 class Sketchy:
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Flask:
         app = Flask(*args, **kwargs)
-        cls._setup(app)  # type: ignore
+
+        cls._setup(app)
+
         return app
 
     @classmethod
-    def _setup(cls, app) -> None:
+    def _setup(cls, app: Flask) -> None:
         login_manager = LoginManager()
         login_manager.user_loader(User.get)
         login_manager.init_app(app)
@@ -40,11 +41,6 @@ class Sketchy:
         app.config["UPLOAD_FOLDER"] = settings.MEDIA_ROOT
 
         app.get("/media/<path:filename>")(cls.media)
-
-        mkdirs_if_not_exist(
-            settings.DB_ROOT,
-            settings.MEDIA_ROOT
-        )
 
     @classmethod
     def before_request(cls) -> None:
