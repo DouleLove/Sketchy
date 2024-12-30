@@ -10,7 +10,7 @@ import sketchy.settings as settings
 
 from . import BaseModel
 
-for root in (settings.DB_PATH, settings.MEDIA_ROOT):
+for root in (settings.DB_ROOT, settings.MEDIA_ROOT):
     if not os.path.exists(root):
         os.mkdir(root)
 
