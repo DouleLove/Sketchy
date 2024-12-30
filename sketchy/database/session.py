@@ -1,5 +1,6 @@
 __all__ = ("Session",)
 
+import os.path
 from typing import Any
 
 import sqlalchemy
@@ -8,6 +9,10 @@ import sqlalchemy.orm as orm
 import sketchy.settings as settings
 
 from . import BaseModel
+
+for root in (settings.DB_PATH, settings.MEDIA_ROOT):
+    if not os.path.exists(root):
+        os.mkdir(root)
 
 engine = sqlalchemy.create_engine(
     f"sqlite:///{settings.DB_PATH}?check_same_thread=False", echo=False
