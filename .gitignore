@@ -162,4 +162,5 @@ cython_debug/
 # vscode
 vscode/
 
+# sketchy media folder
 media/
