@@ -1,4 +1,4 @@
-__all__ = ('Sketchy',)
+__all__ = ("Sketchy",)
 
 import runpy
 from typing import Any

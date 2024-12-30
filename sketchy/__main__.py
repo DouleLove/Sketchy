@@ -3,7 +3,6 @@ __title__ = "Sketchy"
 __version__ = "3.11"
 __license__ = "MIT"
 
-
 import sketchy.settings as settings
 from sketchy.app import Sketchy
 

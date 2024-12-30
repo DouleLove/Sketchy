@@ -90,10 +90,7 @@ def profile_view_post_handler(user: User) -> Response:
             if tp.upper() not in settings.ALLOWED_MEDIA_EXTENSIONS:
                 errors[param] = "Неподдерживаемый тип файла"
                 continue
-            if (
-                user.image
-                and os.path.isfile(settings.MEDIA_ROOT / user.image)
-            ):
+            if user.image and os.path.isfile(settings.MEDIA_ROOT / user.image):
                 os.remove(settings.MEDIA_ROOT / user.image)
             # generate unique filename
             while (image_name := f"{uuid.uuid4()}.{tp.lower()}") in os.listdir(

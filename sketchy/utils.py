@@ -1,21 +1,12 @@
 __all__ = (
-    'get_session',
-    'mkdirs_if_not_exist',
-    'request_contains_params',
+    "get_session",
+    "request_contains_params",
 )
-
-import os
 
 import sqlalchemy.orm as orm
 from flask import request
 
 from sketchy.database import BaseModel
-
-
-def mkdirs_if_not_exist(*paths: str) -> None:
-    for path in paths:
-        if not os.path.exists(path):
-            os.mkdir(path)
 
 
 def request_contains_params(*args: str) -> bool:
