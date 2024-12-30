@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block meta %}
+{{ super() }}
+<meta name="uid" content="{{ user.id }}">
+<meta name="cu-uid" content="{{ current_user.id }}">
+{% endblock %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sketch-preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sketch.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user-preview.css') }}">
+{% endblock %}
+
+{% block main %}
+{% set c = 'true' if current_user.id == user.id else 'false' %}
+<div class="main-inner">
+    <section id="section-user-info">
+        <div class="container-user-info">
+            {% if current_user.id == user.id %}
+            <form id="form-avatar" autocomplete="off">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="file" id="input-load-avatar" name="image">
+            </form>
+            <div class="wrapper-avatar">
+                 <img id="user-avatar-pr" src="{{ user.avatar }}" />
+                 <div class="icon-load-wrapper">
+                     <svg id="icon-load" width="800px" height="800px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <path fill-rule="evenodd" d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"/>
+                    </svg>
+                 </div>
+            </div>
+            {% else %}
+            <div class="wrapper-avatar">
+                 <img id="user-avatar-pr" src="{{ user.avatar }}" />
+            </div>
+            {% endif %}
+            <div class="usernames-container">
+                {% if current_user.id == user.id %}
+                <div class="editable-field">
+                    <form id="form-visible-name" autocomplete="off">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <textarea spellcheck="false" class="f-editable" placeholder="Отображаемое имя" autocomplete="off" id="user-visible-username" name="username" maxlength="20">{{ user.username }}</textarea>
+                    </form>
+                    <svg class="icon-supports-stroke btn-edit-field" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                {% else %}
+                <p id="user-visible-username">{{ user.username }}</p>
+                {% endif %}
+                <p id="user-real-username">{{ user.login }}</p>
+            </div>
+            <hr>
+            <div class="information">
+                <p class="stl ttl-information">Информация</p>
+                {% if current_user.id == user.id %}
+                <div class="editable-field">
+                    <form id="form-description" autocomplete="off">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <textarea spellcheck="false" class="f-editable" autocomplete="off" maxlength="200" name="description" id="user-description" placeholder="Описание">{{ user.description }}</textarea>
+                    </form>
+                    <svg class="icon-supports-stroke btn-edit-field" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                {% elif user.description %}
+                <p id="user-description">{{ user.description }}</p>
+                {% endif %}
+                <div class="container-followers-followed">
+                    <div class="fake-link" data-view="sketches">
+                        {% set p = 'скетч' if sketches_num % 10 == 1 and sketches_num != 11 else ('скетча' if sketches_num in (3, 4) or sketches_num % 10 == 2 and sketches_num != 12 else 'скетчей') %}
+                        <span class="spn-bold" id="posts-num">{{ sketches_num }}</span>
+                        <span class="spn-default">{{ p }}</span>
+                    </div>
+                    <span class="bullet spn-default">&#8226;</span>
+                    <div class="fake-link" data-view="followers">
+                        <span class="spn-bold" id="followers-num">{{ followers_num }}</span>
+                        {% set p = 'Подписчик' if followers_num % 10 == 1 and followers_num != 11 else ('Подписчика' if followers_num in (3, 4) or followers_num % 10 == 2 and followers_num != 12 else 'Подписчиков') %}
+                        <span class="spn-default" id="followers-m">{{ p }}</span>
+                    </div>
+                    <span class="bullet spn-default">&#8226;</span>
+                    <div class="fake-link" data-view="follows">
+                        {% set p = 'Подписка' if follows_num % 10 == 1 and follows_num != 11 else ('Подписки' if follows_num in (3, 4) or follows_num % 10 == 2 and follows_num != 12 else 'Подписок') %}
+                        <span class="spn-bold" id="followed-num">{{ user.follows | length }}</span>
+                        <span class="spn-default">{{ p }}</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="user-settings">
+                <div class="action-buttons-container">
+                    {% if current_user.is_authenticated %}
+                    <div class="action-buttons-left-fl">
+                        {% if current_user.id == user.id or current_user.unique_name == user.unique_name %}
+                        <a class="action-button" id="button-logout" href="{{ origin_url }}/logout" data-title="Выйти">
+                            <svg class="icon-supports-fill" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 471.2 471.2" xml:space="preserve">
+                                <path d="M227.619,444.2h-122.9c-33.4,0-60.5-27.2-60.5-60.5V87.5c0-33.4,27.2-60.5,60.5-60.5h124.9c7.5,0,13.5-6,13.5-13.5 s-6-13.5-13.5-13.5h-124.9c-48.3,0-87.5,39.3-87.5,87.5v296.2c0,48.3,39.3,87.5,87.5,87.5h122.9c7.5,0,13.5-6,13.5-13.5 S235.019,444.2,227.619,444.2z M450.019,226.1l-85.8-85.8c-5.3-5.3-13.8-5.3-19.1,0c-5.3,5.3-5.3,13.8,0,19.1l62.8,62.8h-273.9c-7.5,0-13.5,6-13.5,13.5 s6,13.5,13.5,13.5h273.9l-62.8,62.8c-5.3,5.3-5.3,13.8,0,19.1c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4l85.8-85.8 C455.319,239.9,455.319,231.3,450.019,226.1z"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <form method="POST" id="form-favorites" autocomplete="off">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button name="followers" class="action-button" id="button-to-favorites" value="{{ (current_user in user.followers) | lower }}">
+                                <svg class="icon-supports-stroke" id="icon-to-favorites" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 -1 16 17.2">
+                                    <path stroke="black" d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                                </svg>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="action-buttons-right-fl">
+                        <div class="action-button" id="button-share" data-title="Скопировать ссылку на профиль">
+                            <svg class="icon-supports-fill" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
+                                <path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="section-content">
+        <div class="view-upper-panel">
+            <span id="view-title"></span>
+            {% if current_user.id == user.id %}
+            <a id="btn-add-sketch" href="{{ origin_url }}/sketch/create" style="display: none;">
+                <span>Добавить</span>
+            </a>
+            {% endif %}
+        </div>
+        <div id="views-container"></div>
+        <div id="wrapper-btn-load-more">
+            <div id="btn-load-more">
+                <svg id="icon-load-more" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.93 511.93" xml:space="preserve">
+                    <path d="M476.738,280.436c-4.16-4.16-10.88-4.16-15.04,0l-195.2,195.2V10.996c0-5.333-3.84-10.133-9.067-10.88 c-6.613-0.96-12.267,4.16-12.267,10.56v464.96l-195.093-195.2c-4.267-4.053-10.987-3.947-15.04,0.213 c-3.947,4.16-3.947,10.667,0,14.827L248.365,508.81c4.16,4.16,10.88,4.16,15.04,0l213.333-213.333 C480.898,291.423,480.898,284.596,476.738,280.436z"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
+{% endblock %}
