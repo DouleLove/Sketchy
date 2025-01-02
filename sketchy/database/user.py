@@ -14,10 +14,14 @@ followings = sqlalchemy.Table(
     "followers",
     BaseModel.metadata,
     sqlalchemy.Column(
-        "user_id", sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id")
+        "user_id",
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("users.id"),
     ),
     sqlalchemy.Column(
-        "follower_id", sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id")
+        "follower_id",
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("users.id"),
     ),
 )
 
