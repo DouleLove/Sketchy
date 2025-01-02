@@ -27,7 +27,7 @@ python3 -m pip install -r requirements.txt
 py -3 -m pip install -r requirements.txt
 </pre>
 
-Then you can run app with:
+And finally you can run app with:
 
 <pre>
 # Unix/macOS
