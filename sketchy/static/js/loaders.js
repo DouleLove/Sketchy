@@ -34,7 +34,10 @@ class _Loader {
         }
         const response = this._doRequest();
         this.offset += this.limit;
-        return response.then((data) => {if (data.data.results_left || 0 == 0) { this._active = false }; return data;});
+        return response.then((data) => {
+            this._active = !!(data.data.results_left || 0);
+            return data;
+        });
     }
 }
 

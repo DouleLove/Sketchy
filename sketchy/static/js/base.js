@@ -25,7 +25,8 @@ export function loadPopUp(url, params, onsuccess=null) {
         });
         const urlParams = getURLParameters();
         urlParams.sid = data.data.sid;
-        window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
+        console.log(encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
+        window.history.pushState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
 
         if (onsuccess != null) {
             onsuccess();
@@ -59,13 +60,20 @@ function markActiveNavButton() {
 function main() {
     markActiveNavButton();
     window.history.replaceState({}, '', encodeURL());
+    addEventListener('popstate', (e) => {
+        if (getURLParameters().sid) {
+            loadSketchPopUp(getURLParameters().sid)
+        } else {
+            $('.wrapper-pop-up').html('');
+        }
+    })
     $('#btn-pop-up-close').on('click', () => {
         $('.wrapper-pop-up').html('');
         const urlParams = getURLParameters();
         if (urlParams.sid) {
             delete urlParams.sid;
         }
-        window.history.replaceState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
+        window.history.pushState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
     });
     document.getElementById('form-search').addEventListener('submit', (e) => {
         e.preventDefault();

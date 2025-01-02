@@ -229,6 +229,7 @@ body:has(.wrapper-pop-up:not(:empty)) {
 
 .response-text-container {
     margin-left: 1rem;
+    margin-right: 0.5rem;
 }
 
 .response-title {

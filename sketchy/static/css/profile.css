@@ -18,6 +18,7 @@ html, body, main {
 }
 
 #section-content {
+    display: none;
     margin-top: 150px;
     margin-left: 100px;
 }
@@ -297,6 +298,10 @@ html, body, main {
     font-weight: 450;
 }
 
+.nothing-msg {
+    width: 650px;
+}
+
 #btn-add-sketch:hover {
     background-color: rgb(70, 121, 235);
 }
@@ -377,6 +382,12 @@ html, body, main {
     .wrapper-avatar {
         width: 27vw;
         height: 27vw;
+    }
+    #section-content:has(.nothing-msg) > .view-upper-panel {
+        text-align: center;
+    }
+    #views-container:has(.nothing-msg) > .nothing-msg {
+        width: 100%;
     }
 }
 

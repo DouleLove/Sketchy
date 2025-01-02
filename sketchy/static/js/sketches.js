@@ -4,7 +4,7 @@ import {SearchLoader} from './loaders.js';
 var loader;
 
 
-function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true) {
+function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true, updateURL=true) {
     const query = $('.search-input').val();
 
     if (!loader || additional == false) {
@@ -16,10 +16,18 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true) {
     try {
         let cd = '';
         let href = window.location.origin + `/sketches`;
+        const curHrefParams = getURLParameters(window.location.href);
+        if (curHrefParams.sid) {
+            delete curHrefParams.sid;
+        }
+        const curHrefNoSid = formatURL(window.location.href.split('?')[0], curHrefParams);
         if (query) {
             href += `?query=${query}`;
         }
-        if (href == window.location.href && ignoreOnSameURL) {
+        if (
+            getURLParameters().sid && encodeURL(href) == encodeURL(curHrefNoSid)
+            || (href == window.location.href && ignoreOnSameURL)
+        ) {
             return;
         }
         loader.request().then((data) => {
@@ -40,9 +48,12 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true) {
                 }
                 const r = $('#container-sketches-inner-ctn').children().last();
                 if (r) {
-                    $(r).children().each((i, elem) => elem.addEventListener('click',
-                        (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid')))
-                    );
+                    $(r).children().each((i, elem) => {elem.onclick =
+                        (e) => {
+                            e.preventDefault();
+                            loadSketchPopUp(e.currentTarget.getAttribute('data-sid'))
+                        }
+                    });
                 }
             });
             if (!loader.active) {
@@ -50,9 +61,14 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true) {
             } else {
                 $('#btn-load-more').show();
             }
-            window.history.pushState({}, '', href);
+            if (updateURL) {
+                window.history.pushState({}, '', encodeURL(href));
+            }
             if (onsuccess != null) {
                 onsuccess();
+            }
+            if ($('#section-sketches').is(':hidden')) {
+                $('#section-sketches').show()
             }
         });
     } catch (e) {
@@ -63,25 +79,32 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true) {
 }
 
 
-function emitSearch(val) {
+function emitSearch(val, updateURL=true) {
     $('input[name="search-input"]').val(val);
     const e = new Event('submit');
     e.ignoreOnSameURL = false;
+    e.updateURL = updateURL;
     document.getElementById('form-search').dispatchEvent(e);
 }
 
 
 function main() {
-    window.onpopstate = (e) => {
-        emitSearch(getURLParameters(e.currentTarget.href).query);
-    };
+    addEventListener('popstate', (e) => {
+        emitSearch(getURLParameters(e.currentTarget.href).query, false);
+    })
     document.getElementById('btn-load-more').addEventListener('click', () => {
-        reqLoad(true);
+        reqLoad(true, null, false, false);
     });
-    let el = document.getElementById('form-search')
+    let el = document.getElementById('form-search');
     let cloneNode = el.cloneNode(true);
     el.parentNode.replaceChild(cloneNode, el);
     document.getElementById('form-search').addEventListener('submit', (e) => {
+        if (e.updateURL == undefined) {
+            e.updateURL = true;
+        }
+        if (e.ignoreOnSameURL == undefined) {
+            e.ignoreOnSameURL = true;
+        }
         e.preventDefault();
         $('.search-input').blur();
         reqLoad(false, () => {
@@ -89,10 +112,12 @@ function main() {
                 const HTMLMsg = '<span class="msg-nothing-found">По вашему запросу ничего не найдено</span>';
                 document.getElementById('container-sketches-inner-ctn').innerHTML = HTMLMsg;
             }
-        }, e.ignoreOnSameURL ? true : false);
+        },
+        e.ignoreOnSameURL ? true : false,
+        e.updateURL ? true : false);
     });
 
-    const sid = +(getURLParameters().sid || 0)
+    const sid = +(getURLParameters().sid || 0);
     if (sid) {
         loadSketchPopUp(sid);
     }
@@ -101,8 +126,21 @@ function main() {
     if (urlParams.query) {
         emitSearch(urlParams.query);
     } else {
-        reqLoad(false, null, false);
+        reqLoad(false, null, false, false);
     }
+    var ticksFromLastScrollLoad = 100000;
+    addEventListener('scroll', (e) => {
+        if (ticksFromLastScrollLoad < 3) {
+            ticksFromLastScrollLoad += 1;
+            return;
+        }
+        const totalHeight = $(document).height();
+        const scrollY = window.scrollY;
+        if (totalHeight - scrollY < 2000) {
+            $('#btn-load-more').click();
+        }
+        ticksFromLastScrollLoad = 0;
+    });
 }
 
 

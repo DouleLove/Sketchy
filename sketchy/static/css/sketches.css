@@ -1,3 +1,7 @@
+#section-sketches {
+    display: none;
+}
+
 #container-sketches {
     position: relative;
     width: 100%;

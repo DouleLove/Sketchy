@@ -18,7 +18,6 @@ function setupAnimations() {
             });
             element.addEventListener('mouseleave', (event) => {
                 if (!event.target.classList.contains('active')) {
-                    console.log(event.target.style.opacity);
                     animateBrightness(event.target, undefined, 0.4);
                 }
             });

@@ -15,6 +15,7 @@ function loadMessages(data) {
 
 function reqView(sender) {
     if (sender) {
+        $('#section-content').hide();
         document.getElementById('views-container').innerHTML = '';
         loader = new ViewLoader();
         loader.view = sender.getAttribute('data-view');
@@ -45,7 +46,7 @@ function reqView(sender) {
         loader.request().then((data) => {
             $('#views-container').append(data.rendered);
             if (!$.trim($('#views-container').html()).length) {
-                $('#views-container').append('<p style="width: 650px;">Здесь пока ничего нет</p>')
+                $('#views-container').append('<p class="nothing-msg">Здесь пока ничего нет</p>')
             }
             if (!loader.active) {
                 $('#btn-load-more').hide();
@@ -53,7 +54,11 @@ function reqView(sender) {
             [].forEach.call(
                 document.getElementsByClassName('sketch-item'),
                 (i) => i.onclick = (e) => loadSketchPopUp(e.currentTarget.getAttribute('data-sid'))
-            )});
+            );
+            if ($('#section-content').is(':hidden')) {
+                $('#section-content').show();
+            }
+        });
     } catch (e) {
         if (e instanceof TypeError) {
             return;
@@ -242,8 +247,12 @@ function main() {
                     }
                     e.handled = true;
                     reqPost(e.currentTarget.parentElement, function(response) {
-                        const upl = document.getElementById('user-avatar').src.split('/').slice(0, -1).join('/');
-                        const pt = upl + '/' + response.user_data.avatar
+                        let upl = document.getElementById('user-avatar').src.split('/').slice(0, -1).join('/');
+                        if (upl.includes('/static/img')) {
+                            upl = upl.split('/').slice(0, -2).join('/') + '/media';
+                        }
+                        const pt = upl + '/' + response.user_data.avatar;
+                        console.log(upl, pt);
                         document.getElementById('user-avatar').src = pt;
                         document.getElementById('user-avatar-pr').src = pt;
 
@@ -272,7 +281,21 @@ function main() {
         delete urlParams.view
         href = encodeURL(formatURL(partial, urlParams))
         window.navigator.clipboard.writeText(href);
-    })
+    });
+    var ticksFromLastScrollLoad = 100000;
+    addEventListener('scroll', (e) => {
+        if (ticksFromLastScrollLoad < 3) {
+            ticksFromLastScrollLoad += 1;
+            return;
+        }
+        const totalHeight = $(document).height();
+        const scrollY = window.scrollY;
+        console.log(totalHeight, scrollY, document.height);
+        if (totalHeight - scrollY < 2000) {
+            $('#btn-load-more').click();
+        }
+        ticksFromLastScrollLoad = 0;
+    });
 }
 
 
