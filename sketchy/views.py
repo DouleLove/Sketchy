@@ -1,6 +1,6 @@
 __all__ = ()
 
-from http import HTTPMethod
+from http import HTTPMethod, HTTPStatus
 
 from flask import Response, abort, g, redirect, request
 from flask_login import current_user, logout_user
@@ -22,7 +22,7 @@ def sketch_view() -> Response:
 
 
 @g.app.route("/auth", methods=[HTTPMethod.GET, HTTPMethod.POST])
-def auth_view():
+def auth_view() -> Response:
     if current_user.is_authenticated:
         return redirect("/profile")
 
@@ -34,13 +34,13 @@ def auth_view():
 
 
 @g.app.route("/logout")
-def logout_view():
+def logout_view() -> Response:
     logout_user()  # this will ignore non-authenticated users
     return redirect("/")
 
 
 @g.app.route("/profile", methods=[HTTPMethod.GET, HTTPMethod.POST])
-def profile_view():
+def profile_view() -> Response:
     if request.args.get("uid", current_user.is_authenticated) is False:
         # non-authenticated user tries to check their account, redirect to auth
         return redirect("/auth")
@@ -49,7 +49,7 @@ def profile_view():
     login = request.args.get("username")
 
     if uid is not None and login is not None:
-        return abort(400)
+        return abort(HTTPStatus.BAD_REQUEST)
 
     try:
         user = User.get(int(uid), login)  # type: ignore
@@ -57,7 +57,7 @@ def profile_view():
         user = current_user
 
     if user is None:
-        return abort(404)  # request provided invalid uid
+        return abort(HTTPStatus.NOT_FOUND)  # request provided invalid uid
 
     if request.method == HTTPMethod.GET:
         return handlers.profile_view_get_handler(user)
@@ -65,7 +65,7 @@ def profile_view():
 
 
 @g.app.route("/sketch/create", methods=[HTTPMethod.GET, HTTPMethod.POST])
-def sketch_create_view():
+def sketch_create_view() -> Response:
     if not current_user.is_authenticated:
         return redirect("/auth")
 
@@ -78,5 +78,5 @@ def sketch_create_view():
 
 
 @g.app.route("/sketches", methods=[HTTPMethod.GET])
-def sketches_list_view():
+def sketches_list_view() -> Response:
     return handlers.sketches_list_view_get_handler()
