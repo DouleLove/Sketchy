@@ -8,8 +8,8 @@ from sketchy.app import Sketchy
 
 
 def run() -> None:
-    app = Sketchy(__name__)
-    app.run(
+    sketchy = Sketchy()
+    sketchy.run(
         host=settings.SERVER_HOST,
         port=settings.SERVER_PORT,
         debug=settings.DEBUG,

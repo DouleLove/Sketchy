@@ -14,7 +14,7 @@ from sketchy.database import Session, User
 class Sketchy:
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Flask:
-        app = Flask(*args, **kwargs)
+        app = Flask(__name__)
 
         cls._setup(app)
 
