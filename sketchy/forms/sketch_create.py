@@ -1,7 +1,6 @@
 __all__ = ("SketchForm",)
 
 from http import HTTPStatus
-from typing import Any
 
 import requests
 from flask_wtf import FlaskForm
@@ -37,9 +36,6 @@ class SketchForm(FlaskForm):
         label="Продолжить",
     )
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
     @staticmethod
     def validate_image(_, field: FileField) -> None:
         ext = field.data.content_type.split("/")[1].upper()
@@ -61,7 +57,6 @@ class SketchForm(FlaskForm):
 
         response = requests.get(url, params=params)
 
-        print(response.json())
         if response.status_code == HTTPStatus.OK:
             return bool(
                 int(
