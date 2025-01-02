@@ -79,8 +79,14 @@ def profile_view_post_handler(user: User) -> Response:
             if not value:
                 errors[param] = "Отображаемое имя не указано"
                 continue
+            if len(value) > 20:
+                em = "Превышена длина отображаемого имени (максимум 20)"
+                errors[param] = em
+                continue
             user.username = value
         if param == "description":
+            if len(value) > 120:
+                errors[param] = "Превышена длина описания (максимум 120)"
             user.description = value
         if param == "image":
             if (attachment := attachments.get(param)) is None:
