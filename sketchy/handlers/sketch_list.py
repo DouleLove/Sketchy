@@ -9,7 +9,7 @@ from sketchy.database import Sketch
 from sketchy.utils import request_contains_params
 
 
-def _coincidence(a, b):
+def _coincidence(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a, b).ratio()
 
 
@@ -62,15 +62,16 @@ def sketches_list_view_get_handler() -> Response:
     offset = request.args.get("offset", 0, type=int)
     query = request.args.get("query", "").lower()
 
-    items = _search_sketches(query=query, limit=limit, offset=offset)
+    items = _search_sketches(query=query, limit=limit + 1, offset=offset)
 
     return jsonify(
         status=HTTPStatus.OK,
-        data={"results_left": max(0, len(items) - offset - limit)},
+        data={"results_left": max(0, len(items) - limit)},
         rendered="\n".join(
             render_template(
-                template_name_or_list="sketch-preview.html", sketch=item
+                template_name_or_list="sketch-preview.html", sketch=items[idx]
             )
-            for item in items
+            for idx in range(len(items))
+            if idx != limit
         ),
     )
