@@ -1,7 +1,6 @@
 __all__ = ("Sketchy",)
 
 import runpy
-from typing import Any
 
 from flask import Flask, Response, g, send_from_directory
 from flask_login.login_manager import LoginManager
