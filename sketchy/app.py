@@ -1,6 +1,7 @@
 __all__ = ("Sketchy",)
 
 import runpy
+from typing import Any
 
 from flask import Flask, Response, g, send_from_directory
 from flask_login.login_manager import LoginManager
@@ -12,11 +13,14 @@ from sketchy.database import Session, User
 
 class Sketchy:
 
-    def __new__(cls) -> Flask:
-        app = Flask(__name__)
+    def __new__(cls, *args: Any, **kwargs: Any) -> Flask:
+        app = Flask(
+            kwargs.pop("import_name", __name__),
+            *args,
+            **kwargs,
+        )
 
         cls._setup(app)
-
         return app
 
     @classmethod
