@@ -69,3 +69,9 @@
     font-size: 17px;
     margin-bottom: 10rem;
 }
+
+@media screen and (max-width: 850px) {
+    #container-sketches-inner {
+        margin-top: 130px;
+    }
+}

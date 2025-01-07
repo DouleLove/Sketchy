@@ -265,6 +265,9 @@
     .steps-ttl {
         font-size: 26px;
     }
+    .container-steps {
+        margin-top: 45px;
+    }
 }
 
 
@@ -277,7 +280,7 @@
         line-height: 65px;
     }
     #preview-text {
-        max-width: 100%;
+        max-width: 95%;
         margin-top: 35%;
 
     }
@@ -307,5 +310,21 @@
     }
     #random-sketch-wrapper {
         width: 35%;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .container-step {
+        margin-inline: 1rem;
+    }
+    #preview-text_span {
+        font-size: 50px;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    #preview-text_span {
+        font-size: 30px;
+        line-height: 45px;
     }
 }

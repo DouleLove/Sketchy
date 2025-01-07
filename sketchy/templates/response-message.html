@@ -11,7 +11,7 @@
         {% endif %}
     </div>
     <div class="response-text-container">
-        {% set title = title if title else ('Успех' if status == 200 else 'Ошибка') %}
+        {% set title = title if title else ('Успешно' if status == 200 else 'Ошибка') %}
         <p class="response-title">{{ title }}</p>
         {% if description %}
             <p class="response-description">{{ description }}</p>

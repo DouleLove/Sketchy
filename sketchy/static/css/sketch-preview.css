@@ -84,8 +84,52 @@
     font-weight: 450;
 }
 
+@media screen and (max-width: 1400px) {
+    .sketches-row > .sketch-item {
+        width: 550px;
+        height: 400px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .sketches-row > .sketch-item {
+        width: 480px;
+        height: 400px;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .sketches-row {
+        flex-direction: column;
+    }
+    .sketches-row > .sketch-item {
+        width: 650px;
+        height: 500px;
+        margin-inline: 0;
+    }
+}
+
 @media screen and (max-width: 650px) {
+    #views-container {
+        width: 100vw;
+    }
+    .sketches-row > .sketch-item {
+        width: 100vw;
+    }
+    #views-container > .sketch-item {
+        width: 100vw;
+    }
     .sketch-item {
         width: 100vw;
+
+    }
+    .btn-more {
+        display: none;
+    }
+    .sketch-image {
+        border-radius: 0;
+    }
+    .footer {
+        border-radius: 0;
     }
 }

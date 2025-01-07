@@ -41,7 +41,7 @@ function reqView(sender) {
 
     try {
         if (loader.active) {
-            $('#btn-load-more').show();
+            $('#wrapper-btn-load-more').show();
         }
         loader.request().then((data) => {
             $('#views-container').append(data.rendered);
@@ -49,7 +49,7 @@ function reqView(sender) {
                 $('#views-container').append('<p class="nothing-msg">Здесь пока ничего нет</p>')
             }
             if (!loader.active) {
-                $('#btn-load-more').hide();
+                $('#wrapper-btn-load-more').hide();
             }
             [].forEach.call(
                 document.getElementsByClassName('sketch-item'),
@@ -213,6 +213,14 @@ function setupEditable() {
             });
         }
     );
+    addEventListener('keydown', (e) => {
+        if (e.key != 'Enter') {
+            return;
+        }
+        if (e.key == 'Enter' && document.activeElement.classList.contains('f-editable')) {
+            e.preventDefault();
+        }
+    });
 }
 
 
@@ -252,7 +260,6 @@ function main() {
                             upl = upl.split('/').slice(0, -2).join('/') + '/media';
                         }
                         const pt = upl + '/' + response.user_data.avatar;
-                        console.log(upl, pt);
                         document.getElementById('user-avatar').src = pt;
                         document.getElementById('user-avatar-pr').src = pt;
 
@@ -290,7 +297,6 @@ function main() {
         }
         const totalHeight = $(document).height();
         const scrollY = window.scrollY;
-        console.log(totalHeight, scrollY, document.height);
         if (totalHeight - scrollY < 2000) {
             $('#btn-load-more').click();
         }

@@ -1,4 +1,5 @@
 html, body, main {
+    width: 100%;
     height: 100%;
 }
 
@@ -85,15 +86,15 @@ html, body, main {
     cursor: text;
 }
 
-.editable-field > *:not(svg) {
+.editable-field > form {
     width: 80%;
 }
 
-.editable-field:hover > .btn-edit-field, .editable-field:focus-within > .btn-edit-field {
+.editable-field:hover .btn-edit-field, .editable-field:focus-within .btn-edit-field {
     opacity: 1;
 }
 
-.editable-field:focus-within > .btn-edit-field > path {
+.editable-field:focus-within .btn-edit-field > path {
     opacity: 1;
     stroke: rgb(55, 57, 63);
 }
@@ -103,8 +104,8 @@ html, body, main {
 }
 
 .btn-edit-field {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     transition: opacity 100ms ease;
     cursor: pointer;
@@ -201,6 +202,11 @@ html, body, main {
     height: 1.2rem;
     width: 1.2rem;
     cursor: pointer;
+}
+
+.container-btn-edit-field {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .icon-supports-fill {
@@ -302,6 +308,12 @@ html, body, main {
     width: 650px;
 }
 
+#section-content:has(.nothing-msg):has(#btn-add-sketch) #view-title {
+    display: inline-block;
+    width: 7rem;
+    margin-bottom: 0.4rem;
+}
+
 #btn-add-sketch:hover {
     background-color: rgb(70, 121, 235);
 }
@@ -360,6 +372,9 @@ html, body, main {
 }
 
 @media screen and (max-width: 1050px) {
+    [data-title]::after {
+        display: none;
+    }
     .main-inner {
         flex-direction: column;
         align-items: center;
@@ -371,10 +386,8 @@ html, body, main {
         margin-left: 3rem;
     }
     #section-content {
-        margin-left: 0;
-    }
-    #section-content {
         margin-top: 50px;
+        margin-inline: 0;
     }
     #section-user-info {
         width: 35%;
@@ -383,18 +396,21 @@ html, body, main {
         width: 27vw;
         height: 27vw;
     }
+    .nothing-msg {
+        text-align: center;
+    }
+    #section-content:has(.nothing-msg) > #views-container {
+        width: 650px;
+    }
     #section-content:has(.nothing-msg) > .view-upper-panel {
+        display: flex;
+        justify-content: center;
+    }
+    #section-content:has(.nothing-msg):not(#btn-add-sketch) #view-title {
         text-align: center;
     }
     #views-container:has(.nothing-msg) > .nothing-msg {
         width: 100%;
-    }
-}
-
-@media screen and (max-width: 750px) {
-     #section-content:has(#views-container:not(.user-preview)) > .view-upper-panel {
-        width: 95%;
-        margin-left: 2.5%;
     }
 }
 
@@ -409,9 +425,15 @@ html, body, main {
 }
 
 @media screen and (max-width: 650px) {
+    .nothing-msg {
+        text-align: center;
+    }
     .view-upper-panel {
         width: 95%;
         margin-left: 2.5%;
+    }
+    #section-content:has(.nothing-msg) > #views-container {
+        width: 100vw;
     }
 }
 
