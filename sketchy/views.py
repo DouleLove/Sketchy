@@ -26,11 +26,11 @@ def auth_view() -> Response:
     if current_user.is_authenticated:
         return redirect("/profile")
 
-    response = handlers.auth_view_get_handler()
-    if isinstance(response, Response):
-        return response
+    form_or_response = handlers.auth_view_get_handler()
+    if isinstance(form_or_response, Response):
+        return form_or_response
 
-    return handlers.auth_view_post_handler(*response)
+    return handlers.auth_view_post_handler(form_or_response)
 
 
 @g.app.route("/logout")
@@ -45,14 +45,14 @@ def profile_view() -> Response:
         # non-authenticated user tries to check their account, redirect to auth
         return redirect("/auth")
 
-    uid = request.args.get("uid")
+    uid = request.args.get("uid", type=int)
     login = request.args.get("username")
 
     if uid is not None and login is not None:
         return abort(HTTPStatus.BAD_REQUEST)
 
     try:
-        user = User.get(int(uid), login)  # type: ignore
+        user = User.get(uid, login)
     except (ValueError, TypeError):
         user = current_user
 
