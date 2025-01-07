@@ -41,5 +41,4 @@ def auth_view_post_handler(form: LoginForm) -> Response:
 
     login_user(user, remember=True)
 
-    print(request.args.get('referrer'))
     return redirect(request.args.get("referrer", "/profile"))
