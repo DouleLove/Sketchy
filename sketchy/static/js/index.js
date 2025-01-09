@@ -62,7 +62,21 @@ function main() {
         const x = step.getBoundingClientRect().left;
         const stepsTitle = document.getElementsByClassName('steps-ttl')[0];
         stepsTitle.style.marginLeft = x + 'px';
-    })
+        stepsTitle.style.display = 'block';
+        const sketchTourismInfo = document.getElementsByClassName('sketch-tourism-info-container')[0];
+        sketchTourismInfo.style.left = x + 'px';
+        const stepRight = document.getElementsByClassName('step-bg')[2];
+        const xRight = stepRight.getBoundingClientRect().right;
+        sketchTourismInfo.style.width = (xRight - x) + 'px';
+        sketchTourismInfo.children[0].style.display = 'block';
+        const sketchTourismTitle = document.getElementsByClassName('sketch-tourism-title')[0];
+        const kite1 = document.getElementById('kite1');
+        const kite1y = sketchTourismInfo.getBoundingClientRect().top - 30 + window.scrollY;
+        const kite1x = sketchTourismTitle.getBoundingClientRect().left - 20;
+        kite1.style.top = kite1y;
+        kite1.style.left = kite1x;
+        kite1.style.display = 'block';
+    });
     window.dispatchEvent(new Event('resize'));
 }
 

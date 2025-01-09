@@ -50,7 +50,7 @@
     font-weight: bold;
     font-family: arial;
     color: white;
-    text-shadow: 2px 2px 2px grey;
+    text-shadow: 2px 2px 2px rgb(91, 133, 227);
     line-height: 95px;
     text-overflow: ellipsis;
     word-wrap: break-word;
@@ -82,6 +82,7 @@
     border-radius: 15px;
     filter: brightness(40%);
     opacity: 0;
+    border: 2px solid rgb(91, 133, 227, .85);
 }
 
 .preview-showcase:not(.active) {
@@ -91,6 +92,43 @@
 .preview-title {
     color: white;
     font-size: 80px;
+}
+
+.sketch-tourism-info-container {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    margin-block: 5rem;
+}
+
+.sketch-tourism-info-wrapper-dn {
+    display: none;
+}
+
+.sketch-tourism-title {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.wrapper-definition {
+    display: flex;
+    justify-content: center;
+}
+
+.kite {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    display: none;
+}
+
+#kite1 {
+    transform: rotate(70deg);
 }
 
 .container-steps {
@@ -121,6 +159,7 @@
 }
 
 .steps-ttl {
+    display: none;
     font-size: 48px;
     font-weight: bold;
     margin-left: 3rem;
@@ -147,7 +186,7 @@
     background-image: linear-gradient(-45deg, rgb(66, 95, 166), rgb(34, 63, 133));
     background-size: 400% 100%;
     animation: stepsGradient 10s ease infinite;
-    height: 15rem;
+    height: 12rem;
     aspect-ratio: 1 / 1;
     border-radius: 30px;
     display: flex;
@@ -170,45 +209,47 @@
     width: 40px;
 }
 
-#random-sketch-bg {
-    background-image: url('/static/img/stars-sky.jpg');
-    animation: bgZoomInOut 50s linear infinite;
-    background-size: cover;
+#section-star-sky-random-sketch {
     width: 100%;
-    height: 40vh;
+    height: 296px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.random-sketch-bg {
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/stars-sky.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#random-sketch-bg-defer {
+    height: 296px;
+}
+
+#random-sketch-wrapper {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    position: relative;
+    top: -296px;
+    z-index: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#random-sketch-wrapper {
-    height: 100%;
-    width: 20%;
-    cursor: pointer;
-}
-
 #random-sketch-clickable {
-    width: 100%;
-    height: 100%;
-    background-image: url('/static/img/logo.svg');
-    background-size: 60% auto;
-    background-position: center;
-    background-repeat: no-repeat;
+    height: 60%;
+    aspect-ratio: 1 / 1;
     transition: all 1000ms;
 }
 
 #random-sketch-wrapper:hover > #random-sketch-clickable {
-    background-size: 80% auto;
+    height: 80%;
     transform: rotate(360deg);
-}
-
-@keyframes bgZoomInOut {
-    0%, 100% {
-        background-size: 100% 300%;
-    }
-    50% {
-        background-size: 103% 310%;
-    }
 }
 
 @keyframes stepsGradient {
@@ -263,7 +304,8 @@
         height: 20px;
     }
     .steps-ttl {
-        font-size: 26px;
+        font-size: 28px;
+        margin-bottom: 0.5rem;
     }
     .container-steps {
         margin-top: 45px;
@@ -294,7 +336,7 @@
         justify-content: center;
     }
     .step-bg {
-        height: 4rem;
+        height: 5rem;
         border-radius: 20px;
     }
     .double-arrow-steps {
@@ -302,23 +344,35 @@
         height: 15px;
     }
     .step-desc {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 550;
     }
     .steps-ttl {
-        font-size: 20px;
+        font-size: 23px;
     }
-    #random-sketch-wrapper {
-        width: 35%;
+    #random-sketch-clickable {
+        height: 45%;
+    }
+    #random-sketch-wrapper:hover > #random-sketch-clickable {
+        height: 60%;
+    }
+    .sketch-tourism-title {
+        font-size: 32px;
     }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 470px) {
     .container-step {
         margin-inline: 1rem;
     }
     #preview-text_span {
         font-size: 50px;
+    }
+    .sketch-tourism-title {
+        font-size: 28px;
+    }
+    .definition {
+        font-size: 13px;
     }
 }
 
@@ -326,5 +380,11 @@
     #preview-text_span {
         font-size: 30px;
         line-height: 45px;
+    }
+    .step-bg {
+        height: 4rem;
+    }
+    .step-desc {
+        font-size: 10px;
     }
 }

@@ -25,7 +25,6 @@ export function loadPopUp(url, params, onsuccess=null) {
         });
         const urlParams = getURLParameters();
         urlParams.sid = data.data.sid;
-        console.log(encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
         window.history.pushState({}, '', encodeURL(formatURL(window.location.href.split('?')[0], urlParams)));
 
         if (onsuccess != null) {
@@ -36,11 +35,12 @@ export function loadPopUp(url, params, onsuccess=null) {
 
 
 function markActiveNavButton() {
-    const currentUrl = window.location.href.split('?')[0];
+    const currentUrl = window.location.href.split('?')[0].split('//').slice(1).join('//');
     const navButtons = document.getElementsByClassName('nav-btn');
 
     for (const btn of navButtons) {
-        if (btn.href == currentUrl) {
+        const btnHref = btn.href.split('//').slice(1).join('//');
+        if (btnHref == currentUrl) {
             const uid = $('meta[name="uid"]').attr('content');
             const cuuid = $('meta[name="cu-uid"]').attr('content');
             const urlParams = getURLParameters();
