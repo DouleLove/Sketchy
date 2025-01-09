@@ -24,7 +24,7 @@ def sketch_view_get_handler() -> Response:
 
     if sid is None:
         sid = Sketch.random().id
-        return redirect(f"/sketch?{sid=}")
+        return redirect(f"{request.path}?{sid=}")
 
     sketch = Sketch.get(sid)
 
