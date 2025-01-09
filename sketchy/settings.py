@@ -20,7 +20,7 @@ DEBUG = False
 
 SECRET_KEY = gnvext.StringEnvVariable(
     name="FLASK_APP_SECRETKEY",
-    default="tmp-secretkey-should-be-replaced",
+    default=RuntimeError("FLASK_APP_SECRETKEY must be specified in .env"),
 ).value
 
 VIEWS_MODULES = [
@@ -29,7 +29,10 @@ VIEWS_MODULES = [
 
 ALLOWED_MEDIA_EXTENSIONS = ("JPEG", "JPG", "PNG")
 
-APIKEY_GEOCODER = gnvext.StringEnvVariable("YANDEX_GEOCODER_APIKEY").value
+APIKEY_GEOCODER = gnvext.StringEnvVariable(
+    name="YANDEX_GEOCODER_APIKEY",
+    default=RuntimeError("APIKEY_GEOCODER must be specified in .env"),
+).value
 
 del Path
 del dotenv
