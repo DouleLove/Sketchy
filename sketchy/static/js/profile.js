@@ -183,6 +183,7 @@ function setupEditable() {
                 e.currentTarget.setAttribute('data-value-onfocus', e.currentTarget.value);
             });
             inp.addEventListener('focusout', (e) => {
+                e.preventDefault();
                 if (e.currentTarget.getAttribute('data-value-onfocus') != e.currentTarget.value) {
                     reqPost(e.currentTarget.parentElement, function(tgt, data) {
                         handlePostResponse(data);
