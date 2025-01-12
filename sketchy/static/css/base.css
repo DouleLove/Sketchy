@@ -140,6 +140,7 @@ nav {
 #nav-buttons-burger-short, #btn-dropdown-close {
     width: 100%;
     height: 100%;
+    cursor: pointer;
 }
 
 .nav-buttons-burger-close-wrapper-short {
@@ -195,7 +196,7 @@ nav {
     color: rgb(91, 133, 227);
 }
 
-.nav-btn-short:not(.active) > span:hover {
+.nav-btn-short:not(.active):hover > span {
     color: rgb(235, 237, 240);
 }
 

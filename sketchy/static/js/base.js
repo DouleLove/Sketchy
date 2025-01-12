@@ -121,21 +121,36 @@ function main() {
         if ($(btnsDropdown).is(':hidden')) {
             $(btnsDropdown).show();
             $(btnsDropdown).css({left: -10}).animate({left: 0}, 200);
-            $('.nav-buttons-burger-wrapper-short').fadeOut(150, () => {
-                $('.nav-buttons-burger-close-wrapper-short').hide().fadeIn(150);
+            $('.nav-buttons-burger-wrapper-short').fadeOut(100, () => {
+                $('.nav-buttons-burger-close-wrapper-short').hide().fadeIn(100);
             });
         } else {
             $(btnsDropdown).animate({left: -10}, 100, () => {
                 $(btnsDropdown).hide();
             });
-            $('.nav-buttons-burger-close-wrapper-short').fadeOut(150, () => {
-                $('.nav-buttons-burger-wrapper-short').hide().fadeIn(150);
+            $('.nav-buttons-burger-close-wrapper-short').fadeOut(100, () => {
+                $('.nav-buttons-burger-wrapper-short').hide().fadeIn(100);
             });
         }
     });
-    document.getElementById('btn-dropdown-close').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('nav-buttons-burger-short').dispatchEvent(new Event('click'));
+    addEventListener('click', (e) => {
+        const sectionDropdown = document.getElementById('section-nav-buttons-dropdown-options-container-short');
+        const navWrapper = document.getElementById('nav-wrapper');
+
+        if (document.getElementsByClassName('btn-dropdown-close-container')[0].contains(e.target)) {
+            document.getElementById('nav-buttons-burger-short').dispatchEvent(new Event('click'));
+            return;
+        }
+        if ($(sectionDropdown).is(':animated') || $(sectionDropdown).is(':hidden')) {
+            return;
+        }
+        if (e.clientX == undefined || e.clientY == undefined) {
+            return;
+        }
+
+        if (!sectionDropdown.contains(e.target) && !navWrapper.contains(e.target)) {
+            document.getElementById('nav-buttons-burger-short').dispatchEvent(new Event('click'));
+        }
     });
 }
 
