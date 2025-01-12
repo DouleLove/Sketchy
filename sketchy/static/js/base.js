@@ -1,4 +1,4 @@
-import {getURLParameters, encodeURL, formatURL, loadSketchPopUp} from './utils.js';
+import {getURLParameters, encodeURL, formatURL, loadSketchPopUp, animateOpacity, animateBrightness} from './utils.js';
 import {setupSketchPopUp} from './sketch.js';
 
 
@@ -36,9 +36,11 @@ export function loadPopUp(url, params, onsuccess=null) {
 
 function markActiveNavButton() {
     const currentUrl = window.location.href.split('?')[0].split('//').slice(1).join('//');
-    const navButtons = document.getElementsByClassName('nav-btn');
+    const navButtons = [...document.getElementsByClassName('nav-btn')];
+    const navButtonsShort = [...document.getElementsByClassName('nav-btn-short')]
+    const btns = navButtons.concat(navButtonsShort)
 
-    for (const btn of navButtons) {
+    for (const btn of btns) {
         const btnHref = btn.href.split('//').slice(1).join('//');
         if (btnHref == currentUrl) {
             const uid = $('meta[name="uid"]').attr('content');
@@ -59,6 +61,36 @@ function markActiveNavButton() {
 
 function main() {
     markActiveNavButton();
+    window.addEventListener('resize', () => {
+        if (window.innerWidth < 1000) {
+            $('.nav-buttons').hide();
+            $('#img-logo-nav-wrapper').hide();
+            $('.img-logo_dropdown-container-short').show();
+            $('.img-logo-container-short').show();
+            const spans = $('.nav-btn-short > span')
+            $(spans).each((idx) => {
+                $($(spans)[idx]).show();
+            });
+        } else {
+            $('.nav-buttons').show();
+            $('#img-logo-nav-wrapper').show();
+            $('.img-logo_dropdown-container-short').hide();
+            $('.img-logo-container-short').hide();
+            const spans = $('.nav-btn-short > span')
+            $(spans).each((idx) => {
+                $($(spans)[idx]).hide();
+            });
+        }
+        document.getElementsByClassName('img-logo-switch-container')[0].style.opacity = "1";
+        document.getElementsByClassName('search-container')[0].style.opacity = "1";
+        document.getElementsByClassName('nav-buttons-switch-container')[0].style.opacity = "1";
+        const navPanelShort = document.getElementById('section-nav-buttons-dropdown-options-container-short');
+        const logoShort = document.getElementById('img-logo-nav-short')
+        const boundingRectLogo = logoShort.getBoundingClientRect();
+        const panelWidth = boundingRectLogo.left + Math.floor((boundingRectLogo.right - boundingRectLogo.left) / 2);
+        navPanelShort.style.width = panelWidth + 'px';
+    });
+    window.dispatchEvent(new Event('resize'));
     window.history.replaceState({}, '', encodeURL());
     addEventListener('popstate', (e) => {
         if (getURLParameters().sid) {
@@ -82,7 +114,29 @@ function main() {
             return;
         }
         window.location.href = window.location.origin + `/sketches?query=${val}`;
-    })
+    });
+    document.getElementById('nav-buttons-burger-short').addEventListener('click', (e) => {
+        const btnsDropdown = document.getElementById('section-nav-buttons-dropdown-options-container-short');
+        e.preventDefault();
+        if ($(btnsDropdown).is(':hidden')) {
+            $(btnsDropdown).show();
+            $(btnsDropdown).css({left: -10}).animate({left: 0}, 200);
+            $('.nav-buttons-burger-wrapper-short').fadeOut(150, () => {
+                $('.nav-buttons-burger-close-wrapper-short').hide().fadeIn(150);
+            });
+        } else {
+            $(btnsDropdown).animate({left: -10}, 100, () => {
+                $(btnsDropdown).hide();
+            });
+            $('.nav-buttons-burger-close-wrapper-short').fadeOut(150, () => {
+                $('.nav-buttons-burger-wrapper-short').hide().fadeIn(150);
+            });
+        }
+    });
+    document.getElementById('btn-dropdown-close').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('nav-buttons-burger-short').dispatchEvent(new Event('click'));
+    });
 }
 
 

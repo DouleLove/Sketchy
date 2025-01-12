@@ -78,6 +78,9 @@ function main() {
         kite1.style.display = 'block';
     });
     window.dispatchEvent(new Event('resize'));
+    [...document.getElementsByTagName('section')].forEach((elem) => {
+        animateOpacity(elem, {0: 0, 0.5: 0, 1: 1});
+    })
 }
 
 main();

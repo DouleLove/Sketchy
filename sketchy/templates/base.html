@@ -19,9 +19,23 @@
         <header>
             <nav>
                 <div id="nav-wrapper">
-                    <a href="{{ origin_url }}" id="img-logo-nav-wrapper">
-                        <img id="img-logo-nav" src="{{ url_for('static', filename='img/logo-long.svg') }}">
-                    </a>
+                    <div class="img-logo-switch-container">
+                        <a href="{{ origin_url }}" id="img-logo-nav-wrapper">
+                            <img id="img-logo-nav" src="{{ url_for('static', filename='img/logo-long.svg') }}">
+                        </a>
+                        <div class="img-logo_dropdown-container-short">
+                            <div class="nav-buttons-burger-wrapper-short">
+                                <svg id="nav-buttons-burger-short" width="800px" height="800px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="rgba(235, 237, 240, 0.8)"><path fill="rgba(235, 237, 240, 0.8);" fill-rule="evenodd" d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/></svg>
+                            </div>
+                            <div class="nav-buttons-burger-close-wrapper-short">
+                                <div class="btn-dropdown-close-container">
+                                    <svg fill="rgba(235, 237, 240, 0.8)" id="btn-dropdown-close" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" xml:space="preserve">
+                                        <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="search-container">
                         <div class="search-line-outer">
                             <div class="search-line">
@@ -37,22 +51,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="nav-buttons">
-                        <a class="nav-btn" href="{{ origin_url }}">
-                            <span>Главная</span>
-                        </a>
-                        <a class="nav-btn" href="{{ origin_url }}/sketches">
-                            <span>Скетчи</span>
-                        </a>
-                        {% if current_user.is_authenticated %}
-                            <a class="nav-btn" id="user-avatar-wrapper" href="{{ origin_url }}/profile">
-                                <img id="user-avatar" src="{{ current_user.avatar }}">
+                    <div class="nav-buttons-switch-container">
+                        <div class="nav-buttons">
+                            <a class="nav-btn" href="{{ origin_url }}">
+                                <span>Главная</span>
                             </a>
-                        {% else %}
-                            <a class="nav-btn" href="{{ origin_url }}/auth">
-                                <span>Войти</span>
+                            <a class="nav-btn" href="{{ origin_url }}/sketches">
+                                <span>Скетчи</span>
                             </a>
-                        {% endif %}
+                            {% if current_user.is_authenticated %}
+                                <a class="nav-btn" id="user-avatar-wrapper" href="{{ origin_url }}/profile">
+                                    <img id="user-avatar" src="{{ current_user.avatar }}">
+                                </a>
+                            {% else %}
+                                <a class="nav-btn" href="{{ origin_url }}/auth">
+                                    <span>Войти</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="img-logo-container-short">
+                            <a href="{{ origin_url }}" id="img-logo-nav-wrapper-short">
+                                <img id="img-logo-nav-short" src="{{ url_for('static', filename='img/logo.svg') }}">
+                            </a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -66,10 +87,29 @@
                 <div class="wrapper-pop-up"></div>
             </section>
             <section id="section-messages"></section>
+            <section id="section-nav-buttons-dropdown-options-container-short">
+                <div class="nav-buttons-dropdown-options-short">
+                    <a class="nav-btn-short" href="{{ origin_url }}">
+                        <span>Главная</span>
+                    </a>
+                    <a class="nav-btn-short" href="{{ origin_url }}/sketches">
+                        <span>Скетчи</span>
+                    </a>
+                    {% if current_user.is_authenticated %}
+                        <a class="nav-btn-short" href="{{ origin_url }}/profile">
+                            <span>Профиль</span>
+                        </a>
+                    {% else %}
+                        <a class="nav-btn-short" href="{{ origin_url }}/auth">
+                            <span>Войти</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </section>
             {% block scripts %}
+            <script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/base.js') }}" defer></script>
             <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-            <script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/base.js') }}" defer></script>
             {% endblock %}
         </main>
     </body>
