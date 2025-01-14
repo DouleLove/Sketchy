@@ -43,13 +43,13 @@ def sketch_create_view_post_handler(form: SketchForm) -> Response:
     sketch.place = form.place.data
     sketch.author_id = current_user.id
 
-    ext = form.image.data.content_type.split("/")[1].lower()
+    ext = form.pillow_image.format.lower()
     image_name = _generate_unique_image_name(ext)
 
-    form.image.data.save(os.path.join(settings.MEDIA_ROOT, image_name))
+    form.pillow_image.save(settings.MEDIA_ROOT / image_name, format=ext)
 
     if sketch.image_name in os.listdir(settings.MEDIA_ROOT):
-        os.remove(os.path.join(settings.MEDIA_ROOT, sketch.image_name))
+        os.remove(settings.MEDIA_ROOT / sketch.image_name)
 
     sketch.image_name = image_name
     sketch.time_created = datetime.now()
