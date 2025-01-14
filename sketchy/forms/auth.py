@@ -40,10 +40,10 @@ class LoginForm(FlaskForm):
         self._new = new
 
     @cached_property
-    def user_by_login(self):
+    def user_by_login(self) -> User:
         return User.get(login=self.login.data)
 
-    def validate_login(self, _):
+    def validate_login(self, _) -> None:
         if self._new:
             if self.user_by_login:
                 raise ValidationError("Этот логин уже занят")
@@ -52,10 +52,10 @@ class LoginForm(FlaskForm):
         if not self.user_by_login:
             raise ValidationError("Пользователь не найден")
 
-    def validate_password(self, field):
+    def validate_password(self, _) -> None:
         if (
             not self._new
             and self.user_by_login
-            and not self.user_by_login.check_password(field.data)
+            and not self.user_by_login.check_password(self.password.data)
         ):
             raise ValidationError("Неверный пароль")
