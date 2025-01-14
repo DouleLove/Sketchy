@@ -35,10 +35,10 @@ export function loadPopUp(url, params, onsuccess=null) {
 
 
 function markActiveNavButton() {
-    const currentUrl = window.location.href.split('?')[0].split('//').slice(1).join('//');
+    let currentUrl = window.location.href.split('?')[0].split('//').slice(1).join('//');
     const navButtons = [...document.getElementsByClassName('nav-btn')];
-    const navButtonsShort = [...document.getElementsByClassName('nav-btn-short')]
-    const btns = navButtons.concat(navButtonsShort)
+    const navButtonsShort = [...document.getElementsByClassName('nav-btn-short')];
+    const btns = navButtons.concat(navButtonsShort);
 
     for (const btn of btns) {
         const btnHref = btn.href.split('//').slice(1).join('//');
@@ -51,6 +51,7 @@ function markActiveNavButton() {
             }
             btn.classList.add('active');
             if (btn.href.split('/').pop() == 'sketches' && urlParams.query) {
+                btns[btns.length - 2].classList.add('active');
                 return;
             }
             btn.onclick = (e) => {e.preventDefault()};
