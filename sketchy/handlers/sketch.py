@@ -3,6 +3,7 @@ __all__ = (
     "sketch_view_delete_handler",
 )
 
+import os
 from http import HTTPStatus
 
 from flask import (
@@ -16,6 +17,7 @@ from flask import (
 )
 from flask_login import current_user
 
+import sketchy.settings as settings
 from sketchy.database import Sketch
 
 
@@ -56,6 +58,7 @@ def sketch_view_delete_handler() -> Response:
             ),
         )
 
+    os.remove(settings.MEDIA_ROOT / sketch.image_name)
     g.session.delete(sketch)
     g.session.commit()
 
