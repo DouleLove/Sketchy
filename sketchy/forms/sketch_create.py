@@ -1,8 +1,9 @@
 __all__ = ("SketchForm",)
 
-from http import HTTPStatus
+from functools import cached_property
+from typing import Iterable
 
-import requests
+import PIL.Image
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, SubmitField
@@ -11,8 +12,63 @@ from wtforms.validators import DataRequired, Length, ValidationError
 import sketchy.settings as settings
 
 
+class ImageExtensionValidator:
+
+    def __init__(
+            self,
+            allowed_extensions: Iterable[str],
+            message: str = "",
+    ) -> None:
+        self._allowed_extensions = allowed_extensions
+        self._message = message
+
+    def get_image_format(self, image: PIL.Image.Image) -> str | None:
+        if image is None:
+            raise ValidationError(self._message)
+
+        if (image_format := image.format) is not None:
+            return image_format.upper()
+
+    def _image_extension_is_allowed(self, image: PIL.Image.Image) -> bool:
+        return self.get_image_format(image) in self._allowed_extensions
+
+    def __call__(self, image: PIL.Image.Image) -> None:
+        if not self._image_extension_is_allowed(image):
+            raise ValidationError(self._message)
+
+
+class ImageAspectRatioValidator:
+
+    def __init__(
+            self,
+            min_ratio: float = 0,
+            max_ratio: float = float('inf'),
+            message_less_than_min_ratio: str = "",
+            message_greater_than_max_ratio: str = "",
+    ) -> None:
+        self._min_ratio = min_ratio
+        self._max_ratio = max_ratio
+        self._message_less_than_min_ratio = message_less_than_min_ratio
+        self._message_greater_than_max_ratio = message_greater_than_max_ratio
+
+        if self._min_ratio > self._max_ratio:
+            raise ValueError("min_ratio cannot be greater than max_ratio")
+
+    def __call__(self, image: PIL.Image.Image) -> None:
+        aspect_ratio = image.width / image.height
+
+        if self._min_ratio <= aspect_ratio <= self._max_ratio:
+            return
+
+        if self._min_ratio > aspect_ratio:
+            raise ValidationError(self._message_less_than_min_ratio)
+        if self._max_ratio < aspect_ratio:
+            raise ValidationError(self._message_greater_than_max_ratio)
+
+
 class SketchForm(FlaskForm):
     MAX_NAME_LENGTH = 40
+    MIN_PLACE_LENGTH = 2
 
     name = StringField(
         label="Название скетча",
@@ -21,12 +77,20 @@ class SketchForm(FlaskForm):
             Length(
                 max=MAX_NAME_LENGTH,
                 message=f"Слишком длинное название "
-                f"(максимум {MAX_NAME_LENGTH})",
+                        f"(максимум {MAX_NAME_LENGTH})",
             ),
         ],
     )
     place = StringField(
-        label="Место", validators=[DataRequired(message="Место не указано")]
+        label="Место",
+        validators=[
+            DataRequired(message="Место не указано"),
+            Length(
+                min=MIN_PLACE_LENGTH,
+                message=f"Слишком короткое название места "
+                        f"(минимум {MIN_PLACE_LENGTH})",
+            )
+        ],
     )
     image = FileField(
         label="Изображение",
@@ -36,37 +100,36 @@ class SketchForm(FlaskForm):
         label="Продолжить",
     )
 
-    @staticmethod
-    def validate_image(_, field: FileField) -> None:
-        ext = field.data.content_type.split("/")[1].upper()
-        if ext not in settings.ALLOWED_MEDIA_EXTENSIONS:
-            raise ValidationError("Неподдерживаемый тип файла")
+    @cached_property
+    def pillow_image(self) -> PIL.Image.Image | None:
+        try:
+            image = PIL.Image.open(self.image.data)
+        except (
+            FileNotFoundError,
+            PIL.UnidentifiedImageError,
+            ValueError,
+            TypeError,
+        ):
+            return
 
-    def validate_place(self, field: StringField) -> None:
-        if field.data and not self._check_place_exists(field.data):
-            raise ValidationError("Указанное место не найдено")
+        if image.format is None:
+            try:
+                image.format = self.image.data.content_type.split("/")[1]
+            except (AttributeError, IndexError):
+                return
 
-    @staticmethod
-    def _check_place_exists(place: str) -> bool:
-        url = "http://geocode-maps.yandex.ru/1.x/"
-        params = {
-            "apikey": settings.APIKEY_GEOCODER,
-            "geocode": place,
-            "format": "json",
-        }
+        return image
 
-        response = requests.get(url, params=params)
+    def validate_image(self, _) -> None:
+        validate_image_extension = ImageExtensionValidator(
+            allowed_extensions=settings.ALLOWED_MEDIA_EXTENSIONS,
+            message="Некорректный формат изображения",
+        )
+        validate_image_aspect_ratio = ImageAspectRatioValidator(
+            min_ratio=0.95 / 1,
+            message_less_than_min_ratio="Ширина изображения "
+                                        "должна быть больше высоты",
+        )
 
-        if response.status_code == HTTPStatus.OK:
-            return bool(
-                int(
-                    response.json()
-                    .get("response")
-                    .get("GeoObjectCollection")
-                    .get("metaDataProperty")
-                    .get("GeocoderResponseMetaData")
-                    .get("found")
-                )
-            )
-
-        return False
+        validate_image_extension(self.pillow_image)
+        validate_image_aspect_ratio(self.pillow_image)
