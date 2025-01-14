@@ -29,11 +29,6 @@ VIEWS_MODULES = [
 
 ALLOWED_MEDIA_EXTENSIONS = ("JPEG", "JPG", "PNG")
 
-APIKEY_GEOCODER = gnvext.StringEnvVariable(
-    name="YANDEX_GEOCODER_APIKEY",
-    default=RuntimeError("APIKEY_GEOCODER must be specified in .env"),
-).value
-
 del Path
 del dotenv
 del gnvext
