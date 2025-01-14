@@ -33,16 +33,13 @@
 .author-avatar {
     width: 3rem;
     height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .sketch-info {
     color: rgb(55, 57, 63);
     margin-inline: 10px;
-}
-
-.author-avatar {
-    border-radius: 50%;
-    object-fit: cover;
 }
 
 .container-author-info {
@@ -146,4 +143,109 @@
 
 #btn-delete-sketch:hover > #icon-delete-sketch {
     fill: white;
+}
+
+@media screen and (max-width: 1550px) {
+    .sketch-popup-inner {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    .sketch-popup-inner {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .sketch-popup-inner {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .sketch-popup-inner {
+        width: 100%;
+        border-radius: 0;
+    }
+    .sketch-image-popup {
+        border-radius: 0;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .sketch-popup-inner {
+        height: 70%;
+    }
+    .wrapper-sketch-image {
+        height: 84%;
+    }
+}
+
+@media screen and (max-width: 670px) {
+    .sketch-popup-inner {
+        height: 60%;
+    }
+    .wrapper-sketch-image {
+        height: 81%;
+    }
+}
+
+@media screen and (max-width: 570px) {
+    .sketch-popup-inner {
+        height: 50%;
+    }
+    .wrapper-sketch-image {
+        height: 77%;
+    }
+}
+
+@media screen and (max-width: 470px) {
+    .sketch-popup-inner {
+        height: 40%;
+    }
+    .wrapper-sketch-image {
+        height: 76%;
+    }
+    #btn-sketch-place {
+        padding-block: 0;
+        padding-inline: 6px;
+    }
+    .sketch-place {
+        font-size: 12px;
+    }
+    .sketch-name {
+        font-size: 21px;
+    }
+    #icon-sketch-place {
+        width: 0.8rem;
+        height: 0.8rem;
+        margin-right: 2px;
+    }
+    #btn-delete-sketch {
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+    .author-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    .author-visible-username {
+        font-size: 15px;
+    }
+    .author-login {
+        font-size: 12px;
+    }
+    .followers-num {
+        font-size: 11px;
+    }
+}
+
+@media screen and (max-width: 410px) {
+    .sketch-popup-inner {
+        height: 35%;
+    }
+    .wrapper-sketch-image {
+        height: 72%;
+    }
 }
