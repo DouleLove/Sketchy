@@ -64,6 +64,9 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true, updateU
             if (updateURL) {
                 window.history.pushState({}, '', encodeURL(href));
             }
+            if (data.data.title) {
+                document.title = data.data.title;
+            }
             if (onsuccess != null) {
                 onsuccess();
             }

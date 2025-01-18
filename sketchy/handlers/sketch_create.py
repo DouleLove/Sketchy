@@ -29,6 +29,7 @@ def sketch_create_view_get_handler() -> Response | SketchForm:
         return Response(
             render_template(
                 template_name_or_list="sketch-form.html",
+                title="Создание скетча",
                 form=form,
             ),
         )

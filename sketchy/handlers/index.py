@@ -18,6 +18,7 @@ def index_view_get_handler() -> Response:
     return Response(
         render_template(
             template_name_or_list="index.html",
+            title="Sketchy",
             previews=previews,
         ),
     )

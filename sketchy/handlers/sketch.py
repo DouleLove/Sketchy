@@ -34,7 +34,10 @@ def sketch_view_get_handler() -> Response:
         abort(HTTPStatus.NOT_FOUND)
 
     return jsonify(
-        data={"sid": sid},
+        data={
+            "sid": sid,
+            "title": f"{sketch.name} - {sketch.author.login}",
+        },
         rendered=render_template(
             "sketch.html",
             sketch=sketch,

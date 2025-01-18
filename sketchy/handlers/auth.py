@@ -22,11 +22,17 @@ def auth_view_get_handler() -> Response | LoginForm:
 
     if request.args.get("n") is None:
         form_template = "signin-form.html"
+        title = "Авторизация"
     else:
         form_template = "signup-form.html"
+        title = "Регистрация"
 
     return Response(
-        render_template(template_name_or_list=form_template, form=form),
+        render_template(
+            template_name_or_list=form_template,
+            title=title,
+            form=form,
+        ),
     )
 
 

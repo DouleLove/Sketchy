@@ -30,6 +30,7 @@ def profile_view_get_handler(user: User) -> Response:
         return Response(
             render_template(
                 template_name_or_list="profile.html",
+                title=f"{user.login} ({user.username})",
                 user=user,
                 sketches_num=len(user.sketches),
                 followers_num=len(user.followers),

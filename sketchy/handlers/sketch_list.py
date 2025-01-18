@@ -56,20 +56,33 @@ def _search_sketches(
 
 def sketches_list_view_get_handler() -> Response:
     if not request_contains_params("limit", "offset"):
-        return Response(render_template(template_name_or_list="sketches.html"))
+        return Response(
+            render_template(
+                template_name_or_list="sketches.html",
+                title="Скетчи",
+            )
+        )
 
     limit = request.args.get("limit", 30, type=int)
     offset = request.args.get("offset", 0, type=int)
-    query = request.args.get("query", "").lower()
+    query = request.args.get("query", "")
 
-    items = _search_sketches(query=query, limit=limit + 1, offset=offset)
+    items = _search_sketches(
+        query=query.lower(),
+        limit=limit + 1,
+        offset=offset,
+    )
 
     return jsonify(
         status=HTTPStatus.OK,
-        data={"results_left": max(0, len(items) - limit)},
+        data={
+            "results_left": max(0, len(items) - limit),
+            "title": f"{query} - Поиск скетчей" if query else "Скетчи",
+        },
         rendered="\n".join(
             render_template(
-                template_name_or_list="sketch-preview.html", sketch=items[idx]
+                template_name_or_list="sketch-preview.html",
+                sketch=items[idx],
             )
             for idx in range(len(items))
             if idx != limit

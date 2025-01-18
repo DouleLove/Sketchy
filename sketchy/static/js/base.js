@@ -17,7 +17,14 @@ export function loadPopUp(url, params, onsuccess=null) {
 
     url = encodeURL(formatURL(url.split('?')[0], p))
     $.get(url, (data) => {
+        var prevTitle = document.title;
+        if (data.data.title) {
+            document.title = data.data.title;
+        }
         $('.wrapper-pop-up').html(data.rendered);
+        $('#btn-pop-up-close').on('click', () => {
+            document.title = prevTitle;
+        })
         $('.wrapper-pop-up').children().eq(0).on('click', (e) => {
             if (!$(e.currentTarget).find(e.target).length) {
                 $('#btn-pop-up-close').trigger('click');
