@@ -9,11 +9,7 @@ from sketchy.app import Sketchy
 
 def run() -> None:
     sketchy = Sketchy()
-    sketchy.run(
-        host=settings.SERVER_HOST,
-        port=settings.SERVER_PORT,
-        debug=settings.DEBUG,
-    )
+    sketchy.run(debug=settings.DEBUG)
 
 
 if __name__ == "__main__":
