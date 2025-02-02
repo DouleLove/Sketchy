@@ -15,8 +15,13 @@ DB_ROOT = APPLICATION_ROOT / "database" / "root"
 DB_PATH = DB_ROOT / "db.sqlite3"
 
 SERVER_HOST = "127.0.0.1"
+
 SERVER_PORT = 8000
-DEBUG = False
+
+DEBUG = gnvext.BooleanEnvVariable(
+    name="FLASK_APP_DEBUG",
+    default=False,
+)
 
 SECRET_KEY = gnvext.StringEnvVariable(
     name="FLASK_APP_SECRETKEY",
