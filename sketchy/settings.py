@@ -14,10 +14,20 @@ MEDIA_ROOT = APPLICATION_ROOT / "media"
 DB_ROOT = APPLICATION_ROOT / "database" / "root"
 DB_PATH = DB_ROOT / "db.sqlite3"
 
+HOST = gnvext.StringEnvVariable(
+    name="FLASK_APP_SERVER_HOST",
+    default=RuntimeError("FLASK_APP_SERVER_HOST must be specified in .env")
+).value
+
+PORT = gnvext.IntegerEnvVariable(
+    name="FLASK_APP_SERVER_PORT",
+    default=RuntimeError("FLASK_APP_SERVER_PORT must be specified in .env")
+).value
+
 DEBUG = gnvext.BooleanEnvVariable(
     name="FLASK_APP_DEBUG",
     default=False,
-)
+).value
 
 SECRET_KEY = gnvext.StringEnvVariable(
     name="FLASK_APP_SECRETKEY",
