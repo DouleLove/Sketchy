@@ -115,13 +115,13 @@
     }
     .sketches-row > .sketch-item {
         width: 100vw;
+        height: 470px;
     }
     #views-container > .sketch-item {
         width: 100vw;
     }
     .sketch-item {
         width: 100vw;
-
     }
     .btn-more {
         display: none;
@@ -131,5 +131,52 @@
     }
     .footer {
         border-radius: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #views-container > .sketch-item, .sketches-row > .sketch-item {
+        height: 450px;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    #views-container > .sketch-item, .sketches-row > .sketch-item {
+        height: 410px;
+    }
+}
+
+@media screen and (max-width: 510px) {
+    #views-container > .sketch-item, .sketches-row > .sketch-item {
+        height: 350px;
+    }
+    #view-title {
+        font-size: 18px;
+    }
+    #btn-add-sketch {
+        padding-block: 4px;
+        padding-inline: 15px;
+    }
+    .sketch-title {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #views-container > .sketch-item, .sketches-row > .sketch-item {
+        height: 310px;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    #views-container > .sketch-item, .sketches-row > .sketch-item {
+        height: 270px;
+    }
+    #view-title {
+        font-size: 16px;
+    }
+    #btn-add-sketch {
+        padding-block: 3px;
+        padding-inline: 13px;
     }
 }

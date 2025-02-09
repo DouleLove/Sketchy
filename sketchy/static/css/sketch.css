@@ -19,7 +19,7 @@
 
 .wrapper-sketch-image {
     width: 100%;
-    height: 87%;
+    height: 86.5%;
 }
 
 
@@ -178,7 +178,7 @@
         height: 70%;
     }
     .wrapper-sketch-image {
-        height: 84%;
+        height: 82%;
     }
 }
 
@@ -187,7 +187,7 @@
         height: 60%;
     }
     .wrapper-sketch-image {
-        height: 81%;
+        height: 79%;
     }
 }
 
@@ -196,7 +196,7 @@
         height: 50%;
     }
     .wrapper-sketch-image {
-        height: 77%;
+        height: 75%;
     }
 }
 
@@ -205,7 +205,7 @@
         height: 40%;
     }
     .wrapper-sketch-image {
-        height: 76%;
+        height: 74%;
     }
     #btn-sketch-place {
         padding-block: 0;
@@ -246,6 +246,6 @@
         height: 35%;
     }
     .wrapper-sketch-image {
-        height: 72%;
+        height: 70%;
     }
 }
