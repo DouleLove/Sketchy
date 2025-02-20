@@ -1,7 +1,7 @@
 <div class="sketch-popup">
     <div class="sketch-popup-inner">
         <div class="wrapper-sketch-image">
-            <img class="sketch-image-popup" src="{{ sketch.image }}">
+            <img class="sketch-image-popup" src="{{ sketch.image | replace('media/', 'media/ORIGINAL_') }}">
         </div>
         <div class="sketch-info">
             <div class="ctn-actions">

@@ -47,7 +47,14 @@ def sketch_create_view_post_handler(form: SketchForm) -> Response:
     ext = form.pillow_image.format.lower()
     image_name = _generate_unique_image_name(ext)
 
-    form.pillow_image.save(settings.MEDIA_ROOT / image_name, format=ext)
+    form.pillow_image.save(
+        settings.MEDIA_ROOT / f"ORIGINAL_{image_name}",
+        format=ext,
+    )
+    form.pillow_image_resized.save(
+        settings.MEDIA_ROOT / image_name,
+        format=ext,
+    )
 
     if sketch.image_name in os.listdir(settings.MEDIA_ROOT):
         os.remove(settings.MEDIA_ROOT / sketch.image_name)

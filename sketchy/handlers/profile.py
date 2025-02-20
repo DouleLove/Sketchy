@@ -7,6 +7,7 @@ import os
 import uuid
 from http import HTTPStatus
 
+import PIL.Image
 from flask import Response, jsonify, render_template, request
 from flask_login import current_user
 
@@ -106,7 +107,13 @@ def profile_view_post_handler(user: User) -> Response:
                 pass
             user.image = image_name
             # save filename to media folder
-            attachment.save(settings.MEDIA_ROOT / user.image)
+            as_pillow_image = PIL.Image.open(attachment)  # type: ignore
+            w, h = as_pillow_image.size
+            aspect_ratio_hw = h / w
+            resized_w = min(w, 300)
+            resized_h = resized_w * aspect_ratio_hw
+            as_pillow_image.resize((int(resized_w), int(resized_h)))
+            as_pillow_image.save(settings.MEDIA_ROOT / user.image)
         if param == "followers":
             # merge current_user to user's session
             # to not access current_user in different threads

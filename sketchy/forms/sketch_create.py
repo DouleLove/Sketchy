@@ -101,6 +101,20 @@ class SketchForm(FlaskForm):
     )
 
     @cached_property
+    def pillow_image_resized(self) -> PIL.Image.Image | None:
+        image = self.pillow_image
+
+        if image is None:
+            return
+
+        w, h = image.size
+        aspect_ratio_hw = h / w
+        reduced_w = min(w, 750)
+        reduced_h = reduced_w * aspect_ratio_hw
+
+        return image.resize((int(reduced_w), int(reduced_h)))
+
+    @cached_property
     def pillow_image(self) -> PIL.Image.Image | None:
         try:
             image = PIL.Image.open(self.image.data)
