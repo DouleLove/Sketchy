@@ -61,7 +61,9 @@ def sketch_view_delete_handler() -> Response:
             ),
         )
 
-    os.remove(settings.MEDIA_ROOT / sketch.image_name)
+    for size in ("small", "medium", "large"):
+        os.remove(settings.MEDIA_ROOT / size / sketch.image_name)
+
     g.session.delete(sketch)
     g.session.commit()
 

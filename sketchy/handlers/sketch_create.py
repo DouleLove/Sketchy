@@ -47,17 +47,15 @@ def sketch_create_view_post_handler(form: SketchForm) -> Response:
     ext = form.pillow_image.format.lower()
     image_name = _generate_unique_image_name(ext)
 
-    form.pillow_image.save(
-        settings.MEDIA_ROOT / f"ORIGINAL_{image_name}",
-        format=ext,
-    )
-    form.pillow_image_resized.save(
-        settings.MEDIA_ROOT / image_name,
-        format=ext,
-    )
+    for size in ("small", "medium", "large"):
+        root = settings.MEDIA_ROOT / size
 
-    if sketch.image_name in os.listdir(settings.MEDIA_ROOT):
-        os.remove(settings.MEDIA_ROOT / sketch.image_name)
+        image = getattr(form, f"pillow_image_{size}")
+        image.save(root / image_name, format=ext)
+
+        previous_image_name = sketch.image_name
+        if previous_image_name in os.listdir(root):
+            os.remove(root / previous_image_name)
 
     sketch.image_name = image_name
     sketch.time_created = datetime.now()

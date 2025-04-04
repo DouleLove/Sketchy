@@ -15,9 +15,9 @@ import sketchy.settings as settings
 class ImageExtensionValidator:
 
     def __init__(
-            self,
-            allowed_extensions: Iterable[str],
-            message: str = "",
+        self,
+        allowed_extensions: Iterable[str],
+        message: str = "",
     ) -> None:
         self._allowed_extensions = allowed_extensions
         self._message = message
@@ -40,11 +40,11 @@ class ImageExtensionValidator:
 class ImageAspectRatioValidator:
 
     def __init__(
-            self,
-            min_ratio: float = 0,
-            max_ratio: float = float('inf'),
-            message_less_than_min_ratio: str = "",
-            message_greater_than_max_ratio: str = "",
+        self,
+        min_ratio: float = 0,
+        max_ratio: float = float("inf"),
+        message_less_than_min_ratio: str = "",
+        message_greater_than_max_ratio: str = "",
     ) -> None:
         self._min_ratio = min_ratio
         self._max_ratio = max_ratio
@@ -67,6 +67,10 @@ class ImageAspectRatioValidator:
 
 
 class SketchForm(FlaskForm):
+    SMALL_IMAGE_WIDTH = 768
+    MEDIUM_IMAGE_WIDTH = 1920
+    LARGE_IMAGE_WIDTH = 3840
+
     MAX_NAME_LENGTH = 40
     MIN_PLACE_LENGTH = 2
 
@@ -77,7 +81,7 @@ class SketchForm(FlaskForm):
             Length(
                 max=MAX_NAME_LENGTH,
                 message=f"Слишком длинное название "
-                        f"(максимум {MAX_NAME_LENGTH})",
+                f"(максимум {MAX_NAME_LENGTH})",
             ),
         ],
     )
@@ -88,8 +92,8 @@ class SketchForm(FlaskForm):
             Length(
                 min=MIN_PLACE_LENGTH,
                 message=f"Слишком короткое название места "
-                        f"(минимум {MIN_PLACE_LENGTH})",
-            )
+                f"(минимум {MIN_PLACE_LENGTH})",
+            ),
         ],
     )
     image = FileField(
@@ -100,19 +104,54 @@ class SketchForm(FlaskForm):
         label="Продолжить",
     )
 
-    @cached_property
-    def pillow_image_resized(self) -> PIL.Image.Image | None:
+    def _resize_with_aspect_ratio(
+        self,
+        width: int | float = ...,
+        height: int | float = ...,
+    ) -> PIL.Image.Image | None:
         image = self.pillow_image
 
         if image is None:
             return
 
-        w, h = image.size
-        aspect_ratio_hw = h / w
-        reduced_w = min(w, 750)
-        reduced_h = reduced_w * aspect_ratio_hw
+        image_w, image_h = image.size
+        aspect_ratio_wh = image_w / image_h
+        aspect_ratio_hw = 1 / aspect_ratio_wh
 
-        return image.resize((int(reduced_w), int(reduced_h)))
+        if (
+            width != Ellipsis
+            and height != Ellipsis
+            and height / width != aspect_ratio_hw
+        ):
+            raise ValueError(
+                "given width and height do not match image aspect ratio",
+            )
+
+        if width != Ellipsis:
+            height = min(image_h, width * aspect_ratio_hw)
+
+        if height != Ellipsis:
+            width = min(image_w, height * aspect_ratio_wh)
+
+        return image.resize((int(width), int(height)))
+
+    @cached_property
+    def pillow_image_small(self) -> PIL.Image.Image | None:
+        return self._resize_with_aspect_ratio(
+            width=self.SMALL_IMAGE_WIDTH,
+        )
+
+    @cached_property
+    def pillow_image_medium(self) -> PIL.Image.Image | None:
+        return self._resize_with_aspect_ratio(
+            width=self.MEDIUM_IMAGE_WIDTH,
+        )
+
+    @cached_property
+    def pillow_image_large(self) -> PIL.Image.Image | None:
+        return self._resize_with_aspect_ratio(
+            width=self.LARGE_IMAGE_WIDTH,
+        )
 
     @cached_property
     def pillow_image(self) -> PIL.Image.Image | None:
@@ -142,7 +181,7 @@ class SketchForm(FlaskForm):
         validate_image_aspect_ratio = ImageAspectRatioValidator(
             min_ratio=0.95 / 1,
             message_less_than_min_ratio="Ширина изображения "
-                                        "должна быть больше высоты",
+            "должна быть больше высоты",
         )
 
         validate_image_extension(self.pillow_image)
