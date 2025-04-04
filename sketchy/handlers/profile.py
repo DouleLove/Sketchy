@@ -98,11 +98,12 @@ def profile_view_post_handler(user: User) -> Response:
             if tp.upper() not in settings.ALLOWED_MEDIA_EXTENSIONS:
                 errors[param] = "Неподдерживаемый тип файла"
                 continue
-            if user.image and os.path.isfile(settings.MEDIA_ROOT / user.image):
-                os.remove(settings.MEDIA_ROOT / user.image)
+            root = settings.MEDIA_ROOT / "avatars"
+            if user.image and os.path.isfile(root / user.image):
+                os.remove(root / user.image)
             # generate unique filename
             while (image_name := f"{uuid.uuid4()}.{tp.lower()}") in os.listdir(
-                settings.MEDIA_ROOT
+                root
             ):
                 pass
             user.image = image_name
@@ -112,8 +113,8 @@ def profile_view_post_handler(user: User) -> Response:
             aspect_ratio_hw = h / w
             resized_w = min(w, 300)
             resized_h = resized_w * aspect_ratio_hw
-            as_pillow_image.resize((int(resized_w), int(resized_h)))
-            as_pillow_image.save(settings.MEDIA_ROOT / user.image)
+            resized = as_pillow_image.resize((int(resized_w), int(resized_h)))
+            resized.save(root / user.image)
         if param == "followers":
             # merge current_user to user's session
             # to not access current_user in different threads
