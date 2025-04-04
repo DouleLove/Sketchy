@@ -1,5 +1,6 @@
 __all__ = ("Sketchy",)
 
+import os
 import runpy
 from typing import Any
 
@@ -8,7 +9,6 @@ from flask_login.login_manager import LoginManager
 from flask_wtf import CSRFProtect
 
 import sketchy.settings as settings
-from sketchy.database import Session, User
 
 
 class Sketchy:
@@ -25,6 +25,12 @@ class Sketchy:
 
     @classmethod
     def _setup(cls, app: Flask) -> None:
+        cls._create_required_directories()
+
+        # this will cause an error on the top of file
+        # if settings.DB_ROOT folder is not created
+        from sketchy.database import User
+
         login_manager = LoginManager()
         login_manager.user_loader(User.get)
         login_manager.init_app(app)
@@ -46,7 +52,28 @@ class Sketchy:
         app.get("/media/<path:filename>")(cls.media)
 
     @classmethod
+    def _create_required_directories(cls) -> None:
+        dirs_must_exist = (
+            settings.DB_ROOT,
+            settings.MEDIA_ROOT,
+            *(
+                map(
+                    lambda folder: settings.MEDIA_ROOT / folder,
+                    settings.MEDIA_ROOT_FOLDERS,
+                )
+            ),
+        )
+
+        for root in dirs_must_exist:
+            if not os.path.exists(root):
+                os.mkdir(root)
+
+    @classmethod
     def before_request(cls) -> None:
+        # this will cause an error on the top of file
+        # if settings.DB_ROOT folder is not created
+        from sketchy.database import Session
+
         g.session = Session()
 
     @classmethod
