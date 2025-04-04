@@ -1,6 +1,6 @@
 <a class="user-preview" href="{{ origin_url }}/profile?uid={{ user.id }}">
     <div class="user-preview-avatar-container">
-        <img class="user-preview-avatar" src="{{ user.avatar }}">
+        <img class="user-preview-avatar" src="{{ user.avatar | replace('media/', 'media/avatars/') }}">
     </div>
     <div class="user-preview-text">
         <div class="user-names-container">
@@ -12,4 +12,27 @@
     <div class="btn-more-pu">
         <span class="ttl-more-pu">Ещё</span>
     </div>
+    <script>
+        function userInfoMoreButton() {
+            let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+            if (!x) {
+                return;
+            }
+
+            let show;
+            if (x > 650) {
+                show = true;
+            } else {
+                show = false;
+            }
+
+            [...document.getElementsByClassName('btn-more-pu')].forEach(
+                (btn) => btn.style.display = show ? 'block' : 'none'
+            );
+        }
+
+        userInfoMoreButton();
+        window.addEventListener('resize', userInfoMoreButton);
+    </script>
 </a>
