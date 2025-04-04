@@ -1,7 +1,39 @@
 <div class="sketch-popup">
     <div class="sketch-popup-inner">
         <div class="wrapper-sketch-image">
-            <img class="sketch-image-popup" src="{{ sketch.image | replace('media/', 'media/ORIGINAL_') }}">
+            <img class="sketch-image-popup" src="">
+             <script type="text/javascript">
+                 var image = document.getElementsByClassName('sketch-image-popup')[0];
+
+                 function setSketchImage() {
+                     let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+                     let imageSize;
+                     if (!x) {
+                        imageSize = "large";
+                     } else if (x <= 768) {
+                        imageSize = "small";
+                     } else if (x <= 1920) {
+                        imageSize = "medium";
+                     } else {
+                        imageSize = "large";
+                     }
+
+                     if (image.dataset.size == imageSize) {
+                        return;
+                     }
+
+                     let imageSrc = "{{ sketch.image }}";
+                     let mediaSplit = imageSrc.split('media/');
+                     imageSrc = mediaSplit[0] + 'media/' + imageSize + '/' + mediaSplit[1];
+
+                     image.setAttribute('src', imageSrc);
+                     image.dataset.size = imageSize;
+                 }
+
+                 setSketchImage();
+                 window.addEventListener('resize', setSketchImage);
+            </script>
         </div>
         <div class="sketch-info">
             <div class="ctn-actions">
@@ -29,7 +61,7 @@
             </div>
             <div class="container-author-info">
                 <a href="{{ origin_url }}/profile?uid={{ author.id }}" class="author-avatar-wrapper" data-title="{{ author.username }} ({{ author.login }})">
-                    <img class="author-avatar" src="{{ sketch.author.avatar }}">
+                    <img class="author-avatar" src="{{ sketch.author.avatar | replace('media/', 'media/avatars/') }}">
                 </a>
                 <div class="text-author-info-container">
                     <a class="author-usernames-container" href="{{ origin_url }}/profile?uid={{ author.id }}" data-title="{{ author.username }} ({{ author.login }})">
