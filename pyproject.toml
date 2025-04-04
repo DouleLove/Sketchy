@@ -15,9 +15,9 @@ extend_ignore = [
 per_file_ignores = [
     "__init__.py: F401, F403",
 ]
+inline-quotes = "double"
 
 [tool.isort]
-skip_gitignore = true
 multi_line_output = 3
 include_trailing_comma = true
 
