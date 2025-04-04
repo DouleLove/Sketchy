@@ -34,7 +34,7 @@
             </div>
             {% else %}
             <div class="wrapper-avatar">
-                 <img id="user-avatar-pr" src="{{ user.avatar }}" />
+                 <img id="user-avatar-pr" src="{{ user.avatar | replace('media/', 'media/avatars/') }}" />
             </div>
             {% endif %}
             <div class="usernames-container">
