@@ -85,20 +85,19 @@ class SketchForm(FlaskForm):
             ),
         ],
     )
-    place = StringField(
-        label="Место",
-        validators=[
-            DataRequired(message="Место не указано"),
-            Length(
-                min=MIN_PLACE_LENGTH,
-                message=f"Слишком короткое название места "
-                f"(минимум {MIN_PLACE_LENGTH})",
-            ),
-        ],
-    )
     image = FileField(
         label="Изображение",
         validators=[FileRequired(message="Изображение не прикреплено")],
+    )
+    place = StringField(
+        label="Место",
+        validators=[
+            Length(
+                min=MIN_PLACE_LENGTH,
+                message=f"Слишком короткое название места "
+                        f"(минимум {MIN_PLACE_LENGTH})",
+            ),
+        ],
     )
     submit = SubmitField(
         label="Продолжить",
