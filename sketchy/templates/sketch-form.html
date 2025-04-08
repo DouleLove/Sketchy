@@ -2,12 +2,25 @@
 
 {% block form_title %}Создание скетча{% endblock %}
 
+{% block main %}
+{{ super() }}
+<section id="section-map">
+    <div class="map-wrapper">
+        <div id="map"></div>
+    </div>
+</section>
+{% endblock %}
+
 {% block stylesheets %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sketch-form.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/imap.css') }}">
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script rel="text/javascript" type="module" src="{{ url_for('static', filename='js/sketch-form.js') }}" defer></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=...&lang=ru_RU" rel="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/sketch-form.js') }}" rel="text/javascript" type="module" defer></script>
+<script src="{{ url_for('static', filename='js/roundedimap.js') }}" rel="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/imap.js') }}" rel="text/javascript" type="module"></script>
 {% endblock %}
