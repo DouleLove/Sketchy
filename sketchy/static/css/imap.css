@@ -1,0 +1,11 @@
+.map-wrapper {
+    z-index: 5;
+    position: absolute;
+    left: 0;
+    top: var(--nav-height);
+}
+
+#map {
+    width: 100vw;
+    height: calc(100vh - var(--nav-height));
+}
