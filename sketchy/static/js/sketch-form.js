@@ -1,4 +1,5 @@
 import {postForm} from './form.js'
+import {SketchesMap} from './imap.js'
 
 
 function setupFileInput(selectedFile) {
@@ -56,7 +57,11 @@ function onSubmit(e) {
 function main() {
     setupFileInput();
     document.getElementById('form').addEventListener('submit', onSubmit);
+    const map = new SketchesMap(document.getElementById('map'), {showOnInit: false});
+    document.getElementById('place').addEventListener('focus', () => {
+        map.show();
+        document.getElementById('background-container').style.opacity = 0;
+    });
 }
-
 
 main();
