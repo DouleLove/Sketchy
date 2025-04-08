@@ -72,7 +72,6 @@ class SketchForm(FlaskForm):
     LARGE_IMAGE_WIDTH = 3840
 
     MAX_NAME_LENGTH = 40
-    MIN_PLACE_LENGTH = 2
 
     name = StringField(
         label="Название скетча",
@@ -91,13 +90,6 @@ class SketchForm(FlaskForm):
     )
     place = StringField(
         label="Место",
-        validators=[
-            Length(
-                min=MIN_PLACE_LENGTH,
-                message=f"Слишком короткое название места "
-                        f"(минимум {MIN_PLACE_LENGTH})",
-            ),
-        ],
     )
     submit = SubmitField(
         label="Продолжить",
