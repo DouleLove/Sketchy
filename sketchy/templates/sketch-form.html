@@ -19,7 +19,7 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="https://api-maps.yandex.ru/2.1/?apikey=...&lang=ru_RU" rel="text/javascript"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=...&suggest_apikey=...&lang=ru_RU" rel="text/javascript"></script>
 <script src="{{ url_for('static', filename='js/sketch-form.js') }}" rel="text/javascript" type="module" defer></script>
 <script src="{{ url_for('static', filename='js/roundedimap.js') }}" rel="text/javascript"></script>
 <script src="{{ url_for('static', filename='js/imap.js') }}" rel="text/javascript" type="module"></script>
