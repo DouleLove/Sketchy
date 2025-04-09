@@ -61,12 +61,16 @@ class _CleanMap {
             });
         }
 
-        this.postInit();
+        this._wasShownOnce = false;
+        if (this._options.showOnInit) {
+            this.postInit();
+            this._wasShownOnce = true;
+        }
     }
 
-    postInit() {
-        return;
-    }
+    // abstract method, actually gets called before first show, not the init,
+    // because some functionality is not available directly after ymaps init
+    postInit() {return;}
 
     getPos() {
         return this._mapPos;
@@ -109,6 +113,10 @@ class _CleanMap {
     }
 
     show() {
+        if (!this._wasShownOnce) {
+            this.postInit();
+            this._wasShownOnce = true;
+        }
         this.resize(this._mapSize.width, this._mapSize.height);
     }
 
@@ -131,7 +139,7 @@ export class SketchesMap extends _CleanMap {
     }
 
     postInit() {
-        this._addControls();
+        this._setupControls();
 
         if (this._options.autoResize) {
             window.addEventListener('resize', () => {
@@ -146,7 +154,7 @@ export class SketchesMap extends _CleanMap {
         }
     }
 
-    _addControls() {
+    _setupControls() {
         const closeControl = new ymaps.control.Button({
             data: {
                 iconType: 'cross',
@@ -158,10 +166,10 @@ export class SketchesMap extends _CleanMap {
                 selectOnClick: false,
                 float: 'none',
                 position: {
-                    top: '10px',
-                    right: '10px',
-                }
-            }
+                    top: 10,
+                    right: 10,
+                },
+            },
         });
 
         closeControl.events.add('click', () => {
@@ -170,6 +178,9 @@ export class SketchesMap extends _CleanMap {
         });
 
         const geolocationControl = new ymaps.control.GeolocationControl({
+            data: {
+                title: '',
+            },
             options: {
                 layout: 'round#buttonLayout',
             },
@@ -178,11 +189,11 @@ export class SketchesMap extends _CleanMap {
         // rotate this control with css because it is vertical by default
         const zoomControl = new ymaps.control.ZoomControl({
             data: {
-                title: 'kfsdg',
+                title: '',
             },
             options: {
                 layout: 'round#zoomLayout',
-            }
+            },
         });
 
         const typeSelector = new ymaps.control.TypeSelector({
@@ -192,21 +203,33 @@ export class SketchesMap extends _CleanMap {
                 itemSelectableLayout: 'round#listBoxItemSelectableLayout',
                 float: 'none',
                 position: {
-                    bottom: '10px',
-                    left: '10px',
+                    'bottom': 10,
+                    'left': 10,
                 },
             },
         });
-        typeSelector.addMapType('yandex#map', 1);
-        typeSelector.addMapType('yandex#hybrid', 0);
+
+        const searchControl = new ymaps.control.SearchControl({
+            options: {
+                 float: 'none',
+                 position: {
+                    'left': 65,
+                    'top': 15,
+                 },
+                 provider: 'yandex#search',
+                 maxWidth: 10,
+                 fitMaxWidth: true,
+             },
+        });
 
         this.ymap.controls.add(geolocationControl);
-        this.ymap.controls.add(zoomControl);
         this.ymap.controls.add(closeControl);
+        this.ymap.controls.add(zoomControl);
         this.ymap.controls.add(typeSelector);
+        this.ymap.controls.add(searchControl);
     }
 
-    setSketchMarker(latitude, longitude) {
+    addSketchMarker(latitude, longitude) {
         console.log(latitude, longitude);
     }
 }
