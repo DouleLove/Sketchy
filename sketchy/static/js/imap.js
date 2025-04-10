@@ -16,37 +16,40 @@ class _CleanMap {
         this._mapSize = {'width': mapContainerBoundingRect.width, 'height': mapContainerBoundingRect.height};
 
         this._options = {
-            defaultCords: [55.751244, 37.618423],
+            defaultCords: [55.751244, 37.618423],  // Moscow coordinates
             showOnInit: true,
             autoResize: true,
         }
         for (const option of Object.keys(options)) {
-            if (!this._options.hasOwnProperty(option)) {
-                throw new ReferenceError('Unknown option "' + option + '"');
-            }
             this._options[option] = options[option];
         }
 
-        ymaps.ready(() => this._initYmaps());
+        ymaps.ready(() => this._getCoordinatesByGeolocation().then((center) => this._initYmaps(center)));
     }
 
-    _initYmaps() {
-        // cords by user IP
-        let cords = [ymaps.geolocation.latitude, ymaps.geolocation.longitude];
-        // if could not obtain any of longitude, latitude by user IP,
-        // then use the default coordinates which are the center of Moscow
-        if (cords[0] == undefined || cords[1] == undefined) {
-            cords = this._options.defaultCords;
-        }
+    _getCoordinatesByGeolocation() {
+        return new Promise((resolve, reject) => {
+            ymaps.geolocation.get({provider: 'yandex'}).then((res) => {
+                // cords by user IP
+                resolve(res.geoObjects.get(0).geometry.getCoordinates());
+            }, () => {
+                // if could not obtain coordinates by geolocation,
+                // then use value provided by options.defaultCords
+                resolve(this._options.defaultCords);
+            });
+        });
+    }
 
+    _initYmaps(center) {
         const ymap = new ymaps.Map(this._mapContainer, {
-            center: cords,
+            center: center,
             zoom: 10,  // from 0 to 19 inclusive
             controls: [],
         }, {
             minZoom: 3,
             restrictMapArea: [[84.9, -178.9], [-73.87011, 181]],  // remove areas where map does not exist
             suppressMapOpenBlock: true,
+            yandexMapDisablePoiInteractivity: true,
         });
 
         this.ymap = ymap;
@@ -136,6 +139,10 @@ export class SketchesMap extends _CleanMap {
 
     constructor(mapContainerElement, options={}) {
         super(mapContainerElement, options);
+
+        if (this._options.setPlacemarkOnclick == undefined) {
+            this._options.setPlacemarkOnclick = false;
+        }
     }
 
     postInit() {
@@ -152,6 +159,12 @@ export class SketchesMap extends _CleanMap {
                 }
             });
         }
+
+        if (this._options.setPlacemarkOnclick) {
+            this.ymap.events.add('click', (event) => {
+                this.addSketchMarker(event.get('coords'));
+            });
+        }
     }
 
     _setupControls() {
@@ -162,7 +175,6 @@ export class SketchesMap extends _CleanMap {
             },
             options: {
                 layout: 'round#buttonLayout',
-                maxWidth: 145,
                 selectOnClick: false,
                 float: 'none',
                 position: {
@@ -183,7 +195,17 @@ export class SketchesMap extends _CleanMap {
             },
             options: {
                 layout: 'round#buttonLayout',
+                noPlacemark: true,
             },
+        });
+        // since we set noPlacemark: true in geolocationControl.options,
+        // there's no map centring on geolocation find, so we track
+        // locationchange event to center map by ourselves
+        geolocationControl.events.add('locationchange', (event) => {
+            const bounds = event.get('geoObjects').get(0).properties.get('boundedBy');
+            const size = this.getSize();
+            const state = ymaps.util.bounds.getCenterAndZoom(bounds, [size.width, size.height]);
+            this.ymap.setZoom(state.zoom).then(() => this.ymap.panTo(state.center));
         });
 
         // rotate this control with css because it is vertical by default
@@ -209,18 +231,18 @@ export class SketchesMap extends _CleanMap {
             },
         });
 
+        // styles are set in imap.css
         const searchControl = new ymaps.control.SearchControl({
             options: {
-                 float: 'none',
-                 position: {
-                    'left': 65,
-                    'top': 15,
-                 },
-                 provider: 'yandex#search',
-                 maxWidth: 10,
-                 fitMaxWidth: true,
+                float: 'none',
+                position: {
+                   'left': 65,
+                   'top': 15,
+                },
+                noPlacemark: true,
              },
         });
+        searchControl.events.add('select', () => {alert('here')});
 
         this.ymap.controls.add(geolocationControl);
         this.ymap.controls.add(closeControl);
@@ -229,7 +251,35 @@ export class SketchesMap extends _CleanMap {
         this.ymap.controls.add(searchControl);
     }
 
-    addSketchMarker(latitude, longitude) {
-        console.log(latitude, longitude);
+    addSketchMarker(coordinates, image, text='Выбрать') {
+        let sketchPlacemark;
+
+        if (this._options.setPlacemarkOnclick) {
+            this.ymap.geoObjects.removeAll();
+
+            const sketchMarkerLayout = ymaps.templateLayoutFactory.createClass(
+                '<div class="balloon">' +
+                    '<div class="balloon-content-wrapper">' +
+                        '<span class="balloon-content">' +
+                            '$[properties.balloonContent]' +
+                        '<span>' +
+                    '</div>' +
+                '</div>',
+            )
+
+            sketchPlacemark = new ymaps.Placemark(coordinates, {
+                balloonContent: 'Выбрать'
+            }, {
+                balloonLayout: sketchMarkerLayout,
+                balloonPanelMaxMapArea: 0,
+                hideIconOnBalloonOpen: false,
+                balloonOffset: [5, 5],
+            });
+        } else {
+            sketchPlacemark = new ymaps.Placemark(coordinates, {}, {hasBalloon: false})
+        }
+
+        this.ymap.geoObjects.add(sketchPlacemark);
+        sketchPlacemark.balloon.open();
     }
 }
