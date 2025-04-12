@@ -12,6 +12,7 @@ import sketchy.settings as settings
 
 # custom fields
 
+
 class PlaceField(StringField):
     """
     simple StringField, which only replaces type attribute,
