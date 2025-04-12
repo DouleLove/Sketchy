@@ -102,8 +102,10 @@ html, body, main {
     width: 100%;
 }
 
-.form-field-wrapper:has(.form-field-input[type='file']),
-.form-field-wrapper:has(.form-field-input[type='file']) > .form-field-inner > input {
+.form-field-wrapper:has(.file-icon),
+.form-field-wrapper:has(.file-icon) > .form-field-inner > input,
+.form-field-wrapper:has(.place-icon),
+.form-field-wrapper:has(.place-icon) > .form-field-inner > input {
     cursor: pointer;
 }
 
@@ -122,7 +124,7 @@ html, body, main {
     display: none;
 }
 
-.form-field-input-file-icon-add {
+.form-field-icon {
     height: 1.5rem;
     width: 1.5rem;
     align-self: center;
@@ -130,8 +132,8 @@ html, body, main {
     transition: fill 400ms ease;
 }
 
-.form-field-wrapper:hover > .form-field-inner > .form-field-input-file-icon-add,
-.form-field-wrapper:focus-within > .form-field-inner > .form-field-input-file-icon-add{
+.form-field-wrapper:hover > .form-field-inner > .form-field-icon,
+.form-field-wrapper:focus-within > .form-field-inner > .form-field-icon {
     fill: rgb(55, 57, 63);
 }
 
