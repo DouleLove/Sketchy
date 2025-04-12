@@ -81,6 +81,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 99999;
 }
 
 .img-logo-switch-container {
@@ -164,7 +165,7 @@ nav {
     position: fixed;
     top: 4rem;
     left: 0;
-    z-index: 3;
+    z-index: 99999;
     width: 94vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, .7);
