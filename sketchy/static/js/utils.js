@@ -114,3 +114,51 @@ export function loadSketchPopUp(sid) {
 
     loadPopUp(window.location.origin + '/sketch', params, setupSketchPopUp);
 }
+
+
+export function shortenText(textContainer, text=null) {
+
+    function _getText() {
+        if (text != null) {
+            return text;
+        }
+        if (textContainer.value != undefined) {
+            return textContainer.value;
+        }
+        if (!textContainer.children) {
+            return textContainer.innerHTML;
+        }
+        throw new Error('Cannot get text for `${textContainer}`');
+    }
+
+    function _getFont() {
+
+        function getStyle(element, prop) {
+            return window.getComputedStyle(element, null).getPropertyValue(prop);
+        }
+
+        const fontWeight = getStyle(textContainer, 'font-weight') || 'normal';
+        const fontSize = getStyle(textContainer, 'font-size') || '16px';
+        const fontFamily = getStyle(textContainer, 'font-family') || 'Times New Roman';
+
+        return `${fontWeight} ${fontSize} ${fontFamily}`;
+    }
+
+    text = _getText();
+    const font = _getFont();
+
+    // reuse canvas
+    const canvas = shortenText.canvas || (shortenText.canvas = document.createElement("canvas"));
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    const charWidth = metrics.width / text.length;
+
+    const maxCharsNum = Math.floor(textContainer.offsetWidth / charWidth) - 4;  // 3 chars for dots and 1 extra char
+
+    if (text.length > maxCharsNum) {
+        return text.slice(0, maxCharsNum) + '...';
+    }
+
+    return text
+}
