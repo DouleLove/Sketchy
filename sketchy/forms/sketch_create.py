@@ -5,11 +5,14 @@ from typing import Iterable
 
 import PIL.Image
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
+from flask_wtf.file import FileRequired
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Length, ValidationError
 
 import sketchy.settings as settings
+import sketchy.utils as utils
+
+from .fields import ImageField, PlaceField
 
 
 class ImageExtensionValidator:
@@ -67,6 +70,7 @@ class ImageAspectRatioValidator:
 
 
 class SketchForm(FlaskForm):
+    TINY_IMAGE_WIDTH = 100
     SMALL_IMAGE_WIDTH = 768
     MEDIUM_IMAGE_WIDTH = 1920
     LARGE_IMAGE_WIDTH = 3840
@@ -84,16 +88,12 @@ class SketchForm(FlaskForm):
             ),
         ],
     )
-    image = FileField(
+    image = ImageField(
         label="Изображение",
         validators=[FileRequired(message="Изображение не прикреплено")],
     )
-    place = StringField(
-        label="Место",
-    )
-    submit = SubmitField(
-        label="Продолжить",
-    )
+    place = PlaceField(label="Место")
+    submit = SubmitField(label="Продолжить")
 
     def _resize_with_aspect_ratio(
         self,
@@ -125,6 +125,12 @@ class SketchForm(FlaskForm):
             width = min(image_w, height * aspect_ratio_wh)
 
         return image.resize((int(width), int(height)))
+
+    @cached_property
+    def pillow_image_tiny(self) -> PIL.Image.Image | None:
+        return self._resize_with_aspect_ratio(
+            width=self.TINY_IMAGE_WIDTH,
+        )
 
     @cached_property
     def pillow_image_small(self) -> PIL.Image.Image | None:
@@ -164,6 +170,18 @@ class SketchForm(FlaskForm):
 
         return image
 
+    @property
+    def longitude(self) -> float | None:
+        coordinates = utils.parse_coordinates(self.place.data)
+        if coordinates:
+            return coordinates[0]
+
+    @property
+    def latitude(self) -> float | None:
+        coordinates = utils.parse_coordinates(self.place.data)
+        if coordinates:
+            return coordinates[0]
+
     def validate_image(self, _) -> None:
         validate_image_extension = ImageExtensionValidator(
             allowed_extensions=settings.ALLOWED_MEDIA_EXTENSIONS,
@@ -177,3 +195,17 @@ class SketchForm(FlaskForm):
 
         validate_image_extension(self.pillow_image)
         validate_image_aspect_ratio(self.pillow_image)
+
+    def validate_place(self, _) -> None:
+        if not self.place.data:
+            return
+
+        lon, lat = self.longitude, self.latitude
+
+        if (
+            lon is None
+            or lat is None
+            or not (-180 <= lon <= 180)
+            or not (-90 <= lat <= 90)
+        ):
+            raise ValidationError('Такого места не существует')
