@@ -6,6 +6,7 @@ from flask import Response, abort, g, redirect, request
 from flask_login import current_user, logout_user
 
 import sketchy.handlers as handlers
+import sketchy.utils as utils
 from sketchy.database import User
 
 
@@ -80,3 +81,17 @@ def sketch_create_view() -> Response:
 @g.app.route("/sketches", methods=[HTTPMethod.GET])
 def sketches_list_view() -> Response:
     return handlers.sketches_list_view_get_handler()
+
+
+@g.app.route("/imap", methods=[HTTPMethod.GET])
+def imap_view() -> Response:
+    coordinates = utils.parse_coordinates(request.args.get("coordinates"))
+    bounds = utils.parse_coordinates(request.args.get("bounds"), length=4)
+
+    if bounds:
+        return handlers.imap_view_get_handler(
+            top_left=[bounds[0], bounds[1]],  # type: ignore
+            bottom_right=[bounds[2], bounds[3]],  # type: ignore
+        )
+
+    return handlers.imap_view_get_handler(coordinates)
