@@ -135,14 +135,54 @@ class _CleanMap {
 }
 
 
+// dataclass - container for storing info about place: coordinates and closest address
+class Place {
+
+    constructor(coordinates, name) {
+        this.coordinates = coordinates;
+        this.name = name;
+    }
+
+}
+
+
 export class SketchesMap extends _CleanMap {
 
     constructor(mapContainerElement, options={}) {
         super(mapContainerElement, options);
 
+        if (this._options.singleMarker == undefined) {
+            this._options.singleMarker = false;
+        }
         if (this._options.setPlacemarkOnclick == undefined) {
             this._options.setPlacemarkOnclick = false;
         }
+        if (this._options.placemarkDefaultBackgroundImage == undefined) {
+            this._options.placemarkDefaultBackgroundImage = null;
+        }
+        if (this._options.placemarkDefaultBackgroundSize == undefined) {
+            this._options.placemarkDefaultBackgroundImage = null;  // no background image, if no size specified
+        }
+        if (this._options.placemarkDefaultBackgroundOffset == undefined) {
+            this._options.placemarkDefaultBackgroundOffset = [0, 0];
+        }
+        if (this._options.placemarkDefaultForegroundImage == undefined) {
+            this._options.placemarkDefaultForegroundImage = null;
+        }
+        if (this._options.placemarkDefaultForegroundSize == undefined) {
+            this._options.placemarkDefaultForegroundImage = null;  // no foreground image, if no size specified
+        }
+        if (this._options.placemarkDefaultForegroundOffset == undefined) {
+            this._options.placemarkDefaultForegroundOffset = [0, 0];
+        }
+        if (this._options.placemarkBalloonDefaultText == undefined) {
+            this._options.placemarkBalloonDefaultText = 'Select';
+        }
+        if (this._options.placemarkBalloonOffset == undefined) {
+            this._options.placemarkBalloonOffset = [0, 0];
+        }
+
+        this.__balloonSelectorID = 'balloon'
     }
 
     postInit() {
@@ -185,7 +225,6 @@ export class SketchesMap extends _CleanMap {
         });
 
         closeControl.events.add('click', () => {
-            document.getElementById('background-container').style.opacity = 1;
             this.hide();
         });
 
@@ -251,35 +290,197 @@ export class SketchesMap extends _CleanMap {
         this.ymap.controls.add(searchControl);
     }
 
-    addSketchMarker(coordinates, image, text='Выбрать') {
-        let sketchPlacemark;
+    _isSingleMarkerMode() {
+        return this._options.singleMarker;
+    }
+
+    // only compatible with options.singleMarker = true
+    _moveMarker(coordinates) {
+        for (let i = 0; i < this.ymap.geoObjects.getLength(); i++) {
+            this.ymap.geoObjects.get(i).geometry.setCoordinates(coordinates);
+        }
+    }
+
+    _buildBackgroundPlacemark(
+        coordinates,
+        placemarkBackgroundImage,
+        imageSize,
+        imageOffset,
+        balloonText,
+    ) {
+        if (placemarkBackgroundImage == undefined) {
+            placemarkBackgroundImage = this._options.placemarkDefaultBackgroundImage;
+        }
+
+        if (placemarkBackgroundImage == null) {
+            return;
+        }
+
+        let placemarkData = {};
+        let placemarkOptions = {};
 
         if (this._options.setPlacemarkOnclick) {
-            this.ymap.geoObjects.removeAll();
-
             const sketchMarkerLayout = ymaps.templateLayoutFactory.createClass(
-                '<div class="balloon">' +
+                '<div class="balloon" id="{{ properties.balloonSelectorID }}">' +
                     '<div class="balloon-content-wrapper">' +
                         '<span class="balloon-content">' +
-                            '$[properties.balloonContent]' +
+                            '{{ properties.balloonContent }}' +
                         '<span>' +
                     '</div>' +
                 '</div>',
             )
 
-            sketchPlacemark = new ymaps.Placemark(coordinates, {
-                balloonContent: 'Выбрать'
-            }, {
+            if (balloonText == undefined) {
+                balloonText = this._options.placemarkBalloonDefaultText;
+            }
+            placemarkData = {
+                balloonSelectorID: this.__balloonSelectorID,
+                balloonContent: balloonText != undefined ? balloonText : '',
+            }
+
+            placemarkOptions = {
                 balloonLayout: sketchMarkerLayout,
                 balloonPanelMaxMapArea: 0,
                 hideIconOnBalloonOpen: false,
-                balloonOffset: [5, 5],
-            });
+                balloonOffset: this._options.placemarkBalloonOffset,
+            }
         } else {
-            sketchPlacemark = new ymaps.Placemark(coordinates, {}, {hasBalloon: false})
+            placemarkOptions = {
+                hasBalloon: false,
+            }
         }
 
-        this.ymap.geoObjects.add(sketchPlacemark);
-        sketchPlacemark.balloon.open();
+        if (imageSize == undefined) {
+            imageSize = this._options.placemarkDefaultBackgroundSize;
+        }
+
+        if (imageOffset == undefined) {
+            imageOffset = this._options.placemarkDefaultBackgroundOffset;
+        }
+
+        if (placemarkBackgroundImage != null) {
+            placemarkOptions.iconLayout = 'default#image';
+            placemarkOptions.iconImageHref = placemarkBackgroundImage;
+            placemarkOptions.iconImageSize = imageSize;
+            placemarkOptions.iconImageOffset = imageOffset;
+        }
+
+        return new ymaps.Placemark(coordinates, placemarkData, placemarkOptions);
     }
+
+    _buildForegroundPlacemark(
+        coordinates,
+        placemarkForegroundImage,
+        imageSize,
+        imageOffset,
+    ) {
+        if (placemarkForegroundImage == undefined) {
+            placemarkForegroundImage = this._options.placemarkDefaultForegroundImage;
+        }
+
+        if (placemarkForegroundImage == null) {
+            return;
+        }
+
+        const circleLayout = ymaps.templateLayoutFactory.createClass(
+            '<img class="placemark-foreground{{ properties.defaultClass }}" src="{{ properties.iconImageHref }}"' +
+                 'style="border-radius: 50%;' +
+                        'object-fit: cover;' +
+                        'border: 1px solid rgba(98, 104, 115, .8);' +
+                        'width: {{ properties.iconImageSize[0] }}px;' +
+                        'height: {{ properties.iconImageSize[1] }}px; ' +
+                        'position: relative;' +
+                        'left: {{ properties.iconImageOffset[0] }}px;' +
+                        'top: {{ properties.iconImageOffset[1] }}px;" />',
+        );
+
+        if (imageSize == undefined) {
+            imageSize = this._options.placemarkDefaultForegroundSize;
+        }
+
+        if (imageOffset == undefined) {
+            imageOffset = this._options.placemarkDefaultForegroundOffset;
+        }
+
+        const placemarkForeground = new ymaps.Placemark(coordinates, {
+            iconImageHref: placemarkForegroundImage,
+            iconImageSize: imageSize,
+            iconImageOffset: imageOffset,
+            defaultClass: placemarkForegroundImage == this._options.placemarkDefaultForegroundImage ? ' default' : '',
+        }, {
+            hasBalloon: false,
+            iconLayout: circleLayout,
+            zIndex: 50000,
+            zIndexHover: 50000,
+            iconShape: {
+                type: 'Circle',
+                coordinates: [Math.floor(imageSize[0] / 2), Math.floor(imageSize[1] / 2)],
+                radius: Math.floor(imageSize[0] / 2),
+            },
+        });
+        placemarkForeground.events.add('click', () => {
+            if (placemarkBackground.balloon.isOpen()) {
+                placemarkBackground.balloon.close();
+            } else {
+                placemarkBackground.balloon.open();
+            }
+        });
+
+        return placemarkForeground;
+    }
+
+    _reverseGeocode(coordinates) {
+        return new Promise((resolve, reject) => {
+            const cordsString = `${coordinates[0]},${coordinates[1]}`;
+            const geocodeOptions = {results: 1};
+            ymaps.geocode(cordsString, geocodeOptions).then(
+                function (res) {
+                    const geoObject = res.geoObjects.get(0);
+                    if (!geoObject) {
+                        reject(new Error('No geo-objects found by given coordinates'))
+                    }
+                    resolve(geoObject.properties.get('name'));
+                },
+                function (err) {
+                    reject(err);
+                }
+            )
+        })
+    }
+
+    addSketchMarker(coordinates, placemarkForegroundImage, placemarkBackgroundImage, balloonText) {
+        // if placemark was already created once, and we are in mode where user can have
+        // only one placemark (_isSingleMarkerMode()), then just move out single placemark
+        if (this._isSingleMarkerMode() && this.ymap.geoObjects.getLength() > 0) {
+            this._moveMarker(coordinates);
+            return;
+        }
+
+        const backgroundPlacemark = this._buildBackgroundPlacemark(coordinates, placemarkBackgroundImage, balloonText);
+        if (backgroundPlacemark) {
+            this.ymap.geoObjects.add(backgroundPlacemark);
+        }
+
+        const foregroundPlacemark = this._buildForegroundPlacemark(coordinates, placemarkForegroundImage);
+        if (foregroundPlacemark) {
+            this.ymap.geoObjects.add(foregroundPlacemark);
+        }
+
+        backgroundPlacemark.balloon.open().then(() => {
+            const balloonElement = document.getElementById(this.__balloonSelectorID);
+            balloonElement.addEventListener('click', () => {
+                const coordinates = backgroundPlacemark.geometry.getCoordinates();
+                this._reverseGeocode(coordinates).then(
+                    (name) => {
+                        return this.onSelect(new Place(coordinates, name));
+                    },
+                    () => {
+                        return this.onSelect(new Place(coordinates));  // place with missing address
+                    },
+                )
+            });
+        });
+    }
+
+    onSelect() {return;}  // abstract method
 }

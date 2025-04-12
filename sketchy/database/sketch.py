@@ -19,8 +19,13 @@ class Sketch(BaseModel):
         unique=True,
     )
     name = sqlalchemy.Column(sqlalchemy.String(length=40))
-    place = sqlalchemy.Column(
-        sqlalchemy.String,
+    longitude = sqlalchemy.Column(
+        sqlalchemy.Float,
+        nullable=True,
+        default=None,
+    )
+    latitude = sqlalchemy.Column(
+        sqlalchemy.Float,
         nullable=True,
         default=None,
     )
