@@ -1,5 +1,6 @@
 import {postForm} from './form.js'
-import {SketchesMap} from './imap.js'
+import {SketchesMap} from './sketches-map.js'
+import {shortenText} from './utils.js'
 
 
 function setupFileInput(selectedFile) {
@@ -28,17 +29,7 @@ function setupFileInput(selectedFile) {
             return;
         }
 
-        const fullname = selectedFile.name;
-        const shortname = fullname.split('.').slice(0, -1).join('.');
-        let val;
-        if (shortname.length > 12) {
-            const ext = fullname.split('.').pop();
-            val = shortname.slice(0, 7) + '...' + shortname.slice(-5, shortname.length) + '.' + ext;
-        } else {
-            val = fullname;
-        }
-
-        inp.val(val);
+        inp.val(shortenText(inp.get(0), selectedFile.name));
         inp.blur();
     });
 
@@ -46,22 +37,70 @@ function setupFileInput(selectedFile) {
 }
 
 
+function setupPlaceInput(name, coordinates) {
+    const placeInput = document.getElementById('place');
+
+    const map = new SketchesMap(document.getElementById('map'), {
+        singleMarker: true,
+        showOnInit: false,
+        setPlacemarkOnclick: true,
+        placemarkDefaultBackgroundImage: $('meta[name="placemark-default-background-image"]')[0].content,
+        placemarkDefaultForegroundImage: $('link[rel="icon"]')[0].href,
+        placemarkDefaultBackgroundSize: [37, 67],
+        placemarkDefaultBackgroundOffset: [-15, -50],
+        placemarkDefaultForegroundSize: [35, 35],
+        placemarkDefaultForegroundOffset: [-14, -41],
+        placemarkBalloonDefaultText: 'Выбрать',
+        placemarkBalloonOffset: [5, 5],
+    });
+    map.show = function (show) {
+        document.getElementById('background-container').style.opacity = 0;
+        show.bind(this)();
+    }.bind(map, map.show);
+    map.hide = function (hide) {
+        document.getElementById('background-container').style.opacity = 1;
+        hide.bind(this)();
+    }.bind(map, map.hide);
+    map.onSelect = (place) => {
+        map.hide();
+        let displayText = place.name;
+        const cordsStr = `${place.coordinates[0]},${place.coordinates[1]}`;
+        if (!displayText) {
+            displayText = cordsStr;
+        }
+        const inp = document.getElementById('place');
+        inp.value = shortenText(inp, displayText);
+        inp.dataset.coordinates = cordsStr;
+    }
+    placeInput.addEventListener('focus', () => map.show());
+
+    if (name) {
+        placeInput.value = name;
+    }
+    if (coordinates) {
+        placeInput.dataset.coordinates = coordinates;
+    }
+}
+
+
 function onSubmit(e) {
     e.preventDefault();
 
     const f = document.getElementById('image').files.length ? document.getElementById('image').files[0] : undefined;
-    postForm(this, window.location.href, () => setupFileInput(f));
+    const placeInput = document.getElementById('place');
+    const placeName = placeInput.value;
+    const placeCoordinates = placeInput.dataset.coordinates;
+    postForm(this, window.location.href, () => {
+        setupFileInput(f);
+        setupPlaceInput(placeName, placeCoordinates);
+    }, {place: placeCoordinates});
 }
 
 
 function main() {
     setupFileInput();
+    setupPlaceInput();
     document.getElementById('form').addEventListener('submit', onSubmit);
-    const map = new SketchesMap(document.getElementById('map'), {showOnInit: false, setPlacemarkOnclick: true});
-    document.getElementById('place').addEventListener('focus', () => {
-        map.show();
-        document.getElementById('background-container').style.opacity = 0;
-    });
 }
 
 main();
