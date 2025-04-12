@@ -41,13 +41,14 @@ def sketch_create_view_post_handler(form: SketchForm) -> Response:
     sketch = Sketch()
 
     sketch.name = form.name.data
-    sketch.place = form.place.data
+    sketch.longitude = form.longitude
+    sketch.latitude = form.latitude
     sketch.author_id = current_user.id
 
     ext = form.pillow_image.format.lower()
     image_name = _generate_unique_image_name(ext)
 
-    for size in ("small", "medium", "large"):
+    for size in ("tiny", "small", "medium", "large"):
         root = settings.MEDIA_ROOT / size
 
         image = getattr(form, f"pillow_image_{size}")
