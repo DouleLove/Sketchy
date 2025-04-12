@@ -225,9 +225,30 @@ function setupEditable() {
 }
 
 
+function userInfoMoreButton() {
+    let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+    if (!x) {
+        return;
+    }
+
+    let show;
+    if (x > 650) {
+        show = true;
+    } else {
+        show = false;
+    }
+
+    [...document.getElementsByClassName('btn-more-pu')].forEach(
+        (btn) => btn.style.display = show ? 'block' : 'none'
+    );
+}
+
+
 function main() {
     setFavoritesSwitcher();
     setupEditable();
+    userInfoMoreButton();
     window.onresize = (e) => {
         [].forEach.call(
             document.getElementsByClassName('f-editable'),
@@ -235,6 +256,7 @@ function main() {
                 new Event('input', {view: window, bubbles: true, cancelable: false})
             )
         );
+        userInfoMoreButton();
     }
     window.dispatchEvent(new Event('resize'));
     document.getElementsByClassName('wrapper-avatar')[0].addEventListener('click', (e) => {
