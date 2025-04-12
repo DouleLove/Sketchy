@@ -1,50 +1,17 @@
 <div class="sketch-popup">
     <div class="sketch-popup-inner">
         <div class="wrapper-sketch-image">
-            <img class="sketch-image-popup" src="" fetchpriority="high" loading="eager">
-             <script type="text/javascript">
-                 var image = document.getElementsByClassName('sketch-image-popup')[0];
-
-                 function setSketchImage() {
-                     let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-
-                     let imageSize;
-                     if (!x) {
-                        imageSize = "large";
-                     } else if (x <= 768) {
-                        imageSize = "small";
-                     } else if (x <= 1920) {
-                        imageSize = "medium";
-                     } else {
-                        imageSize = "large";
-                     }
-
-                     if (image.dataset.size == imageSize) {
-                        return;
-                     }
-
-                     let imageSrc = "{{ sketch.image }}";
-                     let mediaSplit = imageSrc.split('media/');
-                     imageSrc = mediaSplit[0] + 'media/' + imageSize + '/' + mediaSplit[1];
-
-                     image.setAttribute('src', imageSrc);
-                     image.dataset.size = imageSize;
-                 }
-
-                 setSketchImage();
-                 window.addEventListener('resize', setSketchImage);
-            </script>
+            <img class="sketch-image-popup" src="" data-imname="{{ sketch.image }}" fetchpriority="high" loading="eager" />
         </div>
         <div class="sketch-info">
             <div class="ctn-actions">
                 <span class="sketch-name">{{ sketch.name }}</span>
                 <div class="container-buttons-sketch">
-                    {% if sketch.place %}
-                    <div class="sketch-action-button" id="btn-sketch-place">
+                    {% if sketch.longitude and sketch.latitude %}
+                    <div class="sketch-action-button" id="btn-sketch-place" data-coordinates="{{ sketch.longitude }},{{ sketch.latitude }}">
                         <svg version="1.1" id="icon-sketch-place" xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 395.71 395.71" xml:space="preserve">
                             <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738 c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388 C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191 c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
                         </svg>
-                        <span class="sketch-place">{{ sketch.place }}</span>
                     </div>
                     {% endif %}
                     {% if author.id == current_user.id %}
