@@ -1,6 +1,6 @@
 __all__ = (
-    'PlaceField',
-    'ImageField',
+    "PlaceField",
+    "ImageField",
 )
 
 import typing
@@ -48,5 +48,5 @@ class ImageField(FileField):
         attribute in format like "image/png, image/jpeg"
         """
 
-        formats = (f'image/{ext}' for ext in self._allowed_media_extensions)
-        return ', '.join(formats)
+        formats = (f"image/{ext}" for ext in self._allowed_media_extensions)
+        return ", ".join(formats)

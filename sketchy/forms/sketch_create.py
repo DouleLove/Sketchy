@@ -208,4 +208,4 @@ class SketchForm(FlaskForm):
             or not (-180 <= lon <= 180)
             or not (-90 <= lat <= 90)
         ):
-            raise ValidationError('Такого места не существует')
+            raise ValidationError("Такого места не существует")
