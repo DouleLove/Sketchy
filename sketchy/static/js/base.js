@@ -70,7 +70,7 @@ function markActiveNavButton() {
 function main() {
     markActiveNavButton();
     window.addEventListener('resize', () => {
-        if (window.innerWidth < 1000) {
+        if (window.innerWidth < 1200) {
             $('.nav-buttons').hide();
             $('#img-logo-nav-wrapper').hide();
             $('.img-logo_dropdown-container-short').show();
