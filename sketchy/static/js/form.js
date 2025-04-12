@@ -1,13 +1,17 @@
 import {getBrightness, animateBrightness, animateOpacity, encodeURL, formatURL, getURLParameters} from './utils.js';
 
-
-export function postForm(form, url=window.location.href, callback=null) {
+export function postForm(form, url=window.location.href, callback=null, additionalFields={}) {
     const xhr = new XMLHttpRequest();
+
+    const formData = new FormData(form);
+    for (let fld of Object.keys(additionalFields)) {
+        formData.set(fld, additionalFields[fld]);
+    }
 
     $.ajax({
         type: 'POST',
         url: url,
-        data: new FormData(form),
+        data: formData,
         processData: false,
         contentType: false,
         xhr: function() { return xhr; },
