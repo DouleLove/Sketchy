@@ -14,7 +14,7 @@ MEDIA_ROOT = APPLICATION_ROOT / "media"
 DB_ROOT = APPLICATION_ROOT / "database" / "root"
 DB_PATH = DB_ROOT / "db.sqlite3"
 
-MEDIA_ROOT_FOLDERS = ["small", "medium", "large", "avatars"]
+MEDIA_ROOT_FOLDERS = ["tiny", "small", "medium", "large", "avatars"]
 
 HOST = gnvext.StringEnvVariable(
     name="FLASK_APP_SERVER_HOST",
