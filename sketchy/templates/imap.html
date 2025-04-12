@@ -1,0 +1,29 @@
+{% extends imap_extend | default("base.html") %}
+
+{% block meta %}
+{{ super() }}
+<meta name="placemark-default-background-image" content="{{ url_for('static', filename='img/placemark-background.svg') }}">
+{% endblock %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/imap.css') }}">
+{% endblock %}
+
+{% block main %}
+{{ super() }}
+<section id="section-map">
+    <div class="map-wrapper">
+        <div id="map"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://api-maps.yandex.ru/2.1/?apikey=9e3def8c-0bdb-476b-b741-7992f7f49ac8&suggest_apikey=c79eeb90-c701-4fc0-938c-f70381fe47bf&lang=ru_RU" rel="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/roundedimap.js') }}" rel="text/javascript"></script>
+{% if not imap_extend %}
+<script src="{{ url_for('static', filename='js/imap.js') }}" type="module" rel="text/javascript"></script>
+{% endif %}
+{% endblock %}
