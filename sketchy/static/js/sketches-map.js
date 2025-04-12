@@ -151,6 +151,9 @@ export class SketchesMap extends _CleanMap {
     constructor(mapContainerElement, options={}) {
         super(mapContainerElement, options);
 
+        if (this._options.allowClose == undefined) {
+            this._options.allowClose = true;
+        }
         if (this._options.singleMarker == undefined) {
             this._options.singleMarker = false;
         }
@@ -223,7 +226,6 @@ export class SketchesMap extends _CleanMap {
                 },
             },
         });
-
         closeControl.events.add('click', () => {
             this.hide();
         });
@@ -284,10 +286,12 @@ export class SketchesMap extends _CleanMap {
         searchControl.events.add('select', () => {alert('here')});
 
         this.ymap.controls.add(geolocationControl);
-        this.ymap.controls.add(closeControl);
         this.ymap.controls.add(zoomControl);
         this.ymap.controls.add(typeSelector);
         this.ymap.controls.add(searchControl);
+        if (this._options.allowClose) {
+            this.ymap.controls.add(closeControl);
+        }
     }
 
     _isSingleMarkerMode() {
