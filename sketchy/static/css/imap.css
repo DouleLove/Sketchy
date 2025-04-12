@@ -105,9 +105,21 @@ JS API sets styles with html "style" attribute, so we should use !important to a
     font-weight: bolder;
 }
 
+.placemark-foreground.default {
+    border: none !important;
+    border-radius: 0 !important;
+}
+
 @media screen and (max-width: 444px) {
-    .ymaps-2-1-79-search {
+    #map:has(.ymaps_maps-button-icon_cross) .ymaps-2-1-79-search {
         /* 65px is the distance from left */
         width: calc(100vw - 65px * 2) !important;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    #map:not(:has(.ymaps_maps-button-icon_cross)) .ymaps-2-1-79-search {
+        /* no close button, so we have additional 65px of space */
+        width: calc(100vw - 65px - 10px) !important;
     }
 }
