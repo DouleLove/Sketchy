@@ -20,7 +20,6 @@ def _search_sketches(
     for entry in g.session.query(Sketch).all():
         values = (
             entry.name,
-            entry.place,
             entry.author.username,
             entry.author.login,
         )
