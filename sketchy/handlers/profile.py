@@ -140,7 +140,7 @@ def profile_view_post_handler(user: User) -> Response:
     # creating response json before commit because it will close user's session
     response = jsonify(
         status=HTTPStatus.OK,
-        user_data={"avatar": user.image},
+        user_data={"avatar": f"avatars/{user.image}"},
         rendered=render_template(
             template_name_or_list="response-message.html",
             status=HTTPStatus.OK,
