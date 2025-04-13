@@ -25,8 +25,12 @@ function reqLoad(additional=false, onsuccess=null, ignoreOnSameURL=true, updateU
             href += `?query=${query}`;
         }
         if (
-            getURLParameters().sid && encodeURL(href) == encodeURL(curHrefNoSid)
-            || (href == window.location.href && ignoreOnSameURL)
+            (getURLParameters().sid
+             && encodeURL(href) == encodeURL(curHrefNoSid)
+             && document.getElementById('container-sketches-inner-ctn').children.length != 0
+            ) || (
+             href == window.location.href && ignoreOnSameURL
+            )
         ) {
             return;
         }
