@@ -88,12 +88,19 @@ function onSubmit(e) {
 
     const f = document.getElementById('image').files.length ? document.getElementById('image').files[0] : undefined;
     const placeInput = document.getElementById('place');
-    const placeName = placeInput.value;
+    let placeName = placeInput.value;
     const placeCoordinates = placeInput.dataset.coordinates;
+    const kwargs = {};
+    if (placeCoordinates) {
+        kwargs[place] = placeCoordinates;
+    }
+    if (!placeName) {
+        placeName = '';
+    }
     postForm(this, window.location.href, () => {
         setupFileInput(f);
         setupPlaceInput(placeName, placeCoordinates);
-    }, {place: placeCoordinates});
+    }, kwargs);
 }
 
 
