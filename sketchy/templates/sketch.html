@@ -1,14 +1,14 @@
 <div class="sketch-popup">
     <div class="sketch-popup-inner">
         <div class="wrapper-sketch-image">
-            <img class="sketch-image-popup" src="" data-imname="{{ sketch.image }}" fetchpriority="high" loading="eager" />
+            <img class="sketch-image-popup" src="" data-imname="{{ sketch.image_name }}" fetchpriority="high" loading="eager" />
         </div>
         <div class="sketch-info">
             <div class="ctn-actions">
                 <span class="sketch-name">{{ sketch.name }}</span>
                 <div class="container-buttons-sketch">
                     {% if sketch.longitude and sketch.latitude %}
-                    <div class="sketch-action-button" id="btn-sketch-place" data-coordinates="{{ sketch.longitude }},{{ sketch.latitude }}">
+                    <div class="sketch-action-button" id="btn-sketch-place" data-coordinates="{{ sketch.longitude }},{{ sketch.latitude }}" data-title="Показать на карте">
                         <svg version="1.1" id="icon-sketch-place" xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 395.71 395.71" xml:space="preserve">
                             <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738 c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388 C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191 c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
                         </svg>
@@ -17,7 +17,7 @@
                     {% if author.id == current_user.id %}
                     <form id="form-delete-sketch" action="">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="sketch-action-button dangerous" id="btn-delete-sketch">
+                        <button type="submit" class="sketch-action-button dangerous" id="btn-delete-sketch" data-title="Удалить скетч">
                             <svg id="icon-delete-sketch" version="1.1" xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 408.483 408.483" xml:space="preserve">
                                 <path d="M87.748,388.784c0.461,11.01,9.521,19.699,20.539,19.699h191.911c11.018,0,20.078-8.689,20.539-19.699l13.705-289.316 H74.043L87.748,388.784z M247.655,171.329c0-4.61,3.738-8.349,8.35-8.349h13.355c4.609,0,8.35,3.738,8.35,8.349v165.293 c0,4.611-3.738,8.349-8.35,8.349h-13.355c-4.61,0-8.35-3.736-8.35-8.349V171.329z M189.216,171.329 c0-4.61,3.738-8.349,8.349-8.349h13.355c4.609,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.737,8.349-8.349,8.349h-13.355 c-4.61,0-8.349-3.736-8.349-8.349V171.329L189.216,171.329z M130.775,171.329c0-4.61,3.738-8.349,8.349-8.349h13.356 c4.61,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.738,8.349-8.349,8.349h-13.356c-4.61,0-8.349-3.736-8.349-8.349V171.329z M343.567,21.043h-88.535V4.305c0-2.377-1.927-4.305-4.305-4.305h-92.971c-2.377,0-4.304,1.928-4.304,4.305v16.737H64.916 c-7.125,0-12.9,5.776-12.9,12.901V74.47h304.451V33.944C356.467,26.819,350.692,21.043,343.567,21.043z"/>
                             </svg>
@@ -28,7 +28,7 @@
             </div>
             <div class="container-author-info">
                 <a href="{{ origin_url }}/profile?uid={{ author.id }}" class="author-avatar-wrapper" data-title="{{ author.username }} ({{ author.login }})">
-                    <img class="author-avatar" src="{{ sketch.author.avatar | replace('media/', 'media/avatars/') }}">
+                    <img class="author-avatar" src="{{ sketch.author.avatar }}">
                 </a>
                 <div class="text-author-info-container">
                     <a class="author-usernames-container" href="{{ origin_url }}/profile?uid={{ author.id }}" data-title="{{ author.username }} ({{ author.login }})">

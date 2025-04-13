@@ -64,7 +64,7 @@
                             </a>
                             {% if current_user.is_authenticated %}
                                 <a class="nav-btn" id="user-avatar-wrapper" href="{{ origin_url }}/profile">
-                                    <img id="user-avatar" src="{{ current_user.avatar | replace('media/', 'media/avatars/') }}">
+                                    <img id="user-avatar" src="{{ current_user.avatar }}">
                                 </a>
                             {% else %}
                                 <a class="nav-btn" href="{{ origin_url }}/auth">
