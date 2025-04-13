@@ -86,12 +86,23 @@ def sketches_list_view() -> Response:
 @g.app.route("/imap", methods=[HTTPMethod.GET])
 def imap_view() -> Response:
     coordinates = utils.parse_coordinates(request.args.get("coordinates"))
-    bounds = utils.parse_coordinates(request.args.get("bounds"), length=4)
+    outer_bounds = utils.parse_coordinates(
+        request.args.get("outer"),
+        length=4,
+    )
+    inner_bounds = utils.parse_coordinates(
+        request.args.get("inner"),
+        length=4,
+    )
 
-    if bounds:
-        return handlers.imap_view_get_handler(
-            top_left=[bounds[0], bounds[1]],  # type: ignore
-            bottom_right=[bounds[2], bounds[3]],  # type: ignore
-        )
+    if not outer_bounds:
+        return handlers.imap_view_get_handler(coordinates)
 
-    return handlers.imap_view_get_handler(coordinates)
+    outer_bounds = [outer_bounds[:2], outer_bounds[2:]]
+    if inner_bounds:
+        inner_bounds = [inner_bounds[:2], inner_bounds[2:]]
+
+    return handlers.imap_view_get_handler(
+        outer_bounds=outer_bounds,  # type: ignore
+        inner_bounds=inner_bounds,  # type: ignore
+    )
