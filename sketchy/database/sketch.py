@@ -4,7 +4,6 @@ __all__ = ("Sketch",)
 
 import sqlalchemy
 import sqlalchemy.orm as orm
-from flask import url_for
 
 from . import BaseModel
 
@@ -37,11 +36,3 @@ class Sketch(BaseModel):
     time_created = sqlalchemy.Column(sqlalchemy.DateTime)
 
     author = orm.relationship("User")
-
-    @property
-    def image(self) -> str:
-        return url_for("media", filename=self.image_name)
-
-    @image.setter
-    def image(self, value: str) -> None:
-        self.image_name = value
