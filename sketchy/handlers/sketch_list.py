@@ -14,7 +14,9 @@ def _coincidence(a: str, b: str) -> float:
 
 
 def _search_sketches(
-    query: str, limit: int = 30, offset: int = 0
+    query: str,
+    limit: int = 30,
+    offset: int = 0,
 ) -> list[Sketch]:
     matching = []
     for entry in g.session.query(Sketch).all():
@@ -59,7 +61,7 @@ def sketches_list_view_get_handler() -> Response:
             render_template(
                 template_name_or_list="sketches.html",
                 title="Скетчи",
-            )
+            ),
         )
 
     limit = request.args.get("limit", 30, type=int)

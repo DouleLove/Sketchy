@@ -42,12 +42,15 @@ def profile_view_get_handler(user: User) -> Response:
     results_left = max(len(getattr(user, view)) - offset - limit, 0)
     if view == "sketches":
         items = sorted(
-            user.sketches, key=lambda s: (s.time_created, s.id), reverse=True
+            user.sketches,
+            key=lambda s: (s.time_created, s.id),
+            reverse=True,
         )
         template = "sketch-preview.html"
     else:
         items = sorted(
-            getattr(user, view), key=lambda u: (u.username, u.login)
+            getattr(user, view),
+            key=lambda u: (u.username, u.login),
         )
         template = "user-preview.html"
 
@@ -59,7 +62,7 @@ def profile_view_get_handler(user: User) -> Response:
                 sketch=item,
                 user=item,
                 author_context=False,
-            )
+            ),
         )
 
     return jsonify(
@@ -103,7 +106,7 @@ def profile_view_post_handler(user: User) -> Response:
                 os.remove(root / user.image)
             # generate unique filename
             while (image_name := f"{uuid.uuid4()}.{tp.lower()}") in os.listdir(
-                root
+                root,
             ):
                 pass
             user.image = image_name
