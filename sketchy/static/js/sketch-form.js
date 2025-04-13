@@ -40,39 +40,44 @@ function setupFileInput(selectedFile) {
 function setupPlaceInput(name, coordinates) {
     const placeInput = document.getElementById('place');
 
-    const map = new SketchesMap(document.getElementById('map'), {
-        singleMarker: true,
-        showOnInit: false,
-        setPlacemarkOnclick: true,
-        placemarkDefaultBackgroundImage: $('meta[name="placemark-default-background-image"]')[0].content,
-        placemarkDefaultForegroundImage: $('link[rel="icon"]')[0].href,
-        placemarkDefaultBackgroundSize: [37, 67],
-        placemarkDefaultBackgroundOffset: [-15, -50],
-        placemarkDefaultForegroundSize: [35, 35],
-        placemarkDefaultForegroundOffset: [-14, -41],
-        placemarkBalloonDefaultText: 'Выбрать',
-        placemarkBalloonOffset: [5, 5],
-    });
-    map.show = function (show) {
-        document.getElementById('background-container').style.opacity = 0;
-        show.bind(this)();
-    }.bind(map, map.show);
-    map.hide = function (hide) {
-        document.getElementById('background-container').style.opacity = 1;
-        hide.bind(this)();
-    }.bind(map, map.hide);
-    map.onSelect = (place) => {
-        map.hide();
-        let displayText = place.name;
-        const cordsStr = `${place.coordinates[0]},${place.coordinates[1]}`;
-        if (!displayText) {
-            displayText = cordsStr;
+    let map;
+    if (!setupPlaceInput.map) {
+         map = setupPlaceInput.map = new SketchesMap(document.getElementById('map'), {
+            singleMarker: true,
+            showOnInit: false,
+            setPlacemarkOnclick: true,
+            placemarkDefaultBackgroundImage: $('meta[name="placemark-default-background-image"]')[0].content,
+            placemarkDefaultForegroundImage: $('link[rel="icon"]')[0].href,
+            placemarkDefaultBackgroundSize: [37, 67],
+            placemarkDefaultBackgroundOffset: [-15, -50],
+            placemarkDefaultForegroundSize: [35, 35],
+            placemarkDefaultForegroundOffset: [-14, -41],
+            placemarkBalloonDefaultText: 'Выбрать',
+            placemarkBalloonOffset: [5, 5],
+        });
+        map.show = function (show) {
+            document.getElementById('background-container').style.opacity = 0;
+            show.bind(this)();
+        }.bind(map, map.show);
+        map.hide = function (hide) {
+            document.getElementById('background-container').style.opacity = 1;
+            hide.bind(this)();
+        }.bind(map, map.hide);
+        map.onSelect = (place) => {
+            map.hide();
+            let displayText = place.name;
+            const cordsStr = `${place.coordinates[0]},${place.coordinates[1]}`;
+            if (!displayText) {
+                displayText = cordsStr;
+            }
+            const inp = document.getElementById('place');
+            inp.value = shortenText(inp, displayText);
+            inp.dataset.coordinates = cordsStr;
         }
-        const inp = document.getElementById('place');
-        inp.value = shortenText(inp, displayText);
-        inp.dataset.coordinates = cordsStr;
+    } else {
+        map = setupPlaceInput.map;
     }
-    placeInput.addEventListener('focus', () => map.show());
+    placeInput.addEventListener('click', () => map.show());
 
     if (name) {
         placeInput.value = name;
@@ -92,7 +97,7 @@ function onSubmit(e) {
     const placeCoordinates = placeInput.dataset.coordinates;
     const kwargs = {};
     if (placeCoordinates) {
-        kwargs[place] = placeCoordinates;
+        kwargs.place = placeCoordinates;
     }
     if (!placeName) {
         placeName = '';
