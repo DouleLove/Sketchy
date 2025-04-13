@@ -10,7 +10,8 @@ import sketchy.settings as settings
 from . import BaseModel
 
 engine = sqlalchemy.create_engine(
-    f"sqlite:///{settings.DB_PATH}?check_same_thread=False", echo=False
+    f"sqlite:///{settings.DB_PATH}?check_same_thread=False",
+    echo=False,
 )
 sessionmaker = orm.sessionmaker(bind=engine)
 
