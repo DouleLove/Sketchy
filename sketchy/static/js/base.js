@@ -58,7 +58,7 @@ function markActiveNavButton() {
             }
             btn.classList.add('active');
             if (btn.href.split('/').pop() == 'sketches' && urlParams.query) {
-                btns[btns.length - 2].classList.add('active');
+                btns[btns.length - 3].classList.add('active');
                 return;
             }
             btn.onclick = (e) => {e.preventDefault()};
