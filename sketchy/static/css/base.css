@@ -257,7 +257,7 @@ nav {
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: 3;
+    z-index: 10000;
     transition: background-color 200ms ease;
     overflow: hidden;
 }
@@ -425,6 +425,12 @@ body:has(.wrapper-pop-up:not(:empty)) {
     display: flex;
     width: 100%;
     border-radius: 15px;
+}
+
+@media screen and (max-width: 1050px) {
+    [data-title]::after {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 1000px) {
