@@ -8,6 +8,9 @@
 {% block stylesheets %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/imap.css') }}">
+{% if not imap_extend %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sketch.css') }}">
+{% endif %}
 {% endblock %}
 
 {% block main %}
