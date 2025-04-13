@@ -180,7 +180,7 @@ class SketchForm(FlaskForm):
     def latitude(self) -> float | None:
         coordinates = utils.parse_coordinates(self.place.data)
         if coordinates:
-            return coordinates[0]
+            return coordinates[1]
 
     def validate_image(self, _) -> None:
         validate_image_extension = ImageExtensionValidator(
