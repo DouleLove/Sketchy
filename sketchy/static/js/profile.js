@@ -246,6 +246,11 @@ function userInfoMoreButton() {
 
 
 function main() {
+    const sid = +(getURLParameters().sid || 0);
+    if (sid) {
+        loadSketchPopUp(sid);
+    }
+
     setFavoritesSwitcher();
     setupEditable();
     userInfoMoreButton();
