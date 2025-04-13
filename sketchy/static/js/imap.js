@@ -88,6 +88,11 @@ function main() {
         // trigger markers load for starting bound
         this.onBoundsChange(this.getBounds());
     }.bind(map, map.postInit)
+
+    const sid = +(getURLParameters().sid || 0);
+    if (sid) {
+        loadSketchPopUp(sid);
+    }
 }
 
 
