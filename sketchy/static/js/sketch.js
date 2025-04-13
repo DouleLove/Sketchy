@@ -3,7 +3,6 @@ import {getURLParameters, formatURL, encodeURL} from './utils.js'
 
 function setSketchImage() {
     const imageElement = document.getElementsByClassName('sketch-image-popup')[0];
-    console.log(imageElement);
 
     let x = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
@@ -22,10 +21,7 @@ function setSketchImage() {
         return;
     }
 
-    let imageSrc = imageElement.dataset.imname;
-    let mediaSplit = imageSrc.split('media/');
-    imageSrc = mediaSplit[0] + 'media/' + imageSize + '/' + mediaSplit[1];
-
+    const imageSrc = `media/${imageSize}/${imageElement.dataset.imname}`;
     imageElement.setAttribute('src', imageSrc);
     imageElement.dataset.size = imageSize;
 }
@@ -34,11 +30,22 @@ export function setupSketchPopUp() {
     setSketchImage();
     window.addEventListener('resize', setSketchImage);
 
-    document.getElementById('btn-sketch-place').addEventListener('click', (e) => {
-        window.location.href = encodeURL(
-            window.location.origin + `/imap?coordinates=${e.currentTarget.dataset.coordinates}`,
+    const btnSketchPlace = document.getElementById('btn-sketch-place');
+    let btnSketchPlaceRedirURL = encodeURL(
+        window.location.origin + `/imap?coordinates=${btnSketchPlace.dataset.coordinates}`,
+    );
+    if (window.location.pathname.indexOf('imap') !== -1) {
+        let coordinates = btnSketchPlace.dataset.coordinates;
+        // ymaps for some reason reverse ll parameter
+        coordinates = coordinates.split(',').reverse().join(',');
+        // if sketch popup is already opened from imap page, then redirect to original yandex maps page
+        btnSketchPlaceRedirURL = encodeURL(
+            `https://yandex.ru/maps?ll=${coordinates}&pt=${coordinates}&z=15`,
         );
-    })
+        btnSketchPlace.style.fill = '#e67467';
+        btnSketchPlace.dataset.title = 'Открыть Яндекс карты'
+    }
+    btnSketchPlace.addEventListener('click', () => {window.location.href = btnSketchPlaceRedirURL;})
     const btnDeleteSketch = document.getElementById('form-delete-sketch')
     if (!btnDeleteSketch) {
         return;
