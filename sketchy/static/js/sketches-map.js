@@ -16,7 +16,9 @@ class _CleanMap {
         this._mapSize = {'width': mapContainerBoundingRect.width, 'height': mapContainerBoundingRect.height};
 
         this._options = {
-            defaultCords: [55.751244, 37.618423],  // Moscow coordinates
+            center: null,
+            zoom: 10,
+            centerNoGeolocation: [55.751244, 37.618423],  // Moscow coordinates
             showOnInit: true,
             autoResize: true,
         }
@@ -24,7 +26,19 @@ class _CleanMap {
             this._options[option] = options[option];
         }
 
-        ymaps.ready(() => this._getCoordinatesByGeolocation().then((center) => this._initYmaps(center)));
+        ymaps.ready(() => {
+            // if center coordinates are passed, init ymaps with those coordinates
+            if (this._options.center) {
+                return this._initYmaps(this._options.center);
+            }
+            this._getCoordinatesByGeolocation().then(
+                // if successful, init ymaps with coordinates determined by user geolocation
+                (center) => this._initYmaps(center),
+                // if could not obtain coordinates by geolocation,
+                // then use value provided by options.centerNoGeolocation
+                () => this._initYmaps(this._options.centerNoGeolocation),
+            );
+        });
     }
 
     _getCoordinatesByGeolocation() {
@@ -33,9 +47,7 @@ class _CleanMap {
                 // cords by user IP
                 resolve(res.geoObjects.get(0).geometry.getCoordinates());
             }, () => {
-                // if could not obtain coordinates by geolocation,
-                // then use value provided by options.defaultCords
-                resolve(this._options.defaultCords);
+                reject(new Error('Could not get coordinates by user IP'));
             });
         });
     }
@@ -43,7 +55,7 @@ class _CleanMap {
     _initYmaps(center) {
         const ymap = new ymaps.Map(this._mapContainer, {
             center: center,
-            zoom: 10,  // from 0 to 19 inclusive
+            zoom: this._options.zoom,  // from 0 to 19 inclusive
             controls: [],
         }, {
             minZoom: 3,
@@ -132,6 +144,10 @@ class _CleanMap {
     toggle() {
         this.isVisible() ? this.hide() : this.show();
     }
+
+    getBounds() {
+        return this.ymap.getBounds();
+    }
 }
 
 
@@ -151,8 +167,8 @@ export class SketchesMap extends _CleanMap {
     constructor(mapContainerElement, options={}) {
         super(mapContainerElement, options);
 
-        if (this._options.allowClose == undefined) {
-            this._options.allowClose = true;
+        if (this._options.closeable == undefined) {
+            this._options.closeable = true;
         }
         if (this._options.singleMarker == undefined) {
             this._options.singleMarker = false;
@@ -202,6 +218,12 @@ export class SketchesMap extends _CleanMap {
                 }
             });
         }
+
+        this.ymap.events.add('boundschange', (e) => {
+            const newBounds = e.get('newBounds');
+            const oldBounds = e.get('oldBounds');
+            this.onBoundsChange(newBounds, oldBounds);
+        });
 
         if (this._options.setPlacemarkOnclick) {
             this.ymap.events.add('click', (event) => {
@@ -289,7 +311,7 @@ export class SketchesMap extends _CleanMap {
         this.ymap.controls.add(zoomControl);
         this.ymap.controls.add(typeSelector);
         this.ymap.controls.add(searchControl);
-        if (this._options.allowClose) {
+        if (this._options.closeable) {
             this.ymap.controls.add(closeControl);
         }
     }
@@ -452,7 +474,7 @@ export class SketchesMap extends _CleanMap {
         })
     }
 
-    addSketchMarker(coordinates, placemarkForegroundImage, placemarkBackgroundImage, balloonText) {
+    addSketchMarker(coordinates, placemarkForegroundImage, placemarkBackgroundImage, balloonText, placemarkOnClick) {
         // if placemark was already created once, and we are in mode where user can have
         // only one placemark (_isSingleMarkerMode()), then just move out single placemark
         if (this._isSingleMarkerMode() && this.ymap.geoObjects.getLength() > 0) {
@@ -468,6 +490,16 @@ export class SketchesMap extends _CleanMap {
         const foregroundPlacemark = this._buildForegroundPlacemark(coordinates, placemarkForegroundImage);
         if (foregroundPlacemark) {
             this.ymap.geoObjects.add(foregroundPlacemark);
+        }
+
+        if (placemarkOnClick) {
+            [backgroundPlacemark, foregroundPlacemark].forEach((placemark) => {
+                placemark.events.add('click', function (placemark) {placemarkOnClick(placemark)}.bind(this, placemark));
+            })
+        }
+
+        if (!backgroundPlacemark.balloon) {
+            return;
         }
 
         backgroundPlacemark.balloon.open().then(() => {
@@ -486,5 +518,7 @@ export class SketchesMap extends _CleanMap {
         });
     }
 
-    onSelect() {return;}  // abstract method
+    onSelect(place) {}  // abstract method
+
+    onBoundsChange(newBounds, oldBounds) {}  // abstract method
 }
