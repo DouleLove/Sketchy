@@ -19,7 +19,7 @@ def imap_view_get_handler(
                 template_name_or_list="imap.html",
                 title="Карта скетчей",
                 coordinates=coordinates,
-            )
+            ),
         )
 
     # filtering sketches which coordinates are inside the outer bounds
@@ -45,12 +45,17 @@ def imap_view_get_handler(
 
     data = []
     for sketch in query.all():
-        data.append({
-            "sid": sketch.id,
-            "longitude": sketch.longitude,
-            "latitude": sketch.latitude,
-            'image': url_for("media", filename=f"tiny/{sketch.image_name}")
-        })
+        data.append(
+            {
+                "sid": sketch.id,
+                "longitude": sketch.longitude,
+                "latitude": sketch.latitude,
+                "image": url_for(
+                    "media",
+                    filename=f"tiny/{sketch.image_name}",
+                ),
+            },
+        )
 
     return jsonify(
         status=HTTPStatus.OK,
