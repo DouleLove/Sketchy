@@ -372,9 +372,6 @@ html, body, main {
 }
 
 @media screen and (max-width: 1050px) {
-    [data-title]::after {
-        display: none;
-    }
     .main-inner {
         flex-direction: column;
         align-items: center;
