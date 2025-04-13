@@ -88,7 +88,7 @@ class User(BaseModel, UserMixin):
     def avatar(self) -> str:
         if self.image is None:
             return url_for("static", filename="img/default-avatar.svg")
-        return url_for("media", filename=self.image)
+        return url_for("media", filename=f"avatars/{self.image}")
 
     @classmethod
     def get(cls, identifier: int = None, login: str = None) -> User:
