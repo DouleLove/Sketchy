@@ -113,6 +113,16 @@
     color: white;
 }
 
+#btn-share-sketch {
+    width: 2rem;
+    height: 2rem;
+}
+
+#icon-share-sketch {
+    width: 50%;
+    height: 50%;
+}
+
 #btn-sketch-place {
     padding-top: 5px;
     padding-bottom: 3px;
