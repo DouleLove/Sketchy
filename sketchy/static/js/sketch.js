@@ -26,11 +26,14 @@ function setSketchImage() {
     imageElement.dataset.size = imageSize;
 }
 
-export function setupSketchPopUp() {
-    setSketchImage();
-    window.addEventListener('resize', setSketchImage);
 
+function setupButtonSketchPlace() {
     const btnSketchPlace = document.getElementById('btn-sketch-place');
+
+    if (!btnSketchPlace) {
+        return;
+    }
+
     let btnSketchPlaceRedirURL = encodeURL(
         window.location.origin + `/imap?coordinates=${btnSketchPlace.dataset.coordinates}`,
     );
@@ -46,6 +49,13 @@ export function setupSketchPopUp() {
         btnSketchPlace.dataset.title = 'Открыть Яндекс карты'
     }
     btnSketchPlace.addEventListener('click', () => {window.location.href = btnSketchPlaceRedirURL;})
+}
+
+
+export function setupSketchPopUp() {
+    setSketchImage();
+    window.addEventListener('resize', setSketchImage);
+    setupButtonSketchPlace();
     const btnDeleteSketch = document.getElementById('form-delete-sketch')
     if (!btnDeleteSketch) {
         return;
