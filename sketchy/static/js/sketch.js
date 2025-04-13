@@ -56,6 +56,22 @@ export function setupSketchPopUp() {
     setSketchImage();
     window.addEventListener('resize', setSketchImage);
     setupButtonSketchPlace();
+    document.getElementById('btn-share-sketch').addEventListener('click', (e) => {
+        const kwargs = {};
+        let pathname;
+        kwargs.sid = getURLParameters().sid;
+        const btnSketchPlace = document.getElementById('btn-sketch-place');
+        if (btnSketchPlace) {
+            kwargs.coordinates = btnSketchPlace.dataset.coordinates;
+            pathname = '/imap';
+        } else {
+            kwargs.uid = getURLParameters(document.getElementsByClassName('author-avatar-wrapper')[0].href).uid;
+            pathname = '/profile';
+        }
+        const partial = window.location.origin + pathname;
+        const url = encodeURL(formatURL(partial, kwargs));
+        window.navigator.clipboard.writeText(url);
+    });
     const btnDeleteSketch = document.getElementById('form-delete-sketch')
     if (!btnDeleteSketch) {
         return;
