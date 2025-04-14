@@ -6,15 +6,11 @@ __license__ = "MIT"
 import sketchy.settings as settings
 from sketchy.app import Sketchy
 
+sketchy = Sketchy()
 
-def run() -> None:
-    sketchy = Sketchy()
+if __name__ == "__main__":
     sketchy.run(
         host=settings.HOST,
         port=settings.PORT,
         debug=settings.DEBUG,
     )
-
-
-if __name__ == "__main__":
-    run()
