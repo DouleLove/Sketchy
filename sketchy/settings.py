@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
-import dotenv
-import gnvext
-
-dotenv.load_dotenv()
+try:
+    __import__("dotenv").load_dotenv()
+except ImportError:
+    pass
 
 BASE_PATH = Path(__file__).parent.parent
 APPLICATION_ROOT = BASE_PATH / "sketchy"
@@ -16,25 +17,10 @@ DB_PATH = DB_ROOT / "db.sqlite3"
 
 MEDIA_ROOT_FOLDERS = ["tiny", "small", "medium", "large", "avatars"]
 
-HOST = gnvext.StringEnvVariable(
-    name="FLASK_APP_SERVER_HOST",
-    default=RuntimeError("FLASK_APP_SERVER_HOST must be specified in .env"),
-).value
-
-PORT = gnvext.IntegerEnvVariable(
-    name="FLASK_APP_SERVER_PORT",
-    default=RuntimeError("FLASK_APP_SERVER_PORT must be specified in .env"),
-).value
-
-DEBUG = gnvext.BooleanEnvVariable(
-    name="FLASK_APP_DEBUG",
-    default=False,
-).value
-
-SECRET_KEY = gnvext.StringEnvVariable(
-    name="FLASK_APP_SECRETKEY",
-    default=RuntimeError("FLASK_APP_SECRETKEY must be specified in .env"),
-).value
+HOST = os.getenv("FLASK_APP_SERVER_HOST", default='127.0.0.1')
+PORT = int(os.getenv("FLASK_APP_SERVER_PORT", default=8000))
+DEBUG = os.getenv("FLASK_APP_DEBUG", default='False') in ('True', 'true', 'T', 't')
+SECRET_KEY = os.getenv("FLASK_APP_SECRETKEY", default='')
 
 VIEWS_MODULES = [
     "sketchy.views",
@@ -42,6 +28,5 @@ VIEWS_MODULES = [
 
 ALLOWED_MEDIA_EXTENSIONS = ("JPEG", "JPG", "PNG")
 
+del os
 del Path
-del dotenv
-del gnvext
