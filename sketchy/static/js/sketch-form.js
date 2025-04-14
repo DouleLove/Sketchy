@@ -1,6 +1,38 @@
+import {loadPopUp} from './base.js'
 import {postForm} from './form.js'
 import {SketchesMap} from './sketches-map.js'
 import {shortenText} from './utils.js'
+
+
+function isImage(file) {
+    return file['type'].split('/')[0] == 'image';
+}
+
+
+function openImageEditor(file) {
+    if (!isImage) {
+        throw new Error('Given file is not an image');
+    }
+
+    const blob = URL.createObjectURL(file);
+
+    const editorContainer = $('<div>').attr({'class': 'editor-container'});
+    const editor = $('<div>').attr({'class': 'editor'});
+    const imageContainer = $('<div>').attr({'class': 'editor-image-container'});
+    const image = $('<img>').attr({'class': 'editor-image', 'id': 'editor-image', 'src': blob});
+    const cropGrid = $('<div>').attr({'class': 'editor-image-crop-grid'});
+    const editorToolsPanel = $('<div>').attr({'class': 'editor-tools-panel'});
+
+    $('.wrapper-pop-up').append(editorContainer);
+    $(editorContainer).append(editor);
+    $(editor).append(imageContainer);
+    $(imageContainer).append(image);
+    $(imageContainer).append(cropGrid);
+    $(editor).append(editorToolsPanel);
+
+//    inp.val(shortenText(inp.get(0), selectedFile.name));
+//    inp.blur();
+}
 
 
 function setupFileInput(selectedFile) {
@@ -29,8 +61,7 @@ function setupFileInput(selectedFile) {
             return;
         }
 
-        inp.val(shortenText(inp.get(0), selectedFile.name));
-        inp.blur();
+        openImageEditor(selectedFile);
     });
 
     $('#image').trigger('change');
