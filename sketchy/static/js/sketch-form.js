@@ -292,7 +292,7 @@ function openImageEditor(file) {
 }
 
 
-function setupFileInput(selectedFile) {
+function setupFileInput() {
     [].forEach.call(
         document.getElementsByClassName('form-field-input-file-icon-add'),
         (elem) => elem.addEventListener('click', (e) => {
@@ -310,9 +310,7 @@ function setupFileInput(selectedFile) {
     $('#image').on('change', (e) => {
         const inp = $(e.currentTarget).next();
 
-        if (e.currentTarget.files.length) {
-            selectedFile = e.currentTarget.files[0];
-        }
+        const selectedFile = e.currentTarget.files.length ? e.currentTarget.files[0] : null;
 
         if (!selectedFile) {
             return;
@@ -391,7 +389,6 @@ function onSubmit(e) {
     e.preventDefault();
 
     const img = document.getElementById('image');
-    const f = img.files.length ? img.files[0] : undefined;
     const placeInput = document.getElementById('place');
     let placeName = placeInput.value;
     const placeCoordinates = placeInput.dataset.coordinates;
@@ -405,7 +402,7 @@ function onSubmit(e) {
         placeName = '';
     }
     postForm(this, window.location.href, () => {
-        setupFileInput(f);
+        setupFileInput();
         setupPlaceInput(placeName, placeCoordinates);
     }, kwargs);
 }
