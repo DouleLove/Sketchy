@@ -5,6 +5,10 @@ export function postForm(form, url=window.location.href, callback=null, addition
 
     const formData = new FormData(form);
     for (let fld of Object.keys(additionalFields)) {
+        if (additionalFields[fld] == undefined) {
+            formData.delete(fld);
+            continue;
+        }
         formData.set(fld, additionalFields[fld]);
     }
 
