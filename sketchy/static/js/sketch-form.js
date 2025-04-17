@@ -87,8 +87,17 @@ function addCropGrid(toElement, cellsNum=9) {
     let prevMouseX;
     let prevMouseY;
 
-    $(container).mousedown(function (e) {
-        if (e.button !== 0 && e.button !== 2) {
+    function mockMouseEvent(e) {
+        if (e.touches && e.offsetX == undefined && e.offsetY == undefined) {
+            return e.touches[0];
+        }
+        return e;
+    }
+
+    $(container).on('touchstart mousedown', function (e) {
+        e.preventDefault();
+
+        if (e.button && e.button !== 0 && e.button !== 2) {
             return;
         }
 
@@ -105,8 +114,11 @@ function addCropGrid(toElement, cellsNum=9) {
         }
     });
 
-    $(document).mouseup(function (e) {
-        if (e.button !== 0 && e.button !== 2) {
+    $(document).on('touchend mouseup', function (e) {
+        e.preventDefault();
+        e = mockMouseEvent(e);
+
+        if (e && e.button !== 0 && e.button !== 2) {
             return;
         }
 
@@ -152,7 +164,9 @@ function addCropGrid(toElement, cellsNum=9) {
         return _rect;
     }
 
-    $(document).on('mousemove', function (e) {
+    $(document).on('touchmove mousemove', function (e) {
+        e = mockMouseEvent(e);
+
         if ($(cropGridContainer).hasClass('draggable')) {
             const rect = _getGridRect();
             let mouseDiffY = e.clientY - prevMouseY;
@@ -263,12 +277,16 @@ function openImageEditor(file) {
             }.bind(elem));
         });
 
-        $(closeBtnContainer).on('click', function () {
+        $(closeBtnContainer).on('touchstart click', function () {
+            $(this).children().css('fill', 'rgb(91, 133, 227)');
+            $(document).off('touchend').off('touchstart');
             $(editorContainer).remove();
             reject(new Error('Image editing cancelled'))
         });
 
-        $(applyBtnContainer).on('click', function () {
+        $(applyBtnContainer).on('touchstart click', function () {
+            $(this).children().css('fill', 'rgb(91, 133, 227)');
+            $(document).off('touchend').off('touchstart');
             const res = [
                 $('.crop-grid').get(0).getBoundingClientRect(),
                 $(imageContainer).get(0).getBoundingClientRect(),
@@ -292,7 +310,7 @@ function openImageEditor(file) {
 }
 
 
-function setupFileInput() {
+function setupFileInput(selectedFile) {
     [].forEach.call(
         document.getElementsByClassName('form-field-input-file-icon-add'),
         (elem) => elem.addEventListener('click', (e) => {
@@ -310,7 +328,9 @@ function setupFileInput() {
     $('#image').on('change', (e) => {
         const inp = $(e.currentTarget).next();
 
-        const selectedFile = e.currentTarget.files.length ? e.currentTarget.files[0] : null;
+        if (e.currentTarget.files.length) {
+            selectedFile = e.currentTarget.files[0];
+        }
 
         if (!selectedFile) {
             return;
@@ -389,6 +409,7 @@ function onSubmit(e) {
     e.preventDefault();
 
     const img = document.getElementById('image');
+    const f = img.files.length ? img.files[0] : undefined;
     const placeInput = document.getElementById('place');
     let placeName = placeInput.value;
     const placeCoordinates = placeInput.dataset.coordinates;
@@ -402,7 +423,7 @@ function onSubmit(e) {
         placeName = '';
     }
     postForm(this, window.location.href, () => {
-        setupFileInput();
+        setupFileInput(f);
         setupPlaceInput(placeName, placeCoordinates);
     }, kwargs);
 }
