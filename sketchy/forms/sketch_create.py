@@ -4,6 +4,7 @@ from functools import cached_property
 from typing import Iterable
 
 import PIL.Image
+from flask import request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
 from wtforms import StringField, SubmitField
@@ -126,6 +127,18 @@ class SketchForm(FlaskForm):
 
         return image.resize((int(width), int(height)))
 
+    @staticmethod
+    def _get_original_image_size() -> list[int, int] | None:
+        # width, height
+        floats = utils.parse_floats_list(request.form.get("imsize"), length=2)
+        return list(map(int, floats))  # type: ignore
+
+    @staticmethod
+    def _get_image_crop_rect() -> list[int, int, int, int] | None:
+        # left, top, right, bottom
+        floats = utils.parse_floats_list(request.form.get("crop"), length=4)
+        return list(map(int, floats))  # type: ignore
+
     @cached_property
     def pillow_image_tiny(self) -> PIL.Image.Image | None:
         return self._resize_with_aspect_ratio(
@@ -153,7 +166,11 @@ class SketchForm(FlaskForm):
     @cached_property
     def pillow_image(self) -> PIL.Image.Image | None:
         try:
-            image = PIL.Image.open(self.image.data)
+            image = (
+                PIL.Image.open(self.image.data)
+                .resize(self._get_original_image_size())
+                .crop(self._get_image_crop_rect())
+            )
         except (
             FileNotFoundError,
             PIL.UnidentifiedImageError,
@@ -172,23 +189,29 @@ class SketchForm(FlaskForm):
 
     @property
     def longitude(self) -> float | None:
-        coordinates = utils.parse_coordinates(self.place.data)
+        coordinates = utils.parse_floats_list(self.place.data, length=2)
         if coordinates:
             return coordinates[0]
 
     @property
     def latitude(self) -> float | None:
-        coordinates = utils.parse_coordinates(self.place.data)
+        coordinates = utils.parse_floats_list(self.place.data, length=2)
         if coordinates:
             return coordinates[1]
 
     def validate_image(self, _) -> None:
+        if (
+            not self._get_original_image_size()
+            or not self._get_image_crop_rect()
+        ):
+            raise ValidationError("Ошибка при обрезке изображения")
+
         validate_image_extension = ImageExtensionValidator(
             allowed_extensions=settings.ALLOWED_MEDIA_EXTENSIONS,
             message="Некорректный формат изображения",
         )
         validate_image_aspect_ratio = ImageAspectRatioValidator(
-            min_ratio=0.95 / 1,
+            min_ratio=1,
             message_less_than_min_ratio="Ширина изображения "
             "должна быть больше высоты",
         )
