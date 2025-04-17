@@ -218,8 +218,12 @@
         height: 74%;
     }
     #btn-sketch-place {
-        padding-block: 0;
-        padding-inline: 6px;
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+    #btn-share-sketch {
+        width: 1.7rem;
+        height: 1.7rem;
     }
     .sketch-place {
         font-size: 12px;
@@ -228,9 +232,8 @@
         font-size: 21px;
     }
     #icon-sketch-place {
-        width: 0.8rem;
-        height: 0.8rem;
-        margin-right: 2px;
+        width: 1.4rem;
+        height: 1.4rem;
     }
     #btn-delete-sketch {
         width: 1.7rem;
