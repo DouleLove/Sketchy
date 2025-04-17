@@ -46,9 +46,9 @@ function setupButtonSketchPlace() {
             `https://yandex.ru/maps?ll=${coordinates}&pt=${coordinates}&z=15`,
         );
         btnSketchPlace.style.fill = '#e67467';
-        btnSketchPlace.dataset.title = 'Открыть Яндекс карты'
+        btnSketchPlace.dataset.title = 'Открыть Яндекс карты';
     }
-    btnSketchPlace.addEventListener('click', () => {window.location.href = btnSketchPlaceRedirURL;})
+    btnSketchPlace.addEventListener('click', () => {window.open(btnSketchPlaceRedirURL, '_blank');})
 }
 
 
