@@ -33,7 +33,8 @@ function addCropGrid(toElement, cellsNum=9) {
 
     container.css('cursor', 'grab');
     const resizeControlsClass = 'crop-grid-resize-control';
-    const resizeControlsIds = ['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'];
+//    const resizeControlsIds = ['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'];
+    const resizeControlsIds = ['nw', 'ne', 'sw', 'se'];
     const controlSize = 12;  // px
     const border = '1px solid rgba(187, 194, 185)';
     resizeControlsIds.forEach(function (cid) {
@@ -100,6 +101,7 @@ function addCropGrid(toElement, cellsNum=9) {
             let controlId = $(e.target).attr('id') || $(e.target).parent().attr('id');
             $(cropGridContainer).addClass(`resizable with-${controlId}`);
             $(container).css('cursor', $(e.target).css('cursor'));
+            $('#section-pop-ups').css('cursor', $(e.target).css('cursor'));
         }
     });
 
@@ -110,16 +112,29 @@ function addCropGrid(toElement, cellsNum=9) {
 
         $(cropGridContainer).removeClass().addClass('editor-image-crop-grid-container');
         $(container).css('cursor', 'grab');
+        $('#section-pop-ups').css('cursor', 'default');
     });
+
+    const gridAspectRatioWH = 650 / 500;
 
     // resizing grid as soon as possible by trying to fire resize event every 30 ms for 2 seconds
     // and if image was loaded, then grid will take its size (or its width if height > width)
     const resizeIntervalID = setInterval(function (e) {
-        if ($(toElement).width() > $(toElement).height()) {
-            $(cropGridContainer).css({right: 0, bottom: 0});
-        } else {
-            $(cropGridContainer).css({right: 0, bottom: $(toElement).height() - $(toElement).width()});
+        let width = $(toElement).width();
+        let height = width * (1 / gridAspectRatioWH);
+        if (height > $(toElement).height()) {
+            height = $(toElement).height();
+            width = height * gridAspectRatioWH;
         }
+        const offsetX = ($(toElement).width() - width) / 2;
+        const offsetY = ($(toElement).height() - height) / 2;
+        const p = {
+            left: offsetX,
+            right: offsetX,
+            top: offsetY,
+            bottom: offsetY,
+        };
+        $(cropGridContainer).css(p);
     }, 30);
     setTimeout(function () {clearInterval(resizeIntervalID)}, 500);
 
@@ -172,23 +187,40 @@ function addCropGrid(toElement, cellsNum=9) {
             return;
         }
         const params = {};
+        let rect = _getGridRect();
         const parentBounds = $(toElement).get(0).getBoundingClientRect();
-        if (withControl.indexOf('n') !== -1) {
+        if (withControl.indexOf('nw') !== -1) {
             params.top = e.clientY - parentBounds.top;
+            params.left = rect.left - (rect.top - params.top);
         }
-        if (withControl.indexOf('w') !== -1) {
-            params.left = e.clientX - parentBounds.left;
-        }
-        if (withControl.indexOf('s') !== -1) {
+        if (withControl.indexOf('sw') !== -1) {
             params.bottom = parentBounds.bottom - e.clientY;
+            params.left = rect.left - (rect.bottom - params.bottom);
         }
-        if (withControl.indexOf('e') !== -1) {
-            params.right = parentBounds.right - e.clientX;
+        if (withControl.indexOf('se') !== -1) {
+            params.bottom = parentBounds.bottom - e.clientY;
+            params.right = rect.right - (rect.bottom - params.bottom);
         }
-        const rect = _getGridRect(params);
+        if (withControl.indexOf('ne') !== -1) {
+            params.top = e.clientY - parentBounds.top;
+            params.right = rect.right - (rect.top - params.top);
+        }
+        let isOnBorder1;
+        for (const k of Object.keys(rect)) {
+            if (k in params && rect[k] === 0) {
+                isOnBorder1 = true;
+            }
+        }
+        rect = _getGridRect(params);
+        let isOnBorder2;
+        for (const k of Object.keys(rect)) {
+            if (k in params && rect[k] === 0) {
+                isOnBorder2 = true;
+            }
+        }
         const w = $(toElement).width() - rect.left - rect.right;
         const h = $(toElement).height() - rect.top - rect.bottom;
-        if (h > w || w < $(toElement).width() * 0.15 || h < $(toElement).height() * 0.15) {
+        if (isOnBorder1 && isOnBorder2 || w < $(toElement).width() * 0.3 || h < $(toElement).height() * 0.3) {
             return;
         }
         $(cropGridContainer).css(params);
@@ -240,7 +272,6 @@ function openImageEditor(file) {
             const res = [
                 $('.crop-grid').get(0).getBoundingClientRect(),
                 $(imageContainer).get(0).getBoundingClientRect(),
-                blob,
             ];
             $(editorContainer).remove();
             resolve(res);
@@ -288,21 +319,20 @@ function setupFileInput(selectedFile) {
         }
 
         openImageEditor(selectedFile).then(([cropBounds, originalBounds, blob]) => {
-            e.currentTarget.dataset.blob = blob;
             e.currentTarget.dataset.crop = [
-                Math.ceil(cropBounds.top),
-                Math.ceil(cropBounds.left),
-                Math.floor(cropBounds.bottom),
-                Math.floor(cropBounds.right),
+                Math.ceil(cropBounds.left - originalBounds.left),
+                Math.ceil(cropBounds.top - originalBounds.top),
+                Math.floor(cropBounds.right - originalBounds.left),
+                Math.floor(cropBounds.bottom - originalBounds.top),
             ].join(',');
             e.currentTarget.dataset.imsize = [
                 Math.ceil(originalBounds.width),
                 Math.ceil(originalBounds.height),
             ].join(',')
-        });
+            const vinp = $('.form-field-inner:has(.form-field-input[type="file"]) .form-field-input[type="text"]')[0];
+            vinp.value = selectedFile.name;
+        }, function () {});
     });
-
-    $('#image').trigger('change');
 }
 
 
@@ -360,11 +390,14 @@ function setupPlaceInput(name, coordinates) {
 function onSubmit(e) {
     e.preventDefault();
 
-    const f = document.getElementById('image').files.length ? document.getElementById('image').files[0] : undefined;
+    const img = document.getElementById('image');
+    const f = img.files.length ? img.files[0] : undefined;
     const placeInput = document.getElementById('place');
     let placeName = placeInput.value;
     const placeCoordinates = placeInput.dataset.coordinates;
     const kwargs = {};
+    kwargs.imsize = img.dataset.imsize;
+    kwargs.crop = img.dataset.crop;
     if (placeCoordinates) {
         kwargs.place = placeCoordinates;
     }
