@@ -9,9 +9,9 @@ function setSketchImage() {
     let imageSize;
     if (!x) {
         imageSize = "large";
-    } else if (x <= 768) {
+    } else if (x <= 650) {
         imageSize = "small";
-    } else if (x <= 1920) {
+    } else if (x <= 1300) {
         imageSize = "medium";
     } else {
         imageSize = "large";
