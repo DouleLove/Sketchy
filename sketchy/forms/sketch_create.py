@@ -168,8 +168,9 @@ class SketchForm(FlaskForm):
         try:
             image = (
                 PIL.Image.open(self.image.data)
-                .resize(self._get_original_image_size())
+                .resize(self._get_original_image_size(), PIL.Image.Resampling.LANCZOS)
                 .crop(self._get_image_crop_rect())
+                .convert("RGB")
             )
         except (
             FileNotFoundError,
@@ -181,7 +182,7 @@ class SketchForm(FlaskForm):
 
         if image.format is None:
             try:
-                image.format = self.image.data.content_type.split("/")[1]
+                image.format = "JPEG"
             except (AttributeError, IndexError):
                 return
 

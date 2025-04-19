@@ -105,19 +105,20 @@ def profile_view_post_handler(user: User) -> Response:
             if user.image and os.path.isfile(root / user.image):
                 os.remove(root / user.image)
             # generate unique filename
-            while (image_name := f"{uuid.uuid4()}.{tp.lower()}") in os.listdir(
+            while (image_name := f"{uuid.uuid4()}.jpeg") in os.listdir(
                 root,
             ):
                 pass
             user.image = image_name
             # save filename to media folder
             as_pillow_image = PIL.Image.open(attachment)  # type: ignore
+            as_pillow_image = as_pillow_image.convert('RGB')
             w, h = as_pillow_image.size
             aspect_ratio_hw = h / w
             resized_w = min(w, 300)
             resized_h = resized_w * aspect_ratio_hw
             resized = as_pillow_image.resize((int(resized_w), int(resized_h)))
-            resized.save(root / user.image)
+            resized.save(root / user.image, optimize=True, quality=65)
         if param == "followers":
             # merge current_user to user's session
             # to not access current_user in different threads
