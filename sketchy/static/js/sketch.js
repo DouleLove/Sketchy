@@ -47,8 +47,9 @@ function setupButtonSketchPlace() {
         );
         btnSketchPlace.style.fill = '#e67467';
         btnSketchPlace.dataset.title = 'Открыть Яндекс карты';
+        btnSketchPlace.addEventListener('click', () => {window.open(btnSketchPlaceRedirURL, '_blank');})
     }
-    btnSketchPlace.addEventListener('click', () => {window.open(btnSketchPlaceRedirURL, '_blank');})
+    btnSketchPlace.addEventListener('click', () => {window.location.href = btnSketchPlaceRedirURL;})
 }
 
 
