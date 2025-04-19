@@ -105,7 +105,8 @@ def profile_view_post_handler(user: User) -> Response:
             if user.image and os.path.isfile(root / user.image):
                 os.remove(root / user.image)
             # generate unique filename
-            while (image_name := f"{uuid.uuid4()}.jpeg") in os.listdir(
+            ext = settings.ALLOWED_MEDIA_EXTENSIONS[0].lower()
+            while (image_name := f"{uuid.uuid4()}.{ext}") in os.listdir(
                 root,
             ):
                 pass
