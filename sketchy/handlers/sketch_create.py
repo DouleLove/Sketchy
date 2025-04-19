@@ -45,15 +45,20 @@ def sketch_create_view_post_handler(form: SketchForm) -> Response:
     sketch.latitude = form.latitude
     sketch.author_id = current_user.id
 
-    ext = form.pillow_image.format.lower()
+    ext = form.original_image.format.lower()
     image_name = _generate_unique_image_name(ext)
-    print(image_name)
 
-    for size in ("tiny", "small", "medium", "large"):
+    for idx, size in enumerate(("tiny", "small", "medium", "large",)):
         root = settings.MEDIA_ROOT / size
 
         image = getattr(form, f"pillow_image_{size}")
-        image.save(root / image_name, format=ext, optimize=True, quality=65)
+        image.save(
+            root / image_name,
+            format=ext,
+            optimize=True,
+            # better quality for tiny and small
+            quality=70 if idx > 1 else 95,
+        )
 
         previous_image_name = sketch.image_name
         if previous_image_name in os.listdir(root):
