@@ -116,10 +116,14 @@ def profile_view_post_handler(user: User) -> Response:
             as_pillow_image = as_pillow_image.convert('RGB')
             w, h = as_pillow_image.size
             aspect_ratio_hw = h / w
-            resized_w = min(w, 300)
+            min_sz = 300
+            resized_w = min(w, min_sz)
             resized_h = resized_w * aspect_ratio_hw
+            if resized_h < min_sz:
+                resized_h = min_sz
+                resized_w = resized_h * (1 / aspect_ratio_hw)
             resized = as_pillow_image.resize((int(resized_w), int(resized_h)))
-            resized.save(root / user.image, optimize=True, quality=65)
+            resized.save(root / user.image, optimize=True, quality=80)
         if param == "followers":
             # merge current_user to user's session
             # to not access current_user in different threads
@@ -145,7 +149,7 @@ def profile_view_post_handler(user: User) -> Response:
     # creating response json before commit because it will close user's session
     response = jsonify(
         status=HTTPStatus.OK,
-        user_data={"avatar": f"avatars/{user.image}"},
+        user_data={"avatar": user.image},
         rendered=render_template(
             template_name_or_list="response-message.html",
             status=HTTPStatus.OK,
