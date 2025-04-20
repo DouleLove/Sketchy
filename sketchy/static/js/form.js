@@ -12,6 +12,12 @@ export function postForm(form, url=window.location.href, callback=null, addition
         formData.set(fld, additionalFields[fld]);
     }
 
+    if (postForm._querying) {
+        return;
+    }
+
+    postForm._querying = true;
+
     $.ajax({
         type: 'POST',
         url: url,
@@ -31,7 +37,10 @@ export function postForm(form, url=window.location.href, callback=null, addition
             if (callback) {
                 callback();
             }
-        }
+        },
+        error: () => {
+            postForm._querying = false;
+        },
     });
 }
 
