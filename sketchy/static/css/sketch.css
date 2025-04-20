@@ -10,18 +10,19 @@
 .sketch-popup-inner {
     cursor: default;
     width: 60%;
-    height: 80%;
+    max-height: 85%;
+    aspect-ratio: 650 / 500;
     display: flex;
     flex-direction: column;
     background-color: rgb(248, 249, 250);
     border-radius: 20px;
+    display: inline-block;
 }
 
 .wrapper-sketch-image {
     width: 100%;
-    height: 86.5%;
+    height: calc(100% - 95px);
 }
-
 
 .sketch-image-popup {
     width: 100%;
@@ -161,11 +162,12 @@
     }
 }
 
-@media screen and (max-width: 1350px) {
+@media screen and (max-width: 1420px) {
     .sketch-popup-inner {
         width: 80%;
     }
 }
+
 
 @media screen and (max-width: 1050px) {
     .sketch-popup-inner {
@@ -183,39 +185,9 @@
     }
 }
 
-@media screen and (max-width: 800px) {
-    .sketch-popup-inner {
-        height: 70%;
-    }
-    .wrapper-sketch-image {
-        height: 82%;
-    }
-}
-
-@media screen and (max-width: 670px) {
-    .sketch-popup-inner {
-        height: 60%;
-    }
-    .wrapper-sketch-image {
-        height: 79%;
-    }
-}
-
-@media screen and (max-width: 570px) {
-    .sketch-popup-inner {
-        height: 50%;
-    }
-    .wrapper-sketch-image {
-        height: 75%;
-    }
-}
-
 @media screen and (max-width: 470px) {
-    .sketch-popup-inner {
-        height: 40%;
-    }
     .wrapper-sketch-image {
-        height: 74%;
+        height: calc(100% - 83px);
     }
     #btn-sketch-place {
         width: 1.7rem;
@@ -251,14 +223,5 @@
     }
     .followers-num {
         font-size: 11px;
-    }
-}
-
-@media screen and (max-width: 410px) {
-    .sketch-popup-inner {
-        height: 35%;
-    }
-    .wrapper-sketch-image {
-        height: 70%;
     }
 }
