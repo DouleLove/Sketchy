@@ -325,6 +325,9 @@ function setupFileInput(selectedFile) {
             }
             $(closestFileInput).get(0).click();
         });
+    $('#image').on('cancel', (e) => {
+        e.currentTarget.parentElement.parentElement.classList.remove('focused');
+    });
     $('#image').on('change', (e) => {
         const inp = $(e.currentTarget).next();
 
@@ -349,6 +352,12 @@ function setupFileInput(selectedFile) {
             ].join(',')
             const vinp = $('.form-field-inner:has(.form-field-input[type="file"]) .form-field-input[type="text"]')[0];
             vinp.value = selectedFile.name;
+            const i = setInterval(() => {
+                if ($('.wrapper-pop-up').is(':empty')) {
+                    e.currentTarget.parentElement.parentElement.classList.remove('focused');
+                    clearInterval(i);
+                }
+            }, 20)
         }, function () {});
     });
 }
@@ -378,6 +387,7 @@ function setupPlaceInput(name, coordinates) {
         }.bind(map, map.show);
         map.hide = function (hide) {
             document.getElementById('background-container').style.opacity = 1;
+            document.getElementById('place').parentElement.parentElement.classList.remove('focused');
             hide.bind(this)();
         }.bind(map, map.hide);
         map.onSelect = (place) => {
