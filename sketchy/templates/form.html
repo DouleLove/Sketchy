@@ -46,7 +46,10 @@
                     <div class="form-field-inner">
                         {% set field_kwargs = {'class_': 'form-field-input', 'spellcheck': 'false', 'autocomplete': 'off', 'placeholder': field.label.text} %}
                         {% if field.type == 'ImageField' %}
-                            {% set _ = field_kwargs.update({'accept': field.accept}) %}
+                            {% set _ = field_kwargs.update({'accept': field.accept, 'readonly': 'true'}) %}
+                        {% endif %}
+                        {% if field.type == 'PlaceField' %}
+                            {% set _ = field_kwargs.update({'readonly': 'true'}) %}
                         {% endif %}
                         {{ field.meta.render_field(field, field_kwargs) }}
                         {% if field.type == 'PasswordField' %}
