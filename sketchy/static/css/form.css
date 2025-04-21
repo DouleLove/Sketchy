@@ -98,7 +98,7 @@ html, body, main {
     z-index: 2;
 }
 
-.form-field-wrapper:focus-within::after {
+.form-field-wrapper.focused::after {
     width: 100%;
 }
 
@@ -133,7 +133,7 @@ html, body, main {
 }
 
 .form-field-wrapper:hover > .form-field-inner > .form-field-icon,
-.form-field-wrapper:focus-within > .form-field-inner > .form-field-icon {
+.form-field-wrapper.focused > .form-field-inner > .form-field-icon {
     fill: rgb(55, 57, 63);
 }
 
