@@ -63,7 +63,7 @@ html, body, main {
 
 #icon-load {
     height: 50%;
-    width: 7.5vw;
+    width: 50%;
     z-index: 1;
     fill: rgb(225, 225, 225);
     opacity: 0;
@@ -444,6 +444,12 @@ html, body, main {
     }
 }
 
+@media screen and (max-width: 510px) {
+    .view-upper-panel {
+        margin-left: 1%;
+    }
+}
+
 @media screen and (max-width: 480px) {
     #section-user-info {
         width: 80%;
@@ -451,5 +457,11 @@ html, body, main {
     .wrapper-avatar {
         width: 53vw;
         height: 53vw;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .view-upper-panel {
+        margin-left: 0;
     }
 }
