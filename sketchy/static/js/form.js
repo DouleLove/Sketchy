@@ -1,5 +1,6 @@
 import {getBrightness, animateBrightness, animateOpacity, encodeURL, formatURL, getURLParameters} from './utils.js';
 
+
 export function postForm(form, url=window.location.href, callback=null, additionalFields={}) {
     const xhr = new XMLHttpRequest();
 
@@ -45,6 +46,21 @@ export function postForm(form, url=window.location.href, callback=null, addition
 }
 
 
+function setupInputFocus() {
+    $(document).on('click', function (event) {
+        $('.form-field-wrapper').each(function () {
+            if (!($(this).has('input[readonly]').length)) {
+                $(this).removeClass('focused');
+            }
+        });
+        const wrapper = $(event.target).closest('.form-field-wrapper');
+        if (wrapper.length) {
+            wrapper.addClass('focused');
+        }
+    })
+}
+
+
 function setReferrer() {
     const url = window.location.href.split('?')[0];
     const parameters = getURLParameters();
@@ -53,4 +69,6 @@ function setReferrer() {
 }
 
 
+$('#form').on('submit', setupInputFocus);
 setReferrer();
+setupInputFocus()
