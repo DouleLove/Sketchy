@@ -327,6 +327,31 @@ export class SketchesMap extends _CleanMap {
         }
     }
 
+    _switchBalloon(placemark, balloon) {
+        if (!balloon) {
+            balloon = placemark.balloon;
+        }
+
+        if (balloon.isOpen()) {
+            balloon.close();
+        } else {
+            balloon.open().then(() => {
+                const balloonElement = document.getElementById(this.__balloonSelectorID);
+                balloonElement.addEventListener('click', () => {
+                    const coordinates = placemark.geometry.getCoordinates();
+                    this._reverseGeocode(coordinates).then(
+                        (name) => {
+                            return this.onSelect(new Place(coordinates, name));
+                        },
+                        () => {
+                            return this.onSelect(new Place(coordinates));  // place with missing address
+                        },
+                    )
+                });
+            })
+        }
+    }
+
     _buildBackgroundPlacemark(
         coordinates,
         placemarkBackgroundImage,
@@ -444,13 +469,6 @@ export class SketchesMap extends _CleanMap {
                 radius: Math.floor(imageSize[0] / 2),
             },
         });
-        placemarkForeground.events.add('click', () => {
-            if (placemarkBackground.balloon.isOpen()) {
-                placemarkBackground.balloon.close();
-            } else {
-                placemarkBackground.balloon.open();
-            }
-        });
 
         return placemarkForeground;
     }
@@ -492,30 +510,19 @@ export class SketchesMap extends _CleanMap {
             this.ymap.geoObjects.add(foregroundPlacemark);
         }
 
-        if (placemarkOnClick) {
-            [backgroundPlacemark, foregroundPlacemark].forEach((placemark) => {
-                placemark.events.add('click', function (placemark) {placemarkOnClick(placemark)}.bind(this, placemark));
-            })
-        }
+        [backgroundPlacemark, foregroundPlacemark].forEach((placemark) => {
+            placemark.events.add('click', function (event) {
+                event.preventDefault();
+                this._switchBalloon(backgroundPlacemark);
+                if (placemarkOnClick) {
+                    placemarkOnClick(backgroundPlacemark);
+                }
+            }.bind(this));
+        })
 
-        if (!backgroundPlacemark.balloon) {
-            return;
+        if (backgroundPlacemark.balloon) {
+            this._switchBalloon(backgroundPlacemark);
         }
-
-        backgroundPlacemark.balloon.open().then(() => {
-            const balloonElement = document.getElementById(this.__balloonSelectorID);
-            balloonElement.addEventListener('click', () => {
-                const coordinates = backgroundPlacemark.geometry.getCoordinates();
-                this._reverseGeocode(coordinates).then(
-                    (name) => {
-                        return this.onSelect(new Place(coordinates, name));
-                    },
-                    () => {
-                        return this.onSelect(new Place(coordinates));  // place with missing address
-                    },
-                )
-            });
-        });
     }
 
     onSelect(place) {}  // abstract method
