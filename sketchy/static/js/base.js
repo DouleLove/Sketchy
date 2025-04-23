@@ -17,9 +17,11 @@ export function loadPopUp(url, params, onsuccess=null) {
 
     url = encodeURL(formatURL(url.split('?')[0], p))
     $.get(url, (data) => {
-        var prevTitle = document.title;
+        const prevTitle = document.title;
+        const prevURL = window.location.href;
         if (data.data.title) {
             document.title = data.data.title;
+            window.history.pushState({}, '', prevURL);
         }
         $('.wrapper-pop-up').html(data.rendered);
         $('#btn-pop-up-close').on('click', () => {
