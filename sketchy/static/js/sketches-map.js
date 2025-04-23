@@ -513,12 +513,14 @@ export class SketchesMap extends _CleanMap {
         [backgroundPlacemark, foregroundPlacemark].forEach((placemark) => {
             placemark.events.add('click', function (event) {
                 event.preventDefault();
-                this._switchBalloon(backgroundPlacemark);
+                if (backgroundPlacemark.balloon) {
+                    this._switchBalloon(backgroundPlacemark);
+                }
                 if (placemarkOnClick) {
                     placemarkOnClick(backgroundPlacemark);
                 }
             }.bind(this));
-        })
+        });
 
         if (backgroundPlacemark.balloon) {
             this._switchBalloon(backgroundPlacemark);
