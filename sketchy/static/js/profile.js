@@ -285,7 +285,7 @@ function main() {
                     reqPost(e.currentTarget.parentElement, function(response) {
                         let upl = document.getElementById('user-avatar').src.split('/').slice(0, -1).join('/');
                         if (upl.includes('/static/img')) {
-                            upl = upl.split('/').slice(0, -2).join('/') + '/media';
+                            upl = upl.split('/').slice(0, -2).join('/') + '/media/avatars';
                         }
                         const pt = upl + '/' + response.user_data.avatar;
                         document.getElementById('user-avatar').src = pt;
