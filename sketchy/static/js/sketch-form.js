@@ -325,9 +325,17 @@ function setupFileInput(selectedFile) {
             }
             $(closestFileInput).get(0).click();
         });
-    $('#image').on('cancel', (e) => {
-        e.currentTarget.parentElement.parentElement.classList.remove('focused');
-    });
+
+    function _unfocusImageInput() {
+        const i = setInterval(() => {
+            if ($('.wrapper-pop-up').is(':empty')) {
+                $('#image').get(0).parentElement.parentElement.classList.remove('focused');
+                clearInterval(i);
+            }
+        }, 20);
+    }
+
+    $('#image').on('cancel', _unfocusImageInput);
     $('#image').on('change', (e) => {
         const inp = $(e.currentTarget).next();
 
@@ -352,13 +360,8 @@ function setupFileInput(selectedFile) {
             ].join(',')
             const vinp = $('.form-field-inner:has(.form-field-input[type="file"]) .form-field-input[type="text"]')[0];
             vinp.value = selectedFile.name;
-            const i = setInterval(() => {
-                if ($('.wrapper-pop-up').is(':empty')) {
-                    e.currentTarget.parentElement.parentElement.classList.remove('focused');
-                    clearInterval(i);
-                }
-            }, 20)
-        }, function () {});
+            _unfocusImageInput()
+        }, _unfocusImageInput);
     });
 }
 
@@ -382,11 +385,18 @@ function setupPlaceInput(name, coordinates) {
             placemarkBalloonOffset: [5, 5],
         });
         map.show = function (show) {
-            document.getElementById('background-container').style.opacity = 0;
+            $('#background-container').append($('<div>', {'class': 'map-nav-layer'}).css({
+                'background-color': 'white',
+                'width': $('#nav-wrapper').width(),
+                'height': $('#nav-wrapper').height(),
+                'position': 'absolute',
+                'left': 0,
+                'top': 0,
+            }));
             show.bind(this)();
         }.bind(map, map.show);
         map.hide = function (hide) {
-            document.getElementById('background-container').style.opacity = 1;
+            $('.map-nav-layer').remove();
             document.getElementById('place').parentElement.parentElement.classList.remove('focused');
             hide.bind(this)();
         }.bind(map, map.hide);
