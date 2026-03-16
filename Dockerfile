@@ -8,4 +8,4 @@ COPY . ./
 
 RUN pip install --no-cache-dir -r requirements/production.txt
 
-CMD ["sh", "-c", "waitress-serve --host=0.0.0.0 --port=8080 sketchy.__main__:sketchy"]
+CMD ["gunicorn", "sketchy.__main__.py:sketchy"]
