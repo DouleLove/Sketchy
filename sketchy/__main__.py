@@ -9,8 +9,6 @@ from sketchy.app import Sketchy
 sketchy = Sketchy()
 
 if __name__ == "__main__":
-    sketchy.run(
-        host=settings.HOST,
-        port=settings.PORT,
-        debug=settings.DEBUG,
-    )
+    import waitress
+
+    waitress.serve(sketchy, host=settings.HOST, port=settings.PORT)
