@@ -12,7 +12,6 @@ from sketchy.database import User
 
 @g.app.route("/")
 def index_view() -> Response:
-    raise ValueError('here')
     return handlers.index_view_get_handler()
 
 
