@@ -6,5 +6,3 @@ __license__ = "MIT"
 from sketchy.app import Sketchy
 
 sketchy = Sketchy()
-
-raise ValueError('here')
